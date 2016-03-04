@@ -7,11 +7,11 @@
 FILE FUNCTIONS
 --------------
 
--> New AniMates file function NOT implemented
+-> New PiXit file function NOT implemented
 
--> Open AniMates file function NOT implemented
+-> Open PiXit file function NOT implemented
 
--> Save AniMates file function NOT implemented
+-> Save PiXit file function NOT implemented
 
 -> Cut function NOT implemented
 

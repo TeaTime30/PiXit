@@ -29,9 +29,9 @@ TOOL FUNCTIONS
 
 -> Text tool  PARTIALLY implemented
 
--> Paint fill tool NOT implmented
+-> Select tool PARTIALLY implemented
 
--> Select tool NOT implemented
+-> Paint fill tool NOT implmented
 
 -> Transform function NOT implemented
 

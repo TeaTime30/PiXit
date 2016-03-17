@@ -3,8 +3,11 @@ var curColour = "#000000";
 var curThickness = 5;
 var curFrame = 1;
 var images = new Array();
-var undoindex = -1;
+var undoindex = 0;
 var undoArr = new Array();
+var redoArr = new Array();
+var selectArray = new Array();
+var tool = 'brush'; //Default tool
 
 if(window.addEventListener) {
 	window.addEventListener('load', function () {
@@ -69,7 +72,6 @@ if(window.addEventListener) {
 	  		temp_context.lineCap = 'round';
 	  		temp_context.strokeStyle = curColour;
 	  		temp_context.fillstyle =curColour;
-	  		uPush();
 			$("#thickmenu").addClass("hide");
 			mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
   			mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
@@ -81,98 +83,91 @@ if(window.addEventListener) {
 
   			if(tool == 'line'){
   				temp_canvas.addEventListener('mousemove', onLine, false);
-  				onLine();
   			}
 
   			else if(tool == 'rect') {
   				temp_canvas.addEventListener('mousemove', onRect, false);
-  				onRect();
-  			
   			}
 
   			else if(tool == 'brush'){
   				temp_canvas.addEventListener('mousemove', onBrush, false);
-  				onBrush();
-  			
   			}
 
-  			else if (tool == 'pencil'){
+  			else if(tool == 'pencil'){
   				temp_canvas.addEventListener('mousemove', onPencil, false);
-  				onPencil();
-  			
+  			}
+
+  			else if(tool == 'select'){
+  				temp_canvas.addEventListener('mousemove', onSel, false);
+  			}
+
+  			else if(tool == 'choose'){
+  				console.log("choose");
+  				temp_canvas.addEventListener('mousemove', onChoose, false);
   			}
 
   			else if(tool == 'erase'){
   				temp_canvas.addEventListener('mousemove', onErase, false);
-  				onErase();
-  			
   			}
 
   			else if(tool == 'circle'){
   				temp_canvas.addEventListener('mousemove', onCircle, false);
-  				onCircle();
-  				
   			}
 
-  			else if (tool == 'oval'){
+  			else if(tool == 'oval'){
   				temp_canvas.addEventListener('mousemove', onOval, false);
-  				onOval();
-  			
   			}
 
   			else if (tool == 'square'){
   				temp_canvas.addEventListener('mousemove', onSquare, false);
-  				onSquare();
-  			
   			}
 
   			else if( tool == 'cline'){
   				temp_canvas.addEventListener('mousemove', onCLine, false);
-  				onCLine();
-  			
   			}
 
   			else if (tool == 'triangle'){
   				temp_canvas.addEventListener('mousemove', onTriangle, false);
-  				onTriangle();
-  			
   			}
 
   			else if (tool == 'diam'){
   				temp_canvas.addEventListener('mousemove', onDiam, false);
-  				onDiam();
-  				
   			}
 
   			else if (tool == 'heart'){
   				temp_canvas.addEventListener('mousemove',onHeart, false);
-  				onHeart();
-  				
   			}
 
   			else if (tool == 'text'){
   				temp_canvas.addEventListener('mousemove', onText, false);
-  				onText();
-  			
   			}
 
   		}, false);
 
 		temp_canvas.addEventListener('mouseup', function(){
-			
+	  		uPush();
+	  		last_mouse.x = mouse.x;
+	  		last_mouse.y = mouse.y;
+	  		console.log("push");
 			temp_canvas.removeEventListener('mousemove', onLine, false);
-			temp_canvas.removeEventListener('mousemove',onCLine, false);
+			temp_canvas.removeEventListener('mousemove', onCLine, false);
 			temp_canvas.removeEventListener('mousemove', onRect, false);
 			temp_canvas.removeEventListener('mousemove', onBrush, false);
 			temp_canvas.removeEventListener('mousemove', onErase,false);
-			temp_canvas.removeEventListener('mousemove',onCircle, false);
+			temp_canvas.removeEventListener('mousemove', onCircle, false);
 			temp_canvas.removeEventListener('mousemove', onOval, false);
 			temp_canvas.removeEventListener('mousemove', onSquare, false);
 			temp_canvas.removeEventListener('mousemove', onTriangle,false);
 			temp_canvas.removeEventListener('mousemove', onDiam, false);
-			temp_canvas.removeEventListener('mousemove',onHeart, false);
+			temp_canvas.removeEventListener('mousemove', onHeart, false);
 			temp_canvas.removeEventListener('mousemove', onText,false);
 			temp_canvas.removeEventListener('mousemove', onPencil, false);
+			temp_canvas.removeEventListener('mousemove', onSel,false);
+			temp_canvas.removeEventListener('mousemove', onChoose, false);
+			if(tool == 'select'){
+   				temp_context.setLineDash([]);
+   				temp_context.lineWidth = curThickness;
+  			}
 
     		if (tool == 'text'){
 
@@ -233,7 +228,7 @@ if(window.addEventListener) {
 
     		points = [];
 
-    		uPush();
+    		//uPush();
 
     		frameDraw();
 
@@ -242,8 +237,6 @@ if(window.addEventListener) {
 
 	
 		/**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
-
- 	 	var tool = 'brush';
  	 	$('#tools div').on('click', function(){
  	 		tool = $(this).attr('id');
  	 		console.log("Tool selected: " + tool);
@@ -283,12 +276,8 @@ if(window.addEventListener) {
 
 		/*********************** UNDO ARRAY FUNCTION*************************/
 		function uPush(){
-		undoindex++;
-		if (undoindex < undoArr.length){
-			undoArr.length = undoindex;
-		}
-		undoArr.push(canvas.toDataURL());
-
+			undoArr.push(canvas.toDataURL());
+			undoindex++;
 		}
 
 
@@ -303,13 +292,14 @@ if(window.addEventListener) {
 		undo.addEventListener("click", undo1);
 
 		 function undo1 (e){
-		 	if (undoindex > 0){
+		 	if (undoindex > 0){		
 		 		undoindex--;
+		 		console.log("undo: " + undoindex);
 		 		var undo_img = new Image();
 		 		undo_img.src = undoArr[undoindex];
 		 		context.clearRect(0,0,temp_canvas.width, temp_canvas.height);
 		 		context.drawImage(undo_img,0,0);
-		 		frameDraw(); 		
+		 		frameDraw(); 
 		 		console.log("undo");
 		 	}
 		}
@@ -327,12 +317,13 @@ if(window.addEventListener) {
 		redo.addEventListener("click", redo1);
 
 		function redo1(e){
-			if (undoindex < undoArr.length-1){		
+			if (undoindex < undoArr.length){	
 				undoindex++;
+		 		console.log("redo: " + undoindex);
 	 			var undo_img = new Image();
 	 			undo_img.src = undoArr[undoindex];
 	 			context.drawImage(undo_img,0,0);
-	 			frameDraw();
+	 			frameDraw();	
 	 			console.log("redo");
 			}
 		}
@@ -367,8 +358,35 @@ if(window.addEventListener) {
 
 
    		/*********************** SELECT FUNCTION*************************/
+   		var x, y, width, height, stx, sty = 0;
+   		var onSel = function(){
+			temp_context.lineWidth = 1;
+   			temp_context.setLineDash([6]);
+			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
+			width = Math.abs(mouse.x - start_mouse.x);
+			height = Math.abs(mouse.y - start_mouse.y);
 
+			temp_context.strokeRect(x,y, width, height);
+			stx = mouse.x;
+			sty = mouse.y;
+			tool = 'choose';
+   		};
+   		var onChoose = function(){
+			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+    		temp_context.fillStyle = 'white';
+    		temp_context.strokeStyle = 'white';
+			temp_context.setLineDash([0]);
+			temp_context.fillRect(x,y, width, height);
+			temp_context.strokeRect(x,y, width, height);
+			diffx = mouse.x - stx;
+			diffy = mouse.y - sty;
+			temp_context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
+			temp_context.strokeRect(x+diffx, y+diffy, width, height);
+    		temp_context.strokeStyle = 'black';
+   		};
 
    		/*********************** PAINT FILL FUNCTION*************************/
 
@@ -377,7 +395,7 @@ if(window.addEventListener) {
 		/********************** TEXT FUNCTION *********************/
 		var onText = function(){
 
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+			temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 
 			var x = Math.min(mouse.x,start_mouse.x);
 			var y = Math.min(mouse.y, start_mouse.y);
@@ -440,7 +458,7 @@ if(window.addEventListener) {
 		};
 
 
-		/********************** RECTANGLE FUNCTION *********************/
+		/********************** TRIANGLE FUNCTION *********************/
 		var onTriangle = function(){
 			temp_context.clearRect(0,0, temp_canvas.width,temp_canvas.height);
 
@@ -585,7 +603,7 @@ if(window.addEventListener) {
 		}
 
 
-		/********************** BRUSH FUNCTION *********************/
+		/********************** PENCIL FUNCTION *********************/
 		var points = [];
 
 		var onPencil = function(){
@@ -713,7 +731,7 @@ if(window.addEventListener) {
 
 		function reset1(){
 			undoArr = [];
-			undoindex= -1;
+			undoindex= 0;
 		}
 
 

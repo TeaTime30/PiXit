@@ -6,7 +6,7 @@
 	border-bottom: solid white;
 }
 
-#menu div{
+#menu > div{
 	display:inline-block;
 	vertical-align:top;
 	width:40px;
@@ -14,7 +14,7 @@
 	padding-right:25px;
 }
 
-#menu p{
+#menu > p{
 	padding-right:250px;
 	display:inline-block;
 }

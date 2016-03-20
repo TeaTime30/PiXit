@@ -5,6 +5,7 @@
 		<script src="jquery-1.11.3.min.js"></script>
 		<script src="jscolor.min.js"></script>
 		<script type="text/javascript" src="PiXit.js"></script>
+		<script type="text/javascript" src="colourpicker.js"></script>
 		<title>PiXit Beta</title>
 	</head>
 	<body>
@@ -99,7 +100,13 @@
 						<button class="colours" id="#cc99ff" style="background-color:#cc99ff"></button>
 						<button class="colours" id="#ff99cc" style="background-color:#ff99cc"></button>
 				</div>
-				Custom Colours
+                <div>
+                    Colour Picker
+                    <input type="color" class="colours colour-picker">
+                </div>
+				
+                <!--
+                Custom Colours
 				<div>
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
@@ -114,6 +121,8 @@
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
 				</div>
+                -->
+
 
 				<script>
 				function update(picker) {

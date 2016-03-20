@@ -798,6 +798,7 @@ if(window.addEventListener) {
 			}
 			$("#playDiv").remove();
 		});
+
 	
 
 }, false); }

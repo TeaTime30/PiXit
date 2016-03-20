@@ -249,3 +249,8 @@ figure{
 	width:200px;
 	background-color: blue;
 }
+
+#colour-picker {
+    padding: 0px !important;
+    border: 0px !important;
+}

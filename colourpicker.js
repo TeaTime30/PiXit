@@ -3,9 +3,9 @@ $(document).ready(function() {
     /***************************COLOUR PICKER EXPERIMENT******************/
         var currentHex = '#FFF';
 
-        $('.colour-picker').bind('change', function() {
+        $('#colour-picker').bind('change', function() {
             currentHex = $(this).val();
-            $(this).attr('id', currentHex);
+            $('#picker > .colours').attr('id', currentHex);
             console.log("change");
         });
     

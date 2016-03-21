@@ -1,6 +1,6 @@
 
 #menu{
-	width:1050px;
+	width:1207px;
 	height:75px;
 	border: 1px solid black;	
 	border-bottom: solid white;
@@ -123,7 +123,7 @@ ul{
 
 #canvas1 {
 
-	width:800px;
+	width:760px;
 	height:400px;
 
 }
@@ -156,8 +156,9 @@ ul{
 }
 
 #frameandtools{
-	width:845px;
+	width:1000px;
 	height:235px;
+	margin-right:-200px;
 	border: 1px solid black;
 	
 }
@@ -253,4 +254,11 @@ figure{
 #colour-picker {
     padding: 0px !important;
     border: 0px !important;
+}
+#object-tab{
+	height: 440px;
+	width: 192px;
+	vertical-align:top;
+	display:inline-block;
+	border:1px solid black;
 }

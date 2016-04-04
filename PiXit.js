@@ -96,7 +96,7 @@ if(window.addEventListener) {
   			}
 
   			else if(tool == 'brush'){
-  				temp_canvas.addEventListener('mousemove', onBrush(e), false);
+  				temp_canvas.addEventListener('mousemove', onBrush, false);
   			}
 
   			else if(tool == 'pencil'){

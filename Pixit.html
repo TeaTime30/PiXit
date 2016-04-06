@@ -1,11 +1,12 @@
 <!DOCTYPE html>	
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="Pixit.css"/>
+		<link rel="stylesheet" type="text/css" href="PiXit.css"/>
 		<script src="jquery-1.11.3.min.js"></script>
 		<script src="jscolor.min.js"></script>
-		<script type="text/javascript" src="Pixit.js"></script>
-		<title>Pixit Prototype</title>
+		<script type="text/javascript" src="PiXit.js"></script>
+		<script type="text/javascript" src="colourpicker.js"></script>
+		<title>PiXit Beta</title>
 	</head>
 	<body>
 		<div id="menu">
@@ -22,7 +23,7 @@
 		</div>
 		<div id="left-menu">
 			<div id="tools" class="left-menu">
-				<p>TOOLS</p>
+				<p>Tools</p>
 				<div id="brush"><img src="icons/brush.png"></div>
 				<div id="pencil"><img src="icons/pencil.png"></div>
 				<div id="thickness"><img src="icons/lineweight.png">
@@ -53,7 +54,7 @@
 			
 						
 			<div id="shapes" class="left-menu">
-				<p>SHAPES</p>
+				<p>Shapes</p>
 				<div id="line"><img src="icons/line.png"></div>
 				<div id="cline"> <img src="icons/cline.png"></div>
 				<div id="rect"><img src="icons/rectangle.png"></div>
@@ -67,7 +68,7 @@
 
 			
 			<div id="colour" class="left-menu">
-				<p>COLOURS</p>
+				<p>Colours</p>
 				<div>
 						<button class="colours" id="#000000" style="background-color:#000000"></button>
 						<button class="colours" id="#cccccc" style="background-color:#cccccc"></button>
@@ -99,7 +100,13 @@
 						<button class="colours" id="#cc99ff" style="background-color:#cc99ff"></button>
 						<button class="colours" id="#ff99cc" style="background-color:#ff99cc"></button>
 				</div>
-				Custom Colours
+                <div id="picker">
+                    <p>Colour Picker</p>
+                    <input type="color" id="colour-picker"> <button class="colours">Apply Colour</button>
+                </div>
+				
+                <!--
+                Custom Colours
 				<div>
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
@@ -114,6 +121,8 @@
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
 					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
 				</div>
+                -->
+
 
 				<script>
 				function update(picker) {
@@ -125,10 +134,10 @@
 		</div>
 		<div id="right-menu">
 			<div class = "show" id="canvas">
-				<canvas id="canvas1" width="800px" height="400px"></canvas>
+				<canvas id="canvas1" ></canvas>
 			</div>
 			<div id="frameandtools">
-				<div>FRAMES &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+				<div>Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
 					<input id="frms" type="number" name="frmpsec" min="30" max="360" value="120">frames/min
 				</div>
 
@@ -147,5 +156,6 @@
 				</div>
 			</div>
 		</div>
+	<div id="object-tab">Object</div>
 	</body>
 </html>

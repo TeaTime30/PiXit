@@ -918,6 +918,7 @@ if(window.addEventListener) {
   			frame_select = $(this).attr('id');
 			curFrame=parseInt(frame_select.match(/frmimg(\d+)/)[1]);
   			console.log("frame selected: "+frame_select+" curFrame:"+curFrame);
+
 			var framesrc=document.getElementById(frame_select).src;
 			var canvas=document.getElementById("canvas1");
 			var context=canvas.getContext("2d");
@@ -927,18 +928,19 @@ if(window.addEventListener) {
 				context.clearRect(0, 0, canvas.width, canvas.height);
 				context.drawImage(img,0,0);				
 			};
-			
+			console.log(images);
 			
  		});
 
 
 		/*************************DRAW FRAME***********************/
-		var cnvs1 = document.getElementById("canvas1");
+		
 		function frameDraw() {
+			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");
 
-			if ((curFrame == 1) && (images.length == 0)){
+			/*if ((curFrame == 1) && (images.length == 0)){
 				images.push(frame);
 			}
 
@@ -948,7 +950,8 @@ if(window.addEventListener) {
 
 			else if (curFrame > images.length){
 				images.push(frame);
-			}
+			}*/
+			images[curFrame-1]=frame;
 			console.log("Length of frame array: " + images.length);
 		
 			var val = "frmimg"+curFrame;
@@ -962,7 +965,7 @@ if(window.addEventListener) {
 		addFrame.addEventListener("click", function(e){
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 			context.clearRect(0,0,canvas.width, canvas.height);
-
+			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");	
 
@@ -991,7 +994,7 @@ if(window.addEventListener) {
 			cimg.src = images[images.length -1];
 			context.drawImage(cimg,0,0);
 			frameDraw();
-
+			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");
 

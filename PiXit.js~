@@ -914,7 +914,7 @@ if(window.addEventListener) {
  		/********************** FRAME SELECT *********************/
 		
  		var frame_select = "frmimg"+curFrame;
-  		$("#frames").on('click','img.frame' ,function(){
+  		$("#frame").on('click','img.frame' ,function(){
   			frame_select = $(this).attr('id');
   			console.log("frame selected: "+frame_select);
  		});

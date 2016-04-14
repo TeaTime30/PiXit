@@ -935,11 +935,11 @@ if(window.addEventListener) {
 
 		/*************************DRAW FRAME***********************/
 		
-		function frameDraw() {
+		function frameDraw(action) {
 			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");
-
+			
 			/*if ((curFrame == 1) && (images.length == 0)){
 				images.push(frame);
 			}
@@ -951,6 +951,14 @@ if(window.addEventListener) {
 			else if (curFrame > images.length){
 				images.push(frame);
 			}*/
+			if (action == "new"){
+				images.splice(curFrame-1,0,frame);			
+			}
+			else if (action == "copy"){
+				images.splice(curFrame-1,0,frame);
+			}
+			
+			
 			images[curFrame-1]=frame;
 			console.log("Length of frame array: " + images.length);
 		
@@ -973,28 +981,31 @@ if(window.addEventListener) {
 			img.className = "frame";
 			img.setAttribute("id", "frmimg"+(curFrame+1));
 			$("#frmimg"+curFrame).after(img);
-			reset1();
+			
 			curFrame++;
-			frameDraw();
+			frameDraw("new");
+			
 		});
 
 		function reset1(){
 			undoArr = [];
-			undoindex= 0;
+			undoindex= 0	;
 		}
 
 
 		/*************************COPY FRAME************************/
 		var copyFrame = document.getElementById("copyframe");
 		copyFrame.addEventListener("click", function(e){
+			
+			var cnvs1 = document.getElementById("canvas1");
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 			context.clearRect(0,0,canvas.width, canvas.height);
 
 			var cimg = new Image();
-			cimg.src = images[images.length -1];
+			cimg.src = images[curFrame-1];
 			context.drawImage(cimg,0,0);
 			frameDraw();
-			var cnvs1 = document.getElementById("canvas1");
+			
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");
 
@@ -1004,7 +1015,7 @@ if(window.addEventListener) {
 			$("#frmimg"+curFrame).after(img);
 			reset1();
 			curFrame++;
-			frameDraw();
+			frameDraw("copy");
 
 		});
 
@@ -1017,7 +1028,7 @@ if(window.addEventListener) {
 				context.clearRect(0,0,canvas.width, canvas.height);
 
 				$("#frmimg"+curFrame).remove();
-				images.pop();
+				images.splice(curFrame,1);
 				curFrame--;
 
 				var curImg = new Image();

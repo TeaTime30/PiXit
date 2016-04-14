@@ -916,7 +916,19 @@ if(window.addEventListener) {
  		var frame_select = "frmimg"+curFrame;
   		$("#frames").on('click','img.frame' ,function(){
   			frame_select = $(this).attr('id');
-  			console.log("frame selected: "+frame_select);
+			curFrame=parseInt(frame_select.match(/frmimg(\d+)/)[1]);
+  			console.log("frame selected: "+frame_select+" curFrame:"+curFrame);
+			var framesrc=document.getElementById(frame_select).src;
+			var canvas=document.getElementById("canvas1");
+			var context=canvas.getContext("2d");
+			var img = new Image();
+			img.src=framesrc;
+			img.onload=function(){
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				context.drawImage(img,0,0);				
+			};
+			
+			
  		});
 
 

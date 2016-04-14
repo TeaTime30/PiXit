@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron" name="header">
+    <h1>PiXit!</h1>
+    <br>
+    <p><small>Imagine. Create. Play.</p></small><br>
+     <br><br>
+     <a href="{{url_for('login')}}" class="btn btn-primary">Login</a>
+</div>
+
+<div class="jumbotron"name="about">
+    <h2>About</h2><br>
+    <p><small> PiXit! is an innovative  web application that allows you to create smooth animations from anywhere with an internet connection. </small></p>
+    <p> Create a PiXit! account today and bring your imaginations to life.</p>
+</div>
+
+<div class="jumbotron"name="i">
+    <h3>Imagine</h3><br>
+    <br>
+    <p></p>
+</div>
+
+<div class="jumbotron"name="c">
+    <h3>Create</h3><br>
+    <br>
+    <p></p>
+</div>
+
+<div class="jumbotron"name="i">
+    <h3>Play</h3><br>
+    <br>
+    <p></p>
+</div>
+
+<a href="{{url_for('signup')}}"class="btn btn-primary">Sign Up</a>
+
+{% endblock %}

@@ -262,6 +262,6 @@ figure{
 	display:inline-block;
 	border:1px solid black;
 }
-.active-frame{
+.active-frave{
 	border:2px solid blue;
 }

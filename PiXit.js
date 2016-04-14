@@ -928,6 +928,11 @@ if(window.addEventListener) {
 				context.clearRect(0, 0, canvas.width, canvas.height);
 				context.drawImage(img,0,0);				
 			};
+
+			$("#frames img").removeClass("frame active-frame");
+			$("#frames img").addClass("frame");
+			$(this).addClass("frame active-frame");
+			
 			console.log(images);
 			
  		});

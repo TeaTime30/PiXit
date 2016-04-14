@@ -928,6 +928,11 @@ if(window.addEventListener) {
 				context.clearRect(0, 0, canvas.width, canvas.height);
 				context.drawImage(img,0,0);				
 			};
+
+			
+			$(this).addClass("frame active-frame");
+			$("#frames img").removeClass("frame active-frame");
+			$("#frames img").addClass("frame");
 			console.log(images);
 			
  		});
@@ -1028,7 +1033,7 @@ if(window.addEventListener) {
 				context.clearRect(0,0,canvas.width, canvas.height);
 
 				$("#frmimg"+curFrame).remove();
-				images.splice(curFrame,1);
+				images.splice(curFrame-1,1);
 				curFrame--;
 
 				var curImg = new Image();

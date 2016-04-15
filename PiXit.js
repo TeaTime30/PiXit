@@ -19,13 +19,27 @@ if(window.addEventListener) {
 
 		$("#thickmenu").addClass("hide");
 		var canvas = document.querySelector('#canvas1');
-  		var context = canvas.getContext('2d');
+  	var context = canvas.getContext('2d');
 
  		var container = document.querySelector('#canvas');
-  		var container_style = getComputedStyle(container);  
+  	var container_style = getComputedStyle(container);  
  		canvas.width = parseInt(container_style.getPropertyValue('width'));
-  		canvas.height = parseInt(container_style.getPropertyValue('height'));
+  	canvas.height = parseInt(container_style.getPropertyValue('height'));
 
+    /********************** EVENT HANDLER FOR MENU **********************/
+    var menu = document.getElementById("menu");
+
+    menu.addEventListener('mousedown', function(){
+      if (tool == 'save'){
+        menu.addEventListener('mousedown', onSave, false);
+      }
+    });
+
+    menu.addEventListener('touchstart', function(){
+      if (tool == 'save'){
+        menu.addEventListener('touchdown', onSave, false);
+      }
+    });
 
  		/********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
 
@@ -154,9 +168,6 @@ if(window.addEventListener) {
   			else if (tool == 'text'){
   				temp_canvas.addEventListener('mousemove', onText, false);
   			}
-        else if (tool == 'save'){
-          temp_canvas.addEventListener('mousemove', onSave, false);
-        }
 
   		}, false);
 
@@ -327,15 +338,12 @@ if(window.addEventListener) {
   			}
 
   			else if (tool == 'heart'){
-  				temp_canvas.addEventListener('touchmove',onHeart, false);
+  				temp_canvas.addEventListener('touchmove', onHeart, false);
   			}
 
   			else if (tool == 'text'){
   				temp_canvas.addEventListener('touchmove', onText, false);
   			}
-        else if (tool == 'save'){
-          temp_canvas.addEventListener('mousemove', onSave, false);
-        }
 
   		}, false);
 
@@ -545,16 +553,19 @@ if(window.addEventListener) {
 
 
 
-		/*********************** SAVE ANIMATES FUNCTION*************************/
+		/*********************** SAVE ANIMATES FUNCTION***********************/
 
     var onSave = function(){
-      var fso = new ActiveXObject("Scripting.FileSystemObject");
-      var fh = fso.OpenTextFile("test.xml", 8, false, 0);
-      for(var i = 0; i < tempFile.length; i++){
-        fh.WriteLine(tempFile[i]);
+      console.log("print to file");
+      var fh = fopen("test.xml", 3);
+      if(fh != -1){
+        for(var i = 0; i < tempFile.length; i++){
+          fwrite(tempFile[i]);
+        }
       }
-      fh.Close();
-      window.location.assign("test.xml");
+      fclose();
+      window.open("test.xml", "_self");
+      //window.location.assign("test.xml");
     }
 
 

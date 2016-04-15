@@ -23,7 +23,7 @@ if(window.addEventListener) {
   		var container_style = getComputedStyle(container);  
  		canvas.width = parseInt(container_style.getPropertyValue('width'));
   		canvas.height = parseInt(container_style.getPropertyValue('height'));
-
+		showSelected();
 
  		/********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
 
@@ -913,7 +913,7 @@ if(window.addEventListener) {
 
  		/********************** FRAME SELECT *********************/
 		
- 		var frame_select = "frmimg"+curFrame;
+ 		
   		$("#frames").on('click','img.frame' ,function(){
   			frame_select = $(this).attr('id');
 			curFrame=parseInt(frame_select.match(/frmimg(\d+)/)[1]);
@@ -929,14 +929,16 @@ if(window.addEventListener) {
 				context.drawImage(img,0,0);				
 			};
 
-			$("#frames img").removeClass("frame active-frame");
-			$("#frames img").addClass("frame");
-			$(this).addClass("frame active-frame");
+			showSelected();
 			
 			console.log(images);
 			
  		});
-
+			//Visually shows curFrame
+			function showSelected(){
+			$("#frames img").removeClass("frame active-frame");
+			$("#frames img").addClass("frame");
+			$("#frmimg"+curFrame).addClass("frame active-frame");}
 
 		/*************************DRAW FRAME***********************/
 		
@@ -945,17 +947,6 @@ if(window.addEventListener) {
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");
 			
-			/*if ((curFrame == 1) && (images.length == 0)){
-				images.push(frame);
-			}
-
-			else if( curFrame == images.length){
-				images[curFrame-1] = frame;
-			}
-
-			else if (curFrame > images.length){
-				images.push(frame);
-			}*/
 			if (action == "new"){
 				images.splice(curFrame-1,0,frame);			
 			}
@@ -986,10 +977,10 @@ if(window.addEventListener) {
 			img.className = "frame";
 			img.setAttribute("id", "frmimg"+(curFrame+1));
 			$("#frmimg"+curFrame).after(img);
-			
+			reset1();
 			curFrame++;
 			frameDraw("new");
-			
+			showSelected();
 		});
 
 		function reset1(){
@@ -1001,7 +992,7 @@ if(window.addEventListener) {
 		/*************************COPY FRAME************************/
 		var copyFrame = document.getElementById("copyframe");
 		copyFrame.addEventListener("click", function(e){
-			
+				
 			var cnvs1 = document.getElementById("canvas1");
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 			context.clearRect(0,0,canvas.width, canvas.height);
@@ -1021,7 +1012,7 @@ if(window.addEventListener) {
 			reset1();
 			curFrame++;
 			frameDraw("copy");
-
+			showSelected();
 		});
 
 
@@ -1031,17 +1022,20 @@ if(window.addEventListener) {
 			if(curFrame > 1){
 				temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 				context.clearRect(0,0,canvas.width, canvas.height);
-
+				
 				$("#frmimg"+curFrame).remove();
+				console.log(images);
 				images.splice(curFrame-1,1);
+				console.log("Frame "+curFrame+" deleted");
+				console.log(images);
 				curFrame--;
 
 				var curImg = new Image();
-				curImg.src = images[images.length-1];
+				curImg.src = images[curFrame-1];
 				context.drawImage(curImg,0,0);
 				reset1();
 			}		
-
+		showSelected();
 		});
 
 

@@ -1,0 +1,6 @@
+1. Selecting of objects
+2. Selecting free form object
+
+
+Possible Fixes
+1. Calculate distance from each point 

@@ -1,13 +1,19 @@
 <shape>
 	<name>shape</name>
-	<point>
+	<startpoint>
 		<x>value</x>
 		<y>value</y>
-	</point>
+	</startpoint>
 	<endpoint>
 		<x>value</x>
 		<y>value</y>
 	</endpoint>
 	<width>value</width>
 	<height>value</width>
+	<fill>value</fill>	
+	<fillcolor>value</fillcolor>
+	<linecolor>value</linecolor>
+	<linwidth>value</linewidth>	
+	<linestyle>round</linestyle>
+	<animationstuddmaygoherenotsureyet></animationstuddmaygoherenotsureyet>
 <shape>

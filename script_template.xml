@@ -1,0 +1,13 @@
+<shape>
+	<name>shape</name>
+	<point>
+		<x>value</x>
+		<y>value</y>
+	</point>
+	<endpoint>
+		<x>value</x>
+		<y>value</y>
+	</endpoint>
+	<width>value</width>
+	<height>value</width>
+<shape>

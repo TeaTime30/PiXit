@@ -8,6 +8,8 @@ var undoArr = new Array();
 var redoArr = new Array();
 var selectArray = new Array();
 var tool = 'brush'; //Default tool
+var tempFile = new Array();
+var delFile = new Array();
 
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
@@ -32,6 +34,12 @@ if(window.addEventListener) {
   		temp_canvas.id = 'temp_canvas';
   		temp_canvas.width = canvas.width;
   		temp_canvas.height = canvas.height;
+      var add = false;
+      var name = '';
+      var x = 0;
+      var y = 0;
+      var wid = 0;
+      var ht = 0;
 
   		container.appendChild(temp_canvas);
 
@@ -108,7 +116,6 @@ if(window.addEventListener) {
   			}
 
   			else if(tool == 'choose'){
-  				console.log("choose");
   				temp_canvas.addEventListener('mousemove', onChoose, false);
   			}
 
@@ -147,6 +154,9 @@ if(window.addEventListener) {
   			else if (tool == 'text'){
   				temp_canvas.addEventListener('mousemove', onText, false);
   			}
+        else if (tool == 'save'){
+          temp_canvas.addEventListener('mousemove', onSave, false);
+        }
 
   		}, false);
 
@@ -155,6 +165,12 @@ if(window.addEventListener) {
 	  		last_mouse.x = mouse.x;
 	  		last_mouse.y = mouse.y;
 	  		console.log("push");
+        if(add){
+          tempFile.push("<shape>\n\t<name>" + name + "</name>" + "\n\t<point>\n\t\t<x>" + x + "</x>\n\t\t<y>" + y + "</y>\n\t</point>\n\t<endpoint>\n\t\t<x>" + last_mouse.x + "</x>\n\t\t<y>" + last_mouse.y + "</y>\n\t</endpoint>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n</shape>\n\n");
+          for (var i = 0; i<tempFile.length; i++){
+            console.log(tempFile[i]);
+          }
+        }
 			temp_canvas.removeEventListener('mousemove', onLine, false);
 			temp_canvas.removeEventListener('mousemove', onCLine, false);
 			temp_canvas.removeEventListener('mousemove', onRect, false);
@@ -317,6 +333,9 @@ if(window.addEventListener) {
   			else if (tool == 'text'){
   				temp_canvas.addEventListener('touchmove', onText, false);
   			}
+        else if (tool == 'save'){
+          temp_canvas.addEventListener('mousemove', onSave, false);
+        }
 
   		}, false);
 
@@ -325,6 +344,12 @@ if(window.addEventListener) {
 	  		uPush();
 	  		last_mouse.x = mouse.x;
 	  		last_mouse.y = mouse.y;
+        if(add){
+          tempFile += "<shape>\n\t<name>" + name + "</name>" + "\n\t<point>\n\t\t<x>" + x + "</x>\n\t\t<y>" + y + "</y>\n\t</point>\n\t<endpoint>\n\t\t<x>" + last_mouse.x + "</x>\n\t\t<y>" + last_mouse.y + "</y>\n\t</endpoint>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n</shape>\n\n"
+          for (var i = 0; i<tempFile.length; i++){
+            console.log(tempFile[i]);
+          }
+        }
 	  		console.log("push");
 			temp_canvas.removeEventListener('touchmove', onLine, false);
 			temp_canvas.removeEventListener('touchmove', onCLine, false);
@@ -424,6 +449,11 @@ if(window.addEventListener) {
   			console.log("Tool selected: " + tool);
  		})
 
+    $('#menu div').on('click', function(){
+        tool = $(this).attr('id');
+        console.log("Tool selected: " + tool);
+    })
+
 		/***********************SELECTING A COLOUR*************************/
  		var clr = $("#colour");
  		clr.mouseover(function(e){
@@ -467,7 +497,8 @@ if(window.addEventListener) {
 
 		var undo = document.getElementById("undo");
 		undo.addEventListener("click", undo1);
-
+    var fl = tempFile.pop();
+    delFile.push(fl);
 		 function undo1 (e){
 		 	if (undoindex > 0){		
 		 		undoindex--;
@@ -516,6 +547,15 @@ if(window.addEventListener) {
 
 		/*********************** SAVE ANIMATES FUNCTION*************************/
 
+    var onSave = function(){
+      var fso = new ActiveXObject("Scripting.FileSystemObject");
+      var fh = fso.OpenTextFile("test.xml", 8, false, 0);
+      for(var i = 0; i < tempFile.length; i++){
+        fh.WriteLine(tempFile[i]);
+      }
+      fh.Close();
+      window.location.assign("test.xml");
+    }
 
 
 		/*********************** IMPORT FILE FUNCTION*************************/
@@ -544,12 +584,14 @@ if(window.addEventListener) {
 			temp_context.lineWidth = 1;
    			temp_context.setLineDash([6]);
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-
+      add = false;
+      name = 'select';
 			x = Math.min(mouse.x, start_mouse.x);
 			y = Math.min(mouse.y, start_mouse.y);
 			width = Math.abs(mouse.x - start_mouse.x);
 			height = Math.abs(mouse.y - start_mouse.y);
-
+      wid = width;
+      ht = height;
 			temp_context.strokeRect(x,y, width, height);
 			stx = mouse.x;
 			sty = mouse.y;
@@ -584,7 +626,8 @@ if(window.addEventListener) {
 	        	e.preventDefault();
 	    	}
 			temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
-
+      name = 'text';
+      add = false;
 			var x = Math.min(mouse.x,start_mouse.x);
 			var y = Math.min(mouse.y, start_mouse.y);
 			var width = Math.abs(mouse.x - start_mouse.x);
@@ -608,15 +651,21 @@ if(window.addEventListener) {
 	    	}
 			temp_context.clearRect(0,0, temp_canvas.width,temp_canvas.height);
 
+      add = true;
 			temp_context.beginPath();
 			temp_context.moveTo(start_mouse.x, start_mouse.y);
 			temp_context.lineTo(mouse.x, mouse.y);
-			temp_context.stroke();
+      name = 'line';
+      x = start_mouse.x;
+      y = start_mouse.y;
+      wid = 0;
+      height = 0;
+      temp_context.stroke();
 			temp_context.closePath();
 		};
 
 
-		/********************** CURVED LINE FUNCTION *********************/
+		/********************** CURVED LINE FUNCTION *********************/ //SCRIPT FUNCTIONALITY NOT IMPLEMENTED
 		var cpoints = [];
 
 		var onCLine = function(e) {
@@ -626,7 +675,8 @@ if(window.addEventListener) {
 	    	}
 			//Save all points in array
 			cpoints.push({x:mouse.x, y:mouse.y});
-
+      add = true;
+      name = 'cline';
 			if(cpoints.length <5){
 				var b = cpoints[0];
 				temp_context.beginPath();
@@ -660,15 +710,16 @@ if(window.addEventListener) {
 	    	}
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
-			var x = Math.min(mouse.x, start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
-			var width = Math.abs(mouse.x - start_mouse.x);
-			var height = Math.abs(mouse.y - start_mouse.y);
-
+      add = true;
+      name = 'triangle';
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
+			wid = Math.abs(mouse.x - start_mouse.x);
+			ht = Math.abs(mouse.y - start_mouse.y);
 			temp_context.beginPath();
 			temp_context.moveTo(x,y);
-			temp_context.lineTo(x + width / 2, y + height);
-			temp_context.lineTo(x - width / 2, y + height);
+			temp_context.lineTo(x + wid / 2, y + ht);
+			temp_context.lineTo(x - wid / 2, y + ht);
 			temp_context.lineTo(x,y);
 			temp_context.stroke();
 			temp_context.closePath();
@@ -684,16 +735,18 @@ if(window.addEventListener) {
 
 			temp_context.clearRect(0,0, temp_canvas.width,temp_canvas.height);
 
-			var x = Math.min(mouse.x, start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
-			var width = Math.abs(mouse.x - start_mouse.x);
-			var height = Math.abs(mouse.y - start_mouse.y);
+      add = true;
+      name = 'diamond';
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
+			wid = Math.abs(mouse.x - start_mouse.x);
+			ht = Math.abs(mouse.y - start_mouse.y);
 
 			temp_context.beginPath();
 			temp_context.moveTo(x,y);
-			temp_context.lineTo(x + width / 2, y + height);
-			temp_context.lineTo(x, y + height +width);
-			temp_context.lineTo(x-width/2, y + height);
+			temp_context.lineTo(x + wid / 2, y + ht);
+			temp_context.lineTo(x, y + ht +wid);
+			temp_context.lineTo(x-wid/2, y + ht);
 			temp_context.lineTo(x,y);
 			temp_context.stroke();
 			temp_context.closePath();
@@ -711,19 +764,20 @@ if(window.addEventListener) {
 			temp_context.clearRect(0,0, temp_canvas.width,temp_canvas.height);
 
 			temp_context.beginPath();
-
-			var x = Math.min(mouse.x, start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
-			var width = Math.abs(mouse.x - start_mouse.x);
-			var height = Math.abs(mouse.y - start_mouse.y);
+      add = true;
+      name = 'heart';
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
+			wid = Math.abs(mouse.x - start_mouse.x);
+			ht = Math.abs(mouse.y - start_mouse.y);
 
 			temp_context.beginPath();
     		temp_context.moveTo(75,40);
                
     		temp_context.bezierCurveTo(75,37,70,25,50,25);
     		temp_context.bezierCurveTo(20,25,20,62.5,20,62.5);
-          
-    		temp_context.bezierCurveTo(20,80,40,102,75,120);
+         
+    		temp_context.bezierCurveTo(20,80,40,102,75,120); 
     		temp_context.bezierCurveTo(110,102,130,80,130,62.5);
         	    
    			temp_context.bezierCurveTo(130,62.5,130,25,100,25);
@@ -744,11 +798,13 @@ if(window.addEventListener) {
 	    	}
 			temp_context.clearRect(0,0, temp_canvas.width,temp_canvas.height);
 
-			var x = Math.min(mouse.x, start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
-			var width = Math.abs(mouse.x - start_mouse.x);
-			var height = Math.abs(mouse.y - start_mouse.y);
-			temp_context.strokeRect(x,y, width, height);
+      add = true;
+      name = 'rectangle';
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
+			wid = Math.abs(mouse.x - start_mouse.x);
+			ht = Math.abs(mouse.y - start_mouse.y);
+			temp_context.strokeRect(x,y, wid, ht);
 		};
 
 
@@ -760,11 +816,13 @@ if(window.addEventListener) {
 	    	}
 			temp_context.clearRect(0,0, temp_canvas.width,temp_canvas.height);
 
-			var x = Math.min(mouse.x, start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
-			var width = Math.abs(mouse.x - start_mouse.x);
-			var height = width;
-			temp_context.strokeRect(x,y, width, height);
+      add = true;
+      name = 'square';
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
+			wid = Math.abs(mouse.x - start_mouse.x);
+			ht = wid;
+			temp_context.strokeRect(x,y, wid, ht);
 		};
 
 
@@ -776,12 +834,15 @@ if(window.addEventListener) {
 	        	e.preventDefault();
 	    	}
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-
-			var x = (mouse.x + start_mouse.x) / 2;
-			var y = (mouse.y + start_mouse.y) / 2;
+      add = true;
+      name = 'circle';
+			x = (mouse.x + start_mouse.x) / 2;
+			y = (mouse.y + start_mouse.y) / 2;
 
 			var radius = Math.max(Math.abs(mouse.x - start_mouse.x), Math.abs(mouse.y - start_mouse.y)) / 2;
 
+      wid = radius*2;
+      ht = wid;
 			temp_context.beginPath();
 			temp_context.arc(x,y,radius,0, Math.PI*2, false);
 			temp_context.stroke();
@@ -797,11 +858,14 @@ if(window.addEventListener) {
 	        	e.preventDefault();
 	    	}
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-
-			var x = Math.min(mouse.x, start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
+      add = true;
+      name = 'oval';
+			x = Math.min(mouse.x, start_mouse.x);
+			y = Math.min(mouse.y, start_mouse.y);
 			var w = Math.abs(mouse.x - start_mouse.x);
 			var h = Math.abs(mouse.y - start_mouse.y);
+      wid = w;
+      ht = h;
 			drawOval(temp_context, x,y,w,h);
 		};
 
@@ -834,9 +898,9 @@ if(window.addEventListener) {
 	        	e.preventDefault();
 	    	}
 			temp_context.lineWidth = 1;
+      add = false;
 			temp_context.lineJoin = 'square';
 			points.push({x:mouse.x, y:mouse.y});
-
 			if(points.length <3){
 				var b = points[0];
 				temp_context.beginPath();

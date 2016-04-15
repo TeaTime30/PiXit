@@ -1,0 +1,16 @@
+===================================================================
+-		KNOW ISSUES IN BRANCH				  -
+-		Last Update: 15 April 2016
+===================================================================
+
+1. When deleting from a frame after selecting it:
+	-The Frames on Screen doesn't match up the frames in images 
+	 array.
+	
+2. Playback doesn't show the last frame when playing.
+
+==================================================================
+-		POSSIBLE FIXES					 -
+==================================================================
+1.Gonna have to change how the curFrame global variable works, or
+  just change how it works.

@@ -1055,7 +1055,7 @@ if(window.addEventListener) {
 				$("#playDiv").delay(msec*(i+1)).fadeIn(msec-100).fadeOut(100);
 				console.log("Frame played:" + i);
 			}
-			$("#playDiv").remove();
+			/*$("#playDiv").remove();*/
 		});
 
 	

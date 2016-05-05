@@ -1052,11 +1052,12 @@ if(window.addEventListener) {
 			for(var key in keys){
 				var playScreen = document.createElement("img");
 				playScreen.setAttribute("id", "playDiv");
-				playScreen.src = images[key];
+				playScreen.src = images[keys[key]];
 				$("#canvas").prepend(playScreen);
 				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
-				count=count+1;
-				console.log("Frame played:" + key);
+				
+				console.log("Frame played:" + count+" key:"+ key+" keys:"+keys);
+				count++;
 			}
 			/*$("#playDiv").remove();*/
 		});

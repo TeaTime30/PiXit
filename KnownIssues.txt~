@@ -13,15 +13,14 @@
 			 function no longer works since it does not exist for 
 			 an object type. Therefore unable to loop through object
 
+		(fixed)
 
 Curve line tool, is bugged.
 
 ==================================================================
 -		POSSIBLE FIXES					 -
 ==================================================================
-1. Create a custom function for object attribute length
-
-2. Do not remove div for playback. Add listener to click outside the playback div after play.
+1.Do not remove div for playback. Add listener to click outside the playback div after play.
 	(can add close button on playback)
 
-3.Change scope of undo (global). Allow for undo of all functions.
+2.Change scope of undo (global). Allow for undo of all functions.

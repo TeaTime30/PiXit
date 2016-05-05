@@ -1047,14 +1047,17 @@ if(window.addEventListener) {
 			var time = parseInt(document.getElementById('frms').value);
 			var sec = 60/time;
 			var msec = sec*1000;
-			//for(var i=0; i<images.length; i++){
+			var count=0;
+			var keys= Object.keys(images);
+			for(var key in keys){
 				var playScreen = document.createElement("img");
 				playScreen.setAttribute("id", "playDiv");
-				playScreen.src = images[i];
+				playScreen.src = images[key];
 				$("#canvas").prepend(playScreen);
-				$("#playDiv").delay(msec*(i+1)).fadeIn(msec-100).fadeOut(100);
-				console.log("Frame played:" + i);
-			//}
+				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
+				count=count+1;
+				console.log("Frame played:" + key);
+			}
 			/*$("#playDiv").remove();*/
 		});
 

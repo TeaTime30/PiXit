@@ -15,3 +15,8 @@ Curve line tool, is bugged.
 ==================================================================
 1.Gonna have to change how the curFrame global variable works, or
   just change how it works.
+
+2. Do not remove div for playback. Add listener to click outside the playback div after play.
+	(can add close button on playback)
+
+3.Change scope of undo (global). Allow for undo of all functions.

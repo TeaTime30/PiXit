@@ -5,16 +5,21 @@
 
 1. When deleting from a frame after selecting it:
 	-The Frames on Screen doesn't match up the frames in images 
-	 array.
+	 array. (Fixed)
 	
-2. Playback doesn't show the last frame when playing.
+2. Playback doesn't show the last frame when playing.(completely
+ sorry :{ )
+	Details: When I changed the array to an object, the length 
+			 function no longer works since it does not exist for 
+			 an object type. Therefore unable to loop through object
+
 
 Curve line tool, is bugged.
+
 ==================================================================
 -		POSSIBLE FIXES					 -
 ==================================================================
-1.Gonna have to change how the curFrame global variable works, or
-  just change how it works.
+1. Create a custom function for object attribute length
 
 2. Do not remove div for playback. Add listener to click outside the playback div after play.
 	(can add close button on playback)

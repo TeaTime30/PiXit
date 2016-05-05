@@ -2,7 +2,7 @@
 var curColour = "#000000";
 var curThickness = 5;
 var curFrame = 1;
-var images = new Array();
+var images = {};
 var undoindex = 0;
 var undoArr = new Array();
 var redoArr = new Array();
@@ -938,7 +938,7 @@ if(window.addEventListener) {
 			function showSelected(){
 			$("#frames img").removeClass("frame active-frame");
 			$("#frames img").addClass("frame");
-			$(this).addClass("frame active-frame");}
+			$("#frmimg"+curFrame).addClass("frame active-frame");}
 
 		/*************************DRAW FRAME***********************/
 		
@@ -948,15 +948,15 @@ if(window.addEventListener) {
 			frame = cnvs1.toDataURL("image/png");
 			
 			if (action == "new"){
-				images.splice(curFrame-1,0,frame);			
+				images[curFrame-1]=frame;			
 			}
 			else if (action == "copy"){
-				images.splice(curFrame-1,0,frame);
+				images[curFrame-1]=frame;
 			}
 			
 			
 			images[curFrame-1]=frame;
-			console.log("Length of frame array: " + images.length);
+			//console.log("Length of frame array: " + images.length);
 		
 			var val = "frmimg"+curFrame;
 			var frameimg = document.getElementById(val);
@@ -1025,7 +1025,7 @@ if(window.addEventListener) {
 				
 				$("#frmimg"+curFrame).remove();
 				console.log(images);
-				images.splice(curFrame-1,1);
+				delete images[curFrame-1];
 				console.log("Frame "+curFrame+" deleted");
 				console.log(images);
 				curFrame--;
@@ -1047,7 +1047,7 @@ if(window.addEventListener) {
 			var time = parseInt(document.getElementById('frms').value);
 			var sec = 60/time;
 			var msec = sec*1000;
-			for(var i=0; i<images.length; i++){
+			//for(var i=0; i<images.length; i++){
 				var playScreen = document.createElement("img");
 				playScreen.setAttribute("id", "playDiv");
 				playScreen.src = images[i];
@@ -1055,7 +1055,7 @@ if(window.addEventListener) {
 				$("#playDiv").delay(msec*(i+1)).fadeIn(msec-100).fadeOut(100);
 				console.log("Frame played:" + i);
 			}
-			$("#playDiv").remove();
+			/*$("#playDiv").remove();*/
 		});
 
 	

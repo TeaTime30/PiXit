@@ -938,7 +938,7 @@ if(window.addEventListener) {
 			function showSelected(){
 			$("#frames img").removeClass("frame active-frame");
 			$("#frames img").addClass("frame");
-			$("#frmimg"+curFrame).addClass("frame active-frame");}
+			$(this).addClass("frame active-frame");}
 
 		/*************************DRAW FRAME***********************/
 		
@@ -1024,6 +1024,7 @@ if(window.addEventListener) {
 				context.clearRect(0,0,canvas.width, canvas.height);
 				
 				$("#frmimg"+curFrame).remove();
+				console.log(images);
 				images.splice(curFrame-1,1);
 				console.log("Frame "+curFrame+" deleted");
 				console.log(images);

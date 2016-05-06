@@ -9,5 +9,21 @@
 		<y>value</y>
 	</endpoint>
 	<width>value</width>
-	<height>value</width>
-<shape>
+	<length>value</length>
+	<colour>value</colour>
+	<weight>value</weight>
+	<sanim>
+		<order>value</order>
+		<path>
+			<point>
+				<x>value</x>
+				<y>value</y>
+			</point>
+		</path>
+	</sanim>
+</shape>
+
+<frame>
+	<order>value</order>
+	<shape>value</shape>
+</frame>

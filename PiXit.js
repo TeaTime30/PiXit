@@ -177,7 +177,7 @@ if(window.addEventListener) {
 	  		last_mouse.y = mouse.y;
 	  		console.log("push");
         if(add){
-          tempFile.push("<shape>\n\t<name>" + name + "</name>" + "\n\t<point>\n\t\t<x>" + x + "</x>\n\t\t<y>" + y + "</y>\n\t</point>\n\t<endpoint>\n\t\t<x>" + last_mouse.x + "</x>\n\t\t<y>" + last_mouse.y + "</y>\n\t</endpoint>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n</shape>\n\n");
+          tempFile.push("<shape>\n\t<name>" + name + "</name>" + "\n\t<point>\n\t\t<x>" + x + "</x>\n\t\t<y>" + y + "</y>\n\t</point>\n\t<endpoint>\n\t\t<x>" + last_mouse.x + "</x>\n\t\t<y>" + last_mouse.y + "</y>\n\t</endpoint>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<colour>" + curColour + "</colour>\n\t<weight>" + curThickness + "</weight>\n</shape>\n\n");
           for (var i = 0; i<tempFile.length; i++){
             console.log(tempFile[i]);
           }
@@ -353,7 +353,7 @@ if(window.addEventListener) {
 	  		last_mouse.x = mouse.x;
 	  		last_mouse.y = mouse.y;
         if(add){
-          tempFile += "<shape>\n\t<name>" + name + "</name>" + "\n\t<point>\n\t\t<x>" + x + "</x>\n\t\t<y>" + y + "</y>\n\t</point>\n\t<endpoint>\n\t\t<x>" + last_mouse.x + "</x>\n\t\t<y>" + last_mouse.y + "</y>\n\t</endpoint>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n</shape>\n\n"
+          tempFile.push("<shape>\n\t<name>" + name + "</name>" + "\n\t<point>\n\t\t<x>" + x + "</x>\n\t\t<y>" + y + "</y>\n\t</point>\n\t<endpoint>\n\t\t<x>" + last_mouse.x + "</x>\n\t\t<y>" + last_mouse.y + "</y>\n\t</endpoint>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<colour>" + curColour + "</colour>\n\t<weight>" + curThickness + "</weight>\n</shape>\n\n");
           for (var i = 0; i<tempFile.length; i++){
             console.log(tempFile[i]);
           }

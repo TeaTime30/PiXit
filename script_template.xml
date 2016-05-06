@@ -1,17 +1,15 @@
 <shape>
 	<name>shape</name>
-	<point>
+	<startpoint>
 		<x>value</x>
 		<y>value</y>
-	</point>
+	</startpoint>
 	<endpoint>
 		<x>value</x>
 		<y>value</y>
 	</endpoint>
 	<width>value</width>
 	<length>value</length>
-	<colour>value</colour>
-	<weight>value</weight>
 	<sanim>
 		<order>value</order>
 		<path>
@@ -19,8 +17,18 @@
 				<x>value</x>
 				<y>value</y>
 			</point>
+			<point>
+				<x>value</x>
+				<y>value</y>
+			</point>
+			...
 		</path>
 	</sanim>
+	<fill>value</fill>	
+	<fillcolor>value</fillcolor>
+	<linecolor>value</linecolor>
+	<linwidth>value</linewidth>	
+	<linestyle>round</linestyle>
 </shape>
 
 <frame>

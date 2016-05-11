@@ -183,16 +183,16 @@ if(window.addEventListener) {
         last_mouse.y = mouse.y;
         console.log("*************************************************NEW SCRIPT************************************************");
         if(addShape){
-          tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\tframeeid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
-          for (var i = 0; i<tempFile.length; i++){
+          tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
+          /*for (var i = 0; i<tempFile.length; i++){
             console.log(tempFile[i]);
-          }
+          }*/
         }
         else if(addFree){
           tempFile.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>");
-          for (var i = 0; i<tempFile.length; i++){
+          /*for (var i = 0; i<tempFile.length; i++){
             console.log(tempFile[i]);
-          }
+          }*/
           addFree = false;
         }
       temp_canvas.removeEventListener('mousemove', onLine, false);
@@ -367,16 +367,16 @@ if(window.addEventListener) {
         last_mouse.y = mouse.y;
         console.log("*************************************************NEW SCRIPT************************************************");
         if(addShape){
-          tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
-          for (var i = 0; i<tempFile.length; i++){
+          tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
+          /*for (var i = 0; i<tempFile.length; i++){
             console.log(tempFile[i]);
-          }
+          }*/
         }
         else if(addFree){
           tempFile.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>");
-          for (var i = 0; i<tempFile.length; i++){
+          /*for (var i = 0; i<tempFile.length; i++){
             console.log(tempFile[i]);
-          }
+          }*/
           addFree = false;
         }
         console.log("push");
@@ -577,6 +577,9 @@ if(window.addEventListener) {
     /*********************** SAVE ANIMATES FUNCTION***********************/
 
     var onSave = function(){
+      for(var i = 0; i < tempFile.length; i++){
+        console.log(tempFile[i])
+      }/*
       console.log("print to file");
       var fh = fopen("test.xml", 3);
       if(fh != -1){
@@ -585,7 +588,7 @@ if(window.addEventListener) {
         }
       }
       fclose();
-      window.open("test.xml", "_self");
+      window.open("test.xml", "_self");*/
       //window.location.assign("test.xml");
     }
 

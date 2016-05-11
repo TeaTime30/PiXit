@@ -2,6 +2,7 @@ Issues
 --------------------------------------------------------------------------------------
 1. Saving objects.
 2. Needs possible extension for saving file locally
+3. Should change shapeid to reset for new frames.
 
 Possible Solutions
 --------------------------------------------------------------------------------------

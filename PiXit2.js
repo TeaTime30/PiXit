@@ -561,6 +561,7 @@ if(window.addEventListener) {
       if(fh != -1){
         for(var i = 0; i < tempFile.length; i++){
           fwrite(tempFile[i]);
+          console.log(tempFile[i]);
         }
       }
       fclose();

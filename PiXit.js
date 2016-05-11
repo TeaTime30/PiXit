@@ -29,7 +29,7 @@ if(window.addEventListener) {
     canvas.width = parseInt(container_style.getPropertyValue('width'));
     canvas.height = parseInt(container_style.getPropertyValue('height'));
 
-    /********************** EVENT HANDLER FOR MENU **********************/
+    /********************** EVENT HANDLER FOR MENU **********************
     var menu = document.getElementById("menu");
 
     menu.addEventListener('mousedown', function(){
@@ -43,6 +43,7 @@ if(window.addEventListener) {
         menu.addEventListener('touchdown', onSave, false);
       }
     });
+    *********************************************************************/
 
     /********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
 
@@ -181,18 +182,12 @@ if(window.addEventListener) {
         uPush();
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
-        console.log("*************************************************NEW SCRIPT************************************************");
         if(addShape){
           tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
-          /*for (var i = 0; i<tempFile.length; i++){
-            console.log(tempFile[i]);
-          }*/
+          addShape = false;
         }
         else if(addFree){
           tempFile.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>");
-          /*for (var i = 0; i<tempFile.length; i++){
-            console.log(tempFile[i]);
-          }*/
           addFree = false;
         }
       temp_canvas.removeEventListener('mousemove', onLine, false);
@@ -365,18 +360,12 @@ if(window.addEventListener) {
         uPush();
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
-        console.log("*************************************************NEW SCRIPT************************************************");
         if(addShape){
           tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
-          /*for (var i = 0; i<tempFile.length; i++){
-            console.log(tempFile[i]);
-          }*/
+          addShape = false;
         }
         else if(addFree){
           tempFile.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>");
-          /*for (var i = 0; i<tempFile.length; i++){
-            console.log(tempFile[i]);
-          }*/
           addFree = false;
         }
         console.log("push");
@@ -480,7 +469,9 @@ if(window.addEventListener) {
 
     $('#menu div').on('click', function(){
         tool = $(this).attr('id');
-        console.log("Tool selected: " + tool);
+        if (tool == 'save'){
+          onSave();
+        }
     })
 
     /***********************SELECTING A COLOUR*************************/
@@ -577,6 +568,7 @@ if(window.addEventListener) {
     /*********************** SAVE ANIMATES FUNCTION***********************/
 
     var onSave = function(){
+      console.log("*************************************************NEW SCRIPT************************************************");
       for(var i = 0; i < tempFile.length; i++){
         console.log(tempFile[i])
       }/*
@@ -964,7 +956,7 @@ if(window.addEventListener) {
 
     /********************** BRUSH FUNCTION *********************/
     var points = [];
-
+    tool = 'brush';
     var onBrush = function(e){
         if (blockMenuHeaderScroll)
         {
@@ -974,7 +966,6 @@ if(window.addEventListener) {
       points.push({x:mouse.x, y:mouse.y});
       tempPath += "\t<point>\n\t\t<x>" + mouse.x + "</x>\n\t\t<y>" + mouse.y + "</y>\n\t</point>\n"
       addFree = true;
-      //console.log("HELLO I'M MR. BRUSH!!!!");
       if(points.length <3){
         var b = points[0];
         temp_context.beginPath();
@@ -1061,6 +1052,7 @@ if(window.addEventListener) {
       img.setAttribute("id", "frmimg"+(curFrame+1));
       $("#frmimg"+curFrame).after(img);
       reset1();
+      shapeid = 0;
       curFrame++;
       frameDraw();
     });

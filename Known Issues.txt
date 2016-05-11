@@ -3,7 +3,6 @@ Issues
 1. Saving objects.
 2. Needs possible extension for saving file locally
 
-
 Possible Solutions
 --------------------------------------------------------------------------------------
 1. Can convert XML file to JSON file and vice versa. JSON file stores objects(shape) as 

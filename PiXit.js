@@ -942,17 +942,10 @@ if(window.addEventListener) {
 
 		/*************************DRAW FRAME***********************/
 		
-		function frameDraw(action) {
+		function frameDraw() {
 			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");
-			
-			if (action == "new"){
-				images[curFrame-1]=frame;			
-			}
-			else if (action == "copy"){
-				images[curFrame-1]=frame;
-			}
 			
 			
 			images[curFrame-1]=frame;
@@ -979,7 +972,7 @@ if(window.addEventListener) {
 			$("#frmimg"+curFrame).after(img);
 			reset1();
 			curFrame++;
-			frameDraw("new");
+			frameDraw();
 			showSelected();
 		});
 
@@ -1011,7 +1004,7 @@ if(window.addEventListener) {
 			$("#frmimg"+curFrame).after(img);
 			reset1();
 			curFrame++;
-			frameDraw("copy");
+			frameDraw();
 			showSelected();
 		});
 

@@ -18,6 +18,9 @@ window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
 	window.addEventListener('load', function () {
 
+  var canvas = new CanvasState(document.getElementById('canvas1');
+  var context = canvas.getContext('2d');
+
     /***********SHAPE CONSTRUCTOR***********/
     function Shape(sx, sy, ex, ey, fill){
       this.sx = sx || 0;
@@ -42,6 +45,10 @@ if(window.addEventListener) {
 
     function Line = function(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
+      this.x = Math.min(this.ex, this.sx);
+      this.y = Math.min(this.ey, this.sy);
+      this.w = Math.abs(this.ex - this.sx);
+      this.h = Math.abs(this.ey - this.sy);
            
     }
 
@@ -516,12 +523,12 @@ if(window.addEventListener) {
           mouseMoveSelected(e, myState.selection);
         }
 
-      }, true);
+      }, false);
 
 
       canvas.addEventListener('touchmove', function(e){
-        mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
-        mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
+        mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
+        mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
 
         if(myState.dragging){
           var mouse = myState.getMouse(e);
@@ -536,86 +543,86 @@ if(window.addEventListener) {
       }, false);
 
 
-    /********************** DRAWING ON CONTEXT *********************/
+      /********************** DRAWING ON CONTEXT *********************/
 
-    canvas.addEventListener('mousedown', function(e){
+        canvas.addEventListener('mousedown', function(e){
 
-        myState.context.lineWidth = curThickness;
-        myState.context.lineJoin = 'round';
-        myState.context.lineCap = 'round';
-        myState.context.strokeStyle = curColour;
-        myState.context.fillstyle =curColour;
+      myState.context.lineWidth = curThickness;
+      myState.context.lineJoin = 'round';
+      myState.context.lineCap = 'round';
+      myState.context.strokeStyle = curColour;
+      myState.context.fillstyle =curColour;
 
 
-        $("#thickmenu").addClass("hide");
+      $("#thickmenu").addClass("hide");
 
-        mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
     
-        start_mouse.x = mouse.x;
-        start_mouse.y = mouse.y;
+      start_mouse.x = mouse.x;
+      start_mouse.y = mouse.y;
 
-        points.push({x:mouse.x, y:mouse.y});
+      points.push({x:mouse.x, y:mouse.y});
 
-        if(tool == 'line'){
-          canvas.addEventListener('mousemove', )
-        }
+      if(tool == 'line'){
+        myState.addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-        else if(tool == 'rect') {
-          temp_canvas.addEventListener('mousemove', onRect, false);
+      else if(tool == 'rect') {
+          canvas.addEventListener('mousemove', onRect, false);
         }
 
         else if(tool == 'brush'){
-          temp_canvas.addEventListener('mousemove', onBrush, false);
+          canvas.addEventListener('mousemove', onBrush, false);
         }
 
         else if(tool == 'pencil'){
-          temp_canvas.addEventListener('mousemove', onPencil, false);
+          canvas.addEventListener('mousemove', onPencil, false);
         }
 
         else if(tool == 'select'){
-          temp_canvas.addEventListener('mousemove', onSel, false);
+          canvas.addEventListener('mousemove', onSel, false);
         }
 
         else if(tool == 'choose'){
           console.log("choose");
-          temp_canvas.addEventListener('mousemove', onChoose, false);
+          canvas.addEventListener('mousemove', onChoose, false);
         }
 
         else if(tool == 'erase'){
-          temp_canvas.addEventListener('mousemove', onErase, false);
+          canvas.addEventListener('mousemove', onErase, false);
         }
 
         else if(tool == 'circle'){
-          temp_canvas.addEventListener('mousemove', onCircle, false);
+          canvas.addEventListener('mousemove', onCircle, false);
         }
 
         else if(tool == 'oval'){
-          temp_canvas.addEventListener('mousemove', onOval, false);
+          canvas.addEventListener('mousemove', onOval, false);
         }
 
         else if (tool == 'square'){
-          temp_canvas.addEventListener('mousemove', onSquare, false);
+          canvas.addEventListener('mousemove', onSquare, false);
         }
 
         else if( tool == 'cline'){
-          temp_canvas.addEventListener('mousemove', onCLine, false);
+          canvas.addEventListener('mousemove', onCLine, false);
         }
 
         else if (tool == 'triangle'){
-          temp_canvas.addEventListener('mousemove', onTriangle, false);
+          canvas.addEventListener('mousemove', onTriangle, false);
         }
 
         else if (tool == 'diam'){
-          temp_canvas.addEventListener('mousemove', onDiam, false);
+          canvas.addEventListener('mousemove', onDiam, false);
         }
 
         else if (tool == 'heart'){
-          temp_canvas.addEventListener('mousemove',onHeart, false);
+          canvas.addEventListener('mousemove',onHeart, false);
         }
 
         else if (tool == 'text'){
-          temp_canvas.addEventListener('mousemove', onText, false);
+          canvas.addEventListener('mousemove', onText, false);
         }
 
       }, false);
@@ -623,6 +630,7 @@ if(window.addEventListener) {
     canvas.addEventListener('mouseup', function(e){
       myState.dragging = false;
       myState.resizing = false;
+      mouseUpSelected(e);
       uPush();
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
@@ -644,8 +652,8 @@ if(window.addEventListener) {
       canvas.removeEventListener('mousemove', onChoose, false);
       
       if(tool == 'select'){
-          temp_context.setLineDash([]);
-          temp_context.lineWidth = curThickness;
+          context.setLineDash([]);
+          context.lineWidth = curThickness;
         }
 
         if (tool == 'text'){
@@ -684,27 +692,26 @@ if(window.addEventListener) {
           var fs = ta_comp_style.getPropertyValue('font-size');
           var ff = ta_comp_style.getPropertyValue('font-family');
         
-          temp_context.font = fs + ' ' + ff;
-          temp_context.textBaseline = 'top';
+          context.font = fs + ' ' + ff;
+          context.textBaseline = 'top';
          
           for (var n = 0; n < processed_lines.length; n++) {
               var processed_line = processed_lines[n];
                
-              temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
+              context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
           }
           
-          context.drawImage(temp_canvas, 0, 0);
+          context.drawImage(canvas, 0, 0);
 
-          temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+          context.clearRect(0, 0, canvas.width, canvas.height);
        
           textarea.style.display = 'none';
           textarea.value = '';
 
         }
 
-        context.drawImage(temp_canvas,0,0);
-        temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
-
+        context.drawImage(canvas,0,0);
+        
         points = [];
 
         //uPush();
@@ -713,17 +720,18 @@ if(window.addEventListener) {
 
     }, false);
 
-    temp_canvas.addEventListener("touchstart", function(e){
+    canvas.addEventListener("touchstart", function(e){
 
       blockMenuHeaderScroll = true;
-        temp_context.lineWidth = curThickness;
-        temp_context.lineJoin = 'round';
-        temp_context.lineCap = 'round';
-        temp_context.strokeStyle = curColour;
-        temp_context.fillstyle =curColour;
+      context.lineWidth = curThickness;
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeStyle = curColour;
+      context.fillstyle =curColour;
       $("#thickmenu").addClass("hide");
-      mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
-        mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
+
+      mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
+      mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
     
         start_mouse.x = mouse.x;
         start_mouse.y = mouse.y;
@@ -731,93 +739,93 @@ if(window.addEventListener) {
         points.push({x:mouse.x, y:mouse.y});
 
         if(tool == 'line'){
-          temp_canvas.addEventListener('touchmove', onLine, false);
+          canvas.addEventListener('touchmove', onLine, false);
         }
 
         else if(tool == 'rect') {
-          temp_canvas.addEventListener('touchmove', onRect, false);
+          canvas.addEventListener('touchmove', onRect, false);
         }
 
         else if(tool == 'brush'){
-          temp_canvas.addEventListener('touchmove', onBrush, false);
+          canvas.addEventListener('touchmove', onBrush, false);
         }
 
         else if(tool == 'pencil'){
-          temp_canvas.addEventListener('touchmove', onPencil, false);
+          canvas.addEventListener('touchmove', onPencil, false);
         }
 
         else if(tool == 'select'){
-          temp_canvas.addEventListener('touchmove', onSel, false);
+          canvas.addEventListener('touchmove', onSel, false);
         }
 
         else if(tool == 'choose'){
           console.log("choose");
-          temp_canvas.addEventListener('touchmove', onChoose, false);
+          canvas.addEventListener('touchmove', onChoose, false);
         }
 
         else if(tool == 'erase'){
-          temp_canvas.addEventListener('touchmove', onErase, false);
+          canvas.addEventListener('touchmove', onErase, false);
         }
 
         else if(tool == 'circle'){
-          temp_canvas.addEventListener('touchmove', onCircle, false);
+          canvas.addEventListener('touchmove', onCircle, false);
         }
 
         else if(tool == 'oval'){
-          temp_canvas.addEventListener('touchmove', onOval, false);
+          canvas.addEventListener('touchmove', onOval, false);
         }
 
         else if (tool == 'square'){
-          temp_canvas.addEventListener('touchmove', onSquare, false);
+          canvas.addEventListener('touchmove', onSquare, false);
         }
 
         else if( tool == 'cline'){
-          temp_canvas.addEventListener('touchmove', onCLine, false);
+          canvas.addEventListener('touchmove', onCLine, false);
         }
 
         else if (tool == 'triangle'){
-          temp_canvas.addEventListener('touchmove', onTriangle, false);
+          canvas.addEventListener('touchmove', onTriangle, false);
         }
 
         else if (tool == 'diam'){
-          temp_canvas.addEventListener('touchmove', onDiam, false);
+          canvas.addEventListener('touchmove', onDiam, false);
         }
 
         else if (tool == 'heart'){
-          temp_canvas.addEventListener('touchmove',onHeart, false);
+          canvas.addEventListener('touchmove',onHeart, false);
         }
 
         else if (tool == 'text'){
-          temp_canvas.addEventListener('touchmove', onText, false);
+          canvas.addEventListener('touchmove', onText, false);
         }
 
       }, false);
 
-    temp_canvas.addEventListener('touchend', function(e){
+      canvas.addEventListener('touchend', function(e){
       blockMenuHeaderScroll = false;
-        uPush();
-        last_mouse.x = mouse.x;
-        last_mouse.y = mouse.y;
-        console.log("push");
-      temp_canvas.removeEventListener('touchmove', onLine, false);
-      temp_canvas.removeEventListener('touchmove', onCLine, false);
-      temp_canvas.removeEventListener('touchmove', onRect, false);
-      temp_canvas.removeEventListener('touchmove', onBrush, false);
-      temp_canvas.removeEventListener('touchmove', onErase,false);
-      temp_canvas.removeEventListener('touchmove', onCircle, false);
-      temp_canvas.removeEventListener('touchmove', onOval, false);
-      temp_canvas.removeEventListener('touchmove', onSquare, false);
-      temp_canvas.removeEventListener('touchmove', onTriangle, false);
-      temp_canvas.removeEventListener('touchmove', onDiam, false);
-      temp_canvas.removeEventListener('touchmove', onHeart, false);
-      temp_canvas.removeEventListener('touchmove', onText, false);
-      temp_canvas.removeEventListener('touchmove', onPencil, false);
-      temp_canvas.removeEventListener('touchmove', onSel, false);
-      temp_canvas.removeEventListener('touchmove', onChoose, false);
+      uPush();
+      last_mouse.x = mouse.x;
+      last_mouse.y = mouse.y;
+      console.log("push");
+      canvas.removeEventListener('touchmove', onLine, false);
+      canvas.removeEventListener('touchmove', onCLine, false);
+      canvas.removeEventListener('touchmove', onRect, false);
+      canvas.removeEventListener('touchmove', onBrush, false);
+      canvas.removeEventListener('touchmove', onErase,false);
+      canvas.removeEventListener('touchmove', onCircle, false);
+      canvas.removeEventListener('touchmove', onOval, false);
+      canvas.removeEventListener('touchmove', onSquare, false);
+      canvas.removeEventListener('touchmove', onTriangle, false);
+      canvas.removeEventListener('touchmove', onDiam, false);
+      canvas.removeEventListener('touchmove', onHeart, false);
+      canvas.removeEventListener('touchmove', onText, false);
+      canvas.removeEventListener('touchmove', onPencil, false);
+      canvas.removeEventListener('touchmove', onSel, false);
+      canvas.removeEventListener('touchmove', onChoose, false);
       
       if(tool == 'select'){
-          temp_context.setLineDash([]);
-          temp_context.lineWidth = curThickness;
+          context.setLineDash([]);
+          context.lineWidth = curThickness;
         }
 
         if (tool == 'text'){
@@ -856,55 +864,229 @@ if(window.addEventListener) {
           var fs = ta_comp_style.getPropertyValue('font-size');
           var ff = ta_comp_style.getPropertyValue('font-family');
         
-          temp_context.font = fs + ' ' + ff;
-          temp_context.textBaseline = 'top';
+          context.font = fs + ' ' + ff;
+          context.textBaseline = 'top';
          
           for (var n = 0; n < processed_lines.length; n++) {
               var processed_line = processed_lines[n];
                
-              temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
+              context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
           }
           
-          context.drawImage(temp_canvas, 0, 0);
+          context.drawImage(canvas, 0, 0);
 
-          temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+          context.clearRect(0, 0, canvas.width, canvas.height);
        
           textarea.style.display = 'none';
           textarea.value = '';
 
         }
 
-        context.drawImage(temp_canvas,0,0);
-        temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
+        context.drawImage(canvas,0,0);
 
         points = [];
-
-        //uPush();
 
         frameDraw();
 
     }, false);
 
 
+    
+    canvas.addEventListener('dbclick', function(e){
+      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+    
+      start_mouse.x = mouse.x;
+      start_mouse.y = mouse.y;
+
+      points.push({x:mouse.x, y:mouse.y});
+
+      var shapes = myState.shapes;
+      var l = shapes.length;
+      var tmpSelected = false;
+      for (var i = l - 1; i >= 0; i--) {
+        var mySel = shapes[i];
+        if (shapes[i].contains(mouse.x, mouse/y) && tmpSelected === false) {
+          if (myState.selection === mySel) {
+            if (shapes[i].touchedAtHandles(mouse.x, mouse.y)) {
+              mouseDownSelected(e, mySel);
+              myState.resizing = true;
+            } 
+            else {
+              myState.dragoffx = mx - mySel.x;
+              myState.dragoffy = my - mySel.y;
+              myState.dragging = true;
+            }
+          }
+          myState.selection = mySel;
+          mySel.selected = true;
+          myState.valid = false;
+          tmpSelected = true;
+        } 
+        else {
+          mySel.selected = false;
+          myState.valid = false;
+        }
+      }
+      if (tmpSelected === false) {
+        myState.selection = null;
+      }
+    }, false);
 
 
+    // mouse down handler for selected state
+  mouseDownSelected = function(e, shape) {
+    var mouse = myState.getMouse(e);
+    var mouseX = mouse.x;
+    var mouseY = mouse.y;
+    var self = shape;
 
-
+    // if there isn't a rect yet
+    if (self.w === undefined) {
+      self.x = mouseY;
+      self.y = mouseX;
+      myState.dragBR = true;
     }
 
+    // if there is, check which corner
+    //   (if any) was clicked
+    //
+    // 4 cases:
+    // 1. top left
+    else if (checkCloseEnough(mouseX, self.x, self.closeEnough) && checkCloseEnough(mouseY, self.y, self.closeEnough)) {
+      myState.dragTL = true;
+      e.target.style.cursor='nw-resize';
+    }
+    // 2. top right
+    else if (checkCloseEnough(mouseX, self.x + self.w, self.closeEnough) && checkCloseEnough(mouseY, self.y, self.closeEnough)) {
+      myState.dragTR = true;
+      e.target.style.cursor='ne-resize';
+    }
+    // 3. bottom left
+    else if (checkCloseEnough(mouseX, self.x, self.closeEnough) && checkCloseEnough(mouseY, self.y + self.h, self.closeEnough)) {
+      myState.dragBL = true;
+      e.target.style.cursor='sw-resize';
+    }
+    // 4. bottom right
+    else if (checkCloseEnough(mouseX, self.x + self.w, self.closeEnough) && checkCloseEnough(mouseY, self.y + self.h, self.closeEnough)) {
+      myState.dragBR = true;
+      e.target.style.cursor='se-resize';
+    }
+    // (5.) none of them
+    else {
+      // handle not resizing
+    }
+    myState.valid = false; // something is resizing so we need to redraw
+  };
+  mouseUpSelected = function(e) {
+    myState.dragTL = myState.dragTR = myState.dragBL = myState.dragBR = false;
+  };
+  mouseMoveSelected = function(e, shape) {
+    var mouse = myState.getMouse(e);
+    var mouseX = mouse.x;
+    var mouseY = mouse.y;
+
+    if (myState.dragTL) {
+      e.target.style.cursor='nw-resize';
+      // switch to top right handle
+      if (((shape.x + shape.w) - mouseX) < 0) {
+        myState.dragTL = false;
+        myState.dragTR = true;
+      }
+      // switch to top bottom left
+      if (((shape.y + shape.h) - mouseY) < 0) {
+        myState.dragTL = false;
+        myState.dragBL = true;
+      }
+      shape.w += shape.x - mouseX;
+      shape.h += shape.y - mouseY;
+      shape.x = mouseX;
+      shape.y = mouseY;
+    } else if (myState.dragTR) {
+      e.target.style.cursor='ne-resize';
+      // switch to top left handle
+      if ((shape.x - mouseX) > 0) {
+        myState.dragTR = false;
+        myState.dragTL = true;
+      }
+      // switch to bottom right handle
+      if (((shape.y + shape.h) - mouseY) < 0) {
+        myState.dragTR = false;
+        myState.dragBR = true;
+      }
+      shape.w = Math.abs(shape.x - mouseX);
+      shape.h += shape.y - mouseY;
+      shape.y = mouseY;
+    } else if (myState.dragBL) {
+      e.target.style.cursor='sw-resize';
+      // switch to bottom right handle
+      if (((shape.x + shape.w) - mouseX) < 0) {
+        myState.dragBL = false;
+        myState.dragBR = true;
+      }
+      // switch to top left handle
+      if ((shape.y - mouseY) > 0) {
+        myState.dragBL = false;
+        myState.dragTL = true;
+      }
+      shape.w += shape.x - mouseX;
+      shape.h = Math.abs(shape.y - mouseY);
+      shape.x = mouseX;
+    } else if (myState.dragBR) {
+      e.target.style.cursor='se-resize';
+      // switch to bottom left handle
+      if ((shape.x - mouseX) > 0) {
+        myState.dragBR = false;
+        myState.dragBL = true;
+      }
+      // switch to top right handle
+      if ((shape.y - mouseY) > 0) {
+        myState.dragBR = false;
+        myState.dragTR = true;
+      }
+      shape.w = Math.abs(shape.x - mouseX);
+      shape.h = Math.abs(shape.y - mouseY);
+    }
+
+    myState.valid = false; // something is resizing so we need to redraw
+  };
+  // **** Options! ****
+
+    this.selectionColor = '#000000';
+    this.selectionWidth = 0.5;
+    this.interval = 30;
+    setInterval(function() {
+    myState.draw();
+    }, myState.interval);
+
+  }
 
 
-		var canvas = document.querySelector('#canvas1');
-  	var context = canvas.getContext('2d');
+  CanvasState.prototype.addShape = function(shape) {
+  this.shapes.push(shape);
+  this.valid = false;
+};
 
- 		var container = document.querySelector('#canvas');
-  	var container_style = getComputedStyle(container);  
- 		canvas.width = parseInt(container_style.getPropertyValue('width'));
-  	canvas.height = parseInt(container_style.getPropertyValue('height'));
+CanvasState.prototype.clear = function() {
+  this.context.clearRect(0, 0, this.width, this.height);
+};
 
+  // Draws a white rectangle with a black border around it
+drawRectWithBorder = function(x, y, sideLength, context) {
+  context.save();
+  context.fillStyle = "#000000";
+  context.fillRect(x - (sideLength / 2), y - (sideLength / 2), sideLength, sideLength);
+  context.fillStyle = "#FFFFFF";
+  context.fillRect(x - ((sideLength - 1) / 2), y - ((sideLength - 1) / 2), sideLength - 1, sideLength - 1);
+  context.restore();
+};
 
+// checks if two points are close enough to each other depending on the closeEnough param
+function checkCloseEnough(p1, p2, closeEnough) {
+  return Math.abs(p1 - p2) < closeEnough;
+}
 
- 		/********************** INITIALISE TEXT CANVAS AND CONTEXT *********************/
+/********************** INITIALISE TEXT CANVAS AND CONTEXT *********************/
 
   		var textarea = document.createElement('textarea');
   		textarea.id = 'text_tool';
@@ -915,7 +1097,7 @@ if(window.addEventListener) {
   		container.appendChild(temp_txt_context);
 
   		textarea.addEventListener('mouseup', function(e){
-			temp_canvas.removeEventListener('mousemove', onText,false);
+			canvas.removeEventListener('mousemove', onText,false);
   		},false);
 	
   
@@ -939,7 +1121,7 @@ if(window.addEventListener) {
         return;
       }
 
-      //temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+      //context.clearRect(0,0, canvas.width, canvas.height);
 
       context.beginPath();
       context.moveTo(points[0].x, points[0].y);
@@ -985,7 +1167,7 @@ if(window.addEventListener) {
 			for(var i = 0; i<thickTiles.length; i++){
 				thickTiles[i].addEventListener('click', function(e) {
 					curThickness = parseInt(this.id);
-					temp_context.lineWidth = curThickness;
+					context.lineWidth = curThickness;
 
 				});
 			}
@@ -1015,7 +1197,7 @@ if(window.addEventListener) {
 		 		console.log("undo: " + undoindex);
 		 		var undo_img = new Image();
 		 		undo_img.src = undoArr[undoindex];
-		 		context.clearRect(0,0,temp_canvas.width, temp_canvas.height);
+		 		context.clearRect(0,0,canvas.width, canvas.height);
 		 		context.drawImage(undo_img,0,0);
 		 		frameDraw(); 
 		 		console.log("undo");
@@ -1047,34 +1229,6 @@ if(window.addEventListener) {
 		}
 
 
-		/*********************** NEW ANIMATES FILE FUNCTION*************************/
-
-
-
-		/*********************** OPEN ANIMATES FILE FUNCTION*************************/
-
-
-
-		/*********************** SAVE ANIMATES FUNCTION*************************/
-
-
-
-		/*********************** IMPORT FILE FUNCTION*************************/
-
-
-
- 		/*********************** CUT FUNCTION*************************/
-
-
-
-  		/*********************** COPY FUNCTION*************************/
-
-
-
-   		/*********************** PASTE FUNCTION*************************/
-
-
-
    		/*********************** SELECT FUNCTION*************************/
    		var x, y, width, height, stx, sty = 0;
    		var onSel = function(){
@@ -1082,16 +1236,16 @@ if(window.addEventListener) {
 	    	{
 	        	e.preventDefault();
 	    	}
-			temp_context.lineWidth = 1;
-   			temp_context.setLineDash([6]);
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+			context.lineWidth = 1;
+   			context.setLineDash([6]);
+			context.clearRect(0,0, canvas.width, canvas.height);
 
 			x = Math.min(mouse.x, start_mouse.x);
 			y = Math.min(mouse.y, start_mouse.y);
 			width = Math.abs(mouse.x - start_mouse.x);
 			height = Math.abs(mouse.y - start_mouse.y);
 
-			temp_context.strokeRect(x,y, width, height);
+			context.strokeRect(x,y, width, height);
 			stx = mouse.x;
 			sty = mouse.y;
 			tool = 'choose';
@@ -1101,17 +1255,17 @@ if(window.addEventListener) {
 	    	{
 	        	e.preventDefault();
 	    	}
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-    		temp_context.fillStyle = 'white';
-    		temp_context.strokeStyle = 'white';
-			temp_context.setLineDash([0]);
-			temp_context.fillRect(x,y, width, height);
-			temp_context.strokeRect(x,y, width, height);
+			context.clearRect(0,0, canvas.width, canvas.height);
+    		context.fillStyle = 'white';
+    		context.strokeStyle = 'white';
+			context.setLineDash([0]);
+			context.fillRect(x,y, width, height);
+			context.strokeRect(x,y, width, height);
 			diffx = mouse.x - stx;
 			diffy = mouse.y - sty;
-			temp_context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
-			temp_context.strokeRect(x+diffx, y+diffy, width, height);
-    		temp_context.strokeStyle = 'black';
+			context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
+			context.strokeRect(x+diffx, y+diffy, width, height);
+    		context.strokeStyle = 'black';
    		};
 
    		/*********************** PAINT FILL FUNCTION*************************/
@@ -1156,7 +1310,7 @@ if(window.addEventListener) {
 		/*************************NEW FRAME************************/
 		var addFrame = document.getElementById("addframe");
 		addFrame.addEventListener("click", function(e){
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+			context.clearRect(0,0, canvas.width, canvas.height);
 			context.clearRect(0,0,canvas.width, canvas.height);
 
 			var frame = new Image();
@@ -1180,7 +1334,7 @@ if(window.addEventListener) {
 		/*************************COPY FRAME************************/
 		var copyFrame = document.getElementById("copyframe");
 		copyFrame.addEventListener("click", function(e){
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+			context.clearRect(0,0, canvas.width, canvas.height);
 			context.clearRect(0,0,canvas.width, canvas.height);
 
 			var cimg = new Image();
@@ -1206,7 +1360,7 @@ if(window.addEventListener) {
 		var delFrame = document.getElementById("delframe");
 		delFrame.addEventListener("click", function(e){
 			if(curFrame > 1){
-				temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+				context.clearRect(0,0, canvas.width, canvas.height);
 				context.clearRect(0,0,canvas.width, canvas.height);
 
 				$("#frmimg"+curFrame).remove();

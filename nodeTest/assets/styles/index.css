@@ -207,8 +207,8 @@ form {
   }
 
   #about {
-    height: 650px;
-    width: 100%;
+    height: 450px;
+    width: 1309px;
     background-color: #EFEDC2;
     padding-top: 100px;
     padding-left: 40px;
@@ -233,6 +233,19 @@ form {
     color: #84CB2E;
 }
 
-#functions {
+#follow {
+    padding-top: 15px;
+    padding-left: 20px;
+    color: white;
+    font-family: "Calibri";
+    font-size: 20px;
+    width: 100%;
+    height: 95px;
+    background-color: #262641;
+}
 
+.fol {
+    height: 45px;
+    width: 45px;
+    margin-top: 5px;
 }

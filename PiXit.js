@@ -535,8 +535,11 @@ if(window.addEventListener) {
 
 
    		/*********************** SELECT FUNCTION*************************/
-   		var x, y, width, height, stx, sty = 0;
+   		
+		var selected={x:-100,y:-100,width:0,height:0};
+		var x, y, width, height, stx, sty = 0;
    		var onSel = function(){
+			selected={x:-100,y:-100,width:0,height:0};
 		  	if (blockMenuHeaderScroll)
 	    	{
 	        	e.preventDefault();
@@ -546,20 +549,35 @@ if(window.addEventListener) {
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
 			x = Math.min(mouse.x, start_mouse.x);
-			y = Math.min(mouse.y, start_mouse.y);
-			width = Math.abs(mouse.x - start_mouse.x);
-			height = Math.abs(mouse.y - start_mouse.y);
-
+			y= Math.min(mouse.y, start_mouse.y);
+			width= Math.abs(mouse.x - start_mouse.x);
+			height= Math.abs(mouse.y - start_mouse.y);
+			
 			temp_context.strokeRect(x,y, width, height);
 			stx = mouse.x;
 			sty = mouse.y;
+			selected.x=x;
+			selected.y=y;
+			selected.width=width;
+			selected.height=height;
+			console.log(selected);
 			tool = 'choose';
    		};
+		
+		var hitTest=function(element,mx,my){
+				if(mx>element.x && mx<element.x+element.width && my>element.y && my<element.y+element.height)
+					return true;
+				else
+					return false;
+		};
+
    		var onChoose = function(){
+			
    			if (blockMenuHeaderScroll)
 	    	{
 	        	e.preventDefault();
 	    	}
+			if(hitTest(selected,mouse.x,mouse.y)){
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
     		temp_context.fillStyle = 'white';
     		temp_context.strokeStyle = 'white';
@@ -571,6 +589,9 @@ if(window.addEventListener) {
 			temp_context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
 			temp_context.strokeRect(x+diffx, y+diffy, width, height);
     		temp_context.strokeStyle = 'black';
+			}
+			else 
+				tool='brush';
    		};
 
    		/*********************** PAINT FILL FUNCTION*************************/

@@ -82,7 +82,7 @@ jQuery(function($){
 		var email = $('#email1').val();
 		var passed = $('#pass3').val();
 		if(email == "forOne@capstone.com" && passed == "musketeers"){
-			window.location.href = "/home/jill/Documents/PiXit!/PiXit/PiXit.html";
+			window.location.href = "/home/renaldo/Documents/PiXit/PiXit.html";
 		}
 	});
 

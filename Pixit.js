@@ -18,7 +18,7 @@ window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
 	window.addEventListener('load', function () {
 
-  var canvas = new CanvasState(document.getElementById('canvas1');
+  var canvas = new CanvasState(document.getElementById('canvas1'));
   var context = canvas.getContext('2d');
 
   /********************** INITIALISE CANVAS AND CONTEXT *********************/
@@ -107,24 +107,24 @@ if(window.addEventListener) {
       points.push({x:mouse.x, y:mouse.y});
 
       if(tool == 'line'){
-        canvas.addEventListener('mousemove', Line.onLine(context), false );
+        canvas.addEventListener('mousemove', Line.draw(context), false );
         myState.addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if(tool == 'rect') {
-        canvas.addEventListener('mousemove', Rectangle.onRect(context), false );
+        canvas.addEventListener('mousemove', Rectangle.draw(context), false );
         myState.addShape(new Rectangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if(tool == 'brush'){
         onBrush();
-        canvas.addEventListener('mousemove', FreeForm.onFreeForm(context), false );
+        canvas.addEventListener('mousemove', FreeForm.draw(context), false );
         myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if(tool == 'pencil'){
         onPencil();
-        canvas.addEventListener('mousemove', FreeForm.onFreeForm(context), false );
+        canvas.addEventListener('mousemove', FreeForm.draw(context), false );
         myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
@@ -142,42 +142,42 @@ if(window.addEventListener) {
       }
 
       else if(tool == 'circle'){
-        canvas.addEventListener('mousemove', Circle.onCircle(context), false );
+        canvas.addEventListener('mousemove', Circle.draw(context), false );
         myState.addShape(new Circle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if(tool == 'oval'){
-        canvas.addEventListener('mousemove', Oval.onOval(context), false );
+        canvas.addEventListener('mousemove', Oval.draw(context), false );
         myState.addShape(new Oval(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if (tool == 'square'){
-        canvas.addEventListener('mousemove', Square.onSquare(context), false );
+        canvas.addEventListener('mousemove', Square.draw(context), false );
         myState.addShape(new Square(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if( tool == 'cline'){
-       canvas.addEventListener('mousemove', CLine.onCLine(context), false );
+       canvas.addEventListener('mousemove', CLine.draw(context), false );
        myState.addShape(new CLine(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if (tool == 'triangle'){
-        canvas.addEventListener('mousemove', Triangle.onTriangle(context), false );
+        canvas.addEventListener('mousemove', Triangle.draw(context), false );
         myState.addShape(new Triangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if (tool == 'diam'){
-        canvas.addEventListener('mousemove', Diamond.onDiam(context), false );
+        canvas.addEventListener('mousemove', Diamond.draw(context), false );
         myState.addShape(new Diamond(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if (tool == 'heart'){
-        canvas.addEventListener('mousemove', Heart.onHeart(context), false );
+        canvas.addEventListener('mousemove', Heart.draw(context), false );
         myState.addShape(new Heart(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
       else if (tool == 'text'){
-       canvas.addEventListener('mousemove', Texts.onText(context), false );
+       canvas.addEventListener('mousemove', Texts.draw(context), false );
        myState.addShape(new Texts(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
       }
 
@@ -191,18 +191,18 @@ if(window.addEventListener) {
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
       console.log("push");
-      canvas.removeEventListener('mousemove', onLine, false);
-      canvas.removeEventListener('mousemove', onCLine, false);
-      canvas.removeEventListener('mousemove', onRect, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
       canvas.removeEventListener('mousemove', onBrush, false);
       canvas.removeEventListener('mousemove', onErase,false);
-      canvas.removeEventListener('mousemove', onCircle, false);
-      canvas.removeEventListener('mousemove', onOval, false);
-      canvas.removeEventListener('mousemove', onSquare, false);
-      canvas.removeEventListener('mousemove', onTriangle, false);
-      canvas.removeEventListener('mousemove', onDiam, false);
-      canvas.removeEventListener('mousemove', onHeart, false);
-      canvas.removeEventListener('mousemove', onText,false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', draw,false);
       canvas.removeEventListener('mousemove', onPencil, false);
       canvas.removeEventListener('mousemove', onSel, false);
       canvas.removeEventListener('mousemove', onChoose, false);
@@ -295,11 +295,11 @@ if(window.addEventListener) {
         points.push({x:mouse.x, y:mouse.y});
 
         if(tool == 'line'){
-          canvas.addEventListener('touchmove', onLine, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if(tool == 'rect') {
-          canvas.addEventListener('touchmove', onRect, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if(tool == 'brush'){
@@ -324,35 +324,35 @@ if(window.addEventListener) {
         }
 
         else if(tool == 'circle'){
-          canvas.addEventListener('touchmove', onCircle, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if(tool == 'oval'){
-          canvas.addEventListener('touchmove', onOval, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if (tool == 'square'){
-          canvas.addEventListener('touchmove', onSquare, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if( tool == 'cline'){
-          canvas.addEventListener('touchmove', onCLine, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if (tool == 'triangle'){
-          canvas.addEventListener('touchmove', onTriangle, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if (tool == 'diam'){
-          canvas.addEventListener('touchmove', onDiam, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
         else if (tool == 'heart'){
-          canvas.addEventListener('touchmove',onHeart, false);
+          canvas.addEventListener('touchmove',draw, false);
         }
 
         else if (tool == 'text'){
-          canvas.addEventListener('touchmove', onText, false);
+          canvas.addEventListener('touchmove', draw, false);
         }
 
       }, false);
@@ -363,18 +363,18 @@ if(window.addEventListener) {
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
       console.log("push");
-      canvas.removeEventListener('touchmove', onLine, false);
-      canvas.removeEventListener('touchmove', onCLine, false);
-      canvas.removeEventListener('touchmove', onRect, false);
+      canvas.removeEventListener('touchmove', Line.draw, false);
+      canvas.removeEventListener('touchmove', Triangle.draw, false);
+      canvas.removeEventListener('touchmove', Rectangle.draw, false);
       canvas.removeEventListener('touchmove', onBrush, false);
       canvas.removeEventListener('touchmove', onErase,false);
-      canvas.removeEventListener('touchmove', onCircle, false);
-      canvas.removeEventListener('touchmove', onOval, false);
-      canvas.removeEventListener('touchmove', onSquare, false);
-      canvas.removeEventListener('touchmove', onTriangle, false);
-      canvas.removeEventListener('touchmove', onDiam, false);
-      canvas.removeEventListener('touchmove', onHeart, false);
-      canvas.removeEventListener('touchmove', onText, false);
+      canvas.removeEventListener('touchmove', Square.draw, false);
+      canvas.removeEventListener('touchmove', Heart.draw, false);
+      canvas.removeEventListener('touchmove', Oval.draw, false);
+      canvas.removeEventListener('touchmove', CLine.draw, false);
+      canvas.removeEventListener('touchmove', Diamond.draw, false);
+      canvas.removeEventListener('touchmove', Circle.draw, false);
+      canvas.removeEventListener('touchmove', Texts.draw, false);
       canvas.removeEventListener('touchmove', onPencil, false);
       canvas.removeEventListener('touchmove', onSel, false);
       canvas.removeEventListener('touchmove', onChoose, false);
@@ -618,6 +618,48 @@ if(window.addEventListener) {
   }
 
 
+CanvasState.prototype.draw = function() {
+  if (!this.valid) {
+    var context = this.context;
+    var shapes = this.shapes;
+    this.clear();
+
+    var l = shapes.length;
+    for (var i = 0; i < l; i++) {
+      var shape = shapes[i];
+      if (this.selection !== shape) {
+        if (shape.x > this.width || shape.y > this.height || shape.x + shape.w < 0 || shape.y + shape.h < 0) 
+          continue;
+        shapes[i].draw(context);
+      }
+    }
+   
+    if (this.selection !== null) {
+      this.selection.draw(context);
+    }
+
+    if (this.selection !== null) {
+      context.strokeStyle = this.selectionColor;
+      context.lineWidth = this.selectionWidth;
+      var mySel = this.selection;
+      context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
+    }
+
+    this.valid = true;
+  }
+};
+
+
+CanvasState.prototype.addShape = function(shape) {
+  this.shapes.push(shape);
+  this.valid = false;
+};
+
+CanvasState.prototype.clear = function() {
+  this.context.clearRect(0, 0, this.width, this.height);
+};
+
+
     /***********SHAPE CONSTRUCTOR***********/
     function Shape(sx, sy, ex, ey, fill){
       this.sx = sx || 0;
@@ -651,7 +693,7 @@ if(window.addEventListener) {
 
     Line.prototype = subclassOf(Shape);
 
-    Line.prototype.onLine = function(context){
+    Line.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(this.sx, this.sy);
@@ -679,7 +721,7 @@ if(window.addEventListener) {
 
     Triangle.prototype = subclassOf(Shape);
 
-    Triangle.prototype.onTriangle = function(context){     
+    Triangle.prototype.draw = function(context){     
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(this.x, this.y);
@@ -710,7 +752,7 @@ if(window.addEventListener) {
 
     Diamond.prototype = subclassOf(Shape);
 
-    Diamond.prototype.onDiam = function(context){
+    Diamond.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(this.x, this.y);
@@ -743,7 +785,7 @@ if(window.addEventListener) {
 
     Heart.prototype = subclassOf(Shape);
 
-    Heart.prototype.onHeart = function(context){
+    Heart.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(75,40);
@@ -782,7 +824,7 @@ if(window.addEventListener) {
 
     Rectangle.prototype = subclassOf(Shape);
 
-    Rectangle.prototype.onRect = function(context){
+    Rectangle.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.strokeRect(this.x, this.y, this.w, this.h);
 
@@ -807,7 +849,7 @@ if(window.addEventListener) {
 
     Square.prototype = subclassOf(Shape);
 
-    Square.prototype.onSquare = function(context){
+    Square.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.strokeRect(this.x, this.y, this.w, this.h);
 
@@ -831,7 +873,7 @@ if(window.addEventListener) {
 
     Circle.prototype = subclassOf(Shape);
 
-    Circle.prototype.onCircle = function(context){
+    Circle.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.beginPath();
       context.arc(this.x, this.y, this.radius,0, Math.PI*2, false);
@@ -859,7 +901,7 @@ if(window.addEventListener) {
 
     Oval.prototype = subclassOf(Shape);
 
-    Oval.prototype.onOval = function(context){
+    Oval.prototype.draw = function(context){
       context.fillstyle = this.fill;
       var kappa = .5522848;
       ox = (w / 2) * kappa, // control point offset horizontal
@@ -900,7 +942,7 @@ if(window.addEventListener) {
 
     Texts.prototype = subclassOf(Shape);
 
-    Texts.prototype.onText = function(context){
+    Texts.prototype.draw = function(context){
       context.fillstyle = this.fill;
       context.style.left = this.x + 'px';
       context.style.top = this.y + 'px';
@@ -933,7 +975,7 @@ if(window.addEventListener) {
 
     CLine.prototype = subclass(Shape);
 
-    CLine.prototype.onCLine = function(context) {
+    CLine.prototype.draw = function(context) {
       if(this.points.length <5){
         var b = this.points[0];
         context.beginPath();
@@ -976,13 +1018,13 @@ if(window.addEventListener) {
       var xmin = points.indexOf(points.find(function(o){return o.x == (Math.min.apply(Math,points.map(function(o){return o.x})))}));
       var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
       var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
-      var this.w = this.points[xmax].x - this.points[xmin].x;
-      var this.h = this.points[max].y - this.point[min].y;
+      this.w = this.points[xmax].x - this.points[xmin].x;
+      this.h = this.points[max].y - this.point[min].y;
     }
 
     FreeForm.prototype = subclass(Shape);
 
-    FreeForm.prototype.onFreeForm = function(context){
+    FreeForm.prototype.draw = function(context){
       context.lineWidth = this.lw;
       context.lineJoin = this.lj;
 
@@ -1028,7 +1070,7 @@ if(window.addEventListener) {
 
     //Determine if point fall within shape
     Shape.prototype.contains = function(mx, my){
-      if (this.touchedHandles(mx, my) === true{
+      if (this.touchedHandles(mx, my) === true){
         return true;
       }
       var xBool = false;
@@ -1071,15 +1113,6 @@ if(window.addEventListener) {
 		$("#thickmenu").addClass("hide");
 
 
-  CanvasState.prototype.addShape = function(shape) {
-  this.shapes.push(shape);
-  this.valid = false;
-};
-
-CanvasState.prototype.clear = function() {
-  this.context.clearRect(0, 0, this.width, this.height);
-};
-
   // Draws a white rectangle with a black border around it
 drawRectWithBorder = function(x, y, sideLength, context) {
   context.save();
@@ -1106,7 +1139,7 @@ function checkCloseEnough(p1, p2, closeEnough) {
   		container.appendChild(temp_txt_context);
 
   		textarea.addEventListener('mouseup', function(e){
-			canvas.removeEventListener('mousemove', onText,false);
+			canvas.removeEventListener('mousemove', draw,false);
   		},false);
 	
     var onBrush = function(){

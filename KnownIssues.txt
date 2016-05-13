@@ -14,8 +14,15 @@
 			 an object type. Therefore unable to loop through object
 
 		(fixed)
-
-Curve line tool, is bugged.
+3.The first frame src doesn't have a starting value, which leaves a
+  bug.
+	Bug: Adding a new frame, then drawing on the new frame and 
+		 switch back to the first frame and attempt to draw on it
+		 the 2nd frame's image is stored on the first frame.
+4. Bugged Tools:
+	-Curve line tool
+	-heart tool
+	-
 
 ==================================================================
 -		POSSIBLE FIXES					 -

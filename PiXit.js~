@@ -577,7 +577,7 @@ if(window.addEventListener) {
 	    	{
 	        	e.preventDefault();
 	    	}
-			if(hitTest(selected,mouse.x,mouse.y)){
+			if(hitTest(selected,mouse.x,mouse.y){
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
     		temp_context.fillStyle = 'white';
     		temp_context.strokeStyle = 'white';

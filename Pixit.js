@@ -640,7 +640,7 @@ if(window.addEventListener) {
 
     /********************** STRAIGHT LINE FUNCTION *********************/
 
-    function Line = function(sx, sy, ex, ey, fill){
+    function Line(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -669,7 +669,7 @@ if(window.addEventListener) {
     };
 
     /********************** TRIANGLE FUNCTION *********************/
-    function Triangle = function (sx, sy, ex, ey, fill){
+    function Triangle(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -700,7 +700,7 @@ if(window.addEventListener) {
 
 
     /********************** DIAMOND FUNCTION *********************/
-    function Diamond = function (sx, sy, ex, ey, fill){
+    function Diamond(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -733,7 +733,7 @@ if(window.addEventListener) {
 
 
     /********************** HEART FUNCTION *********************/
-    function Heart = function (sx, sy, ex, ey, fill){
+    function Heart(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -772,7 +772,7 @@ if(window.addEventListener) {
 
 
     /********************** RECTANGLE FUNCTION *********************/
-    function Rectangle = function (sx, sy, ex, ey, fill){
+    function Rectangle(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -797,7 +797,7 @@ if(window.addEventListener) {
 
 
     /********************** SQUARE FUNCTION *********************/
-    function Square = function (sx, sy, ex, ey, fill){
+    function Square(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -822,7 +822,7 @@ if(window.addEventListener) {
 
 
     /********************** CIRCLE FUNCTION *********************/
-    function Circle = function (sx, sy, ex, ey, fill){
+    function Circle(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = (this.ex + this.sx) / 2;
       this.y = (this.ey + this.sy) / 2;
@@ -849,7 +849,7 @@ if(window.addEventListener) {
 
 
     /********************** OVAL FUNCTION *********************/
-    function Oval = function (sx, sy, ex, ey, fill){
+    function Oval(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -890,7 +890,7 @@ if(window.addEventListener) {
 
 
 /********************** TEXT FUNCTION *********************/
-    function Texts = function (sx, sy, ex, ey, fill){
+    function Texts(sx, sy, ex, ey, fill){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -922,7 +922,7 @@ if(window.addEventListener) {
     
 
     /********************** CURVED LINE FUNCTION *********************/
-     function CLine = function (sx, sy, ex, ey, fill, points){
+     function CLine(sx, sy, ex, ey, fill, points){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.points = points;
       max = Math.max.apply(Math,points.map(function(o){return o.y}))    ;
@@ -969,7 +969,7 @@ if(window.addEventListener) {
 
     /********************** FREEFORM FUNCTION *********************/
     
-    function FreeForm = function (sx, sy, ex, ey, fill, points){
+    function FreeForm(sx, sy, ex, ey, fill, points){
       Shape.call(this, sx, sy, ex, ey, fill);
       this.points = points;
       var xmax = points.indexOf(points.find(function(o){return o.x == (Math.max.apply(Math,points.map(function(o){return o.x})))}));
@@ -1109,7 +1109,19 @@ function checkCloseEnough(p1, p2, closeEnough) {
 			canvas.removeEventListener('mousemove', onText,false);
   		},false);
 	
-  
+    var onBrush = function(){
+      curThickness = 5;
+      curLJoin = 'round';
+      context.lineWidth = curThickness;
+      context.lineJoin = curLJoin;
+    }
+
+    var onPencil = function(){
+      curThickness = 1;
+      curLJoin = 'square';
+      context.lineWidth = curThickness;
+      context.lineJoin = curLJoin;
+    }
 
     /********************** ERASE FUNCTION *********************/
     var onErase = function(e){

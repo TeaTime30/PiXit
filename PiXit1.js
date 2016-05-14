@@ -17,151 +17,157 @@ var valid = false; // when set to false, the canvas will redraw everything
 var shapes = []; // the collection of things to be drawn
 var dragging = false; // Keep track of when we are dragging
 var resizing = false;
-var selection = []; // the current selected object. In the future we could turn this into an array for multiple selection
 
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
 	window.addEventListener('load', function () {
 
 		/********************** INITIALISE CANVAS AND CONTEXT *********************/
-		var canvas = new CanvasState(document.getElementById('canvas1'));
-  		var context = canvas.getContext('2d');
-  		canvas.dragoffy = 0;
-  		canvas.dragoffx = 0;
-		var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-    	if (document.defaultView && document.defaultView.getComputedStyle) {
-	      	canvas.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
-	      	canvas.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
-	      	canvas.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
-	      	canvas.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
-    	}
+    $("#thickmenu").addClass("hide");
+		var canvas = document.getElementById('canvas1');
+  	var context = canvas.getContext('2d');
+    canvas.dragoffy = 0;
+  	canvas.dragoffx = 0;
+    canvas.selection = null; // the current selected object. In the future we could turn this into an array for multiple selection
 
-    	var html = document.body.parentNode;
-    	canvas.htmlTop = html.offsetTop;
-    	canvas.htmlLeft = html.offsetLeft;
+
+		var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+    if (document.defaultView && document.defaultView.getComputedStyle) {
+      canvas.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
+	    canvas.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
+	    canvas.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
+	    canvas.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
+    }
+
+    var html = document.body.parentNode;
+    canvas.htmlTop = html.offsetTop;
+    canvas.htmlLeft = html.offsetLeft;
     	
 		canvas.addEventListener('selectstart', function(e) {
-      		e.preventDefault();
-      		return false;
-    	}, false);
+      e.preventDefault();
+      return false;
+    }, false);
 		
 		canvas.addEventListener('mousemove', function(e){
-	      mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-	      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-	      if(dragging){
-	      	selection.push({x: (mouse.x - canvas.dragoffx), y: (mouse.y - canvas.dragoffy)});
-        	valid = false;
-          }
-          if (resizing){
-        	mouseMoveSelected(e,selection);
-      	  }
+	    mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+	    mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+	      
+      if(dragging){
+	     	canvas.selection.x = mouse.x - canvas.dragoffx;
+        canvas.selection.y = mouse.y - canvas.dragoffy;
+       	valid = false;
+      }
+
+      if (resizing){
+       	mouseMoveSelected(e,selection);
+      }
 		}, false);
 
-    	canvas.addEventListener('touchmove', function(e){
-    		mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
-    		mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
+    canvas.addEventListener('touchmove', function(e){
+    	mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
+    	mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
       
-      		if(dragging){
-        	selection.push(x: (mouse.x - e.touches[0].pageX), y: (mouse.y - e.touches[0].pageY));
-        	valid = false;
-      		}
+    	if(dragging){
+        canvas.selection.x = mouse.x - canvas.dragOffx;
+        canvas.selection.y = mouse.y - canvas.dragoffy;
+       	valid = false;
+    	}
 
-    	}, false);
+    }, false);
 
 
-    	canvas.addEventListener('mousedown', function(e){
-      		context.lineWidth = curThickness;
-      		context.lineJoin = 'round';
-      		context.lineCap = 'round';
-      		context.strokeStyle = curColour;
-      		context.fillstyle =curColour;
+    canvas.addEventListener('mousedown', function(e){
+      context.lineWidth = curThickness;
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+      context.strokeStyle = curColour;
+      context.fillstyle =curColour;
 
-      		$("#thickmenu").addClass("hide");
+      $("#thickmenu").addClass("hide");
 
-      		mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-      		mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-    
-      		start_mouse.x = mouse.x;
-      		start_mouse.y = mouse.y;
+      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+    	start_mouse.x = mouse.x;
+    	start_mouse.y = mouse.y;
 
-      		points.push({x:mouse.x, y:mouse.y});
+    	points.push({x:mouse.x, y:mouse.y});
 
-      		if(tool == 'line'){
-        		canvas.addEventListener('mousemove', Line.draw(), false );
-        		addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y));
-      		}
+      if(tool == 'line'){
+      	canvas.addEventListener('mousemove', Line.draw, false );
+      	addShape(new Line("Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y));
+      }
 
-      		else if(tool == 'rect') {
-        		canvas.addEventListener('mousemove', Rectangle.draw(), false );
-        		addShape(new Rectangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'rect') {
+      	canvas.addEventListener('mousemove', Rectangle.draw, false );
+      	addShape(new Rectangle("Rectangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'brush'){
-        		onBrush();
-        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
-        		addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'brush'){
+      	onBrush();
+      	canvas.addEventListener('mousemove', FreeForm.draw, false );
+      	addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'pencil'){
-        		onPencil();
-        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
-        		myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'pencil'){
+        onPencil();
+        canvas.addEventListener('mousemove', FreeForm.draw, false );
+        myState.addShape(new FreeForm( "FreeForm", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'select'){
-        		canvas.addEventListener('mousemove', onSel, false);
-      		}
+      else if(tool == 'select'){
+      	canvas.addEventListener('mousemove', onSel, false);
+      }
 
-      		else if(tool == 'choose'){
-        		console.log("choose");
-        		canvas.addEventListener('mousemove', onChoose, false);
-      		}
+      else if(tool == 'choose'){
+      	console.log("choose");
+      	canvas.addEventListener('mousemove', onChoose, false);
+      }
 
-      		else if(tool == 'erase'){
-        		canvas.addEventListener('mousemove', onErase, false);
-      		}
+      else if(tool == 'erase'){
+      	canvas.addEventListener('mousemove', onErase, false);
+      }
 
-      		else if(tool == 'circle'){
-        		canvas.addEventListener('mousemove', Circle.draw(), false );
-        		addShape(new Circle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'circle'){
+      	canvas.addEventListener('mousemove', Circle.draw, false );
+      	addShape(new Circle( "Circle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'oval'){
-        		canvas.addEventListener('mousemove', Oval.draw(), false );
-        		addShape(new Oval(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'oval'){
+      	canvas.addEventListener('mousemove', Oval.draw, false );
+      	addShape(new Oval("Oval", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-     		else if (tool == 'square'){
-        		canvas.addEventListener('mousemove', Square.draw(), false );
-        		addShape(new Square(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+     	else if (tool == 'square'){
+      	canvas.addEventListener('mousemove', Square.draw, false );
+      	addShape(new Square("Square", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if( tool == 'cline'){
-       			canvas.addEventListener('mousemove', CLine.draw(), false );
-       			addShape(new CLine(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-     		 }
+      else if( tool == 'cline'){
+      	canvas.addEventListener('mousemove', CLine.draw, false );
+      	addShape(new CLine("Curved Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+     	}
 
-      		else if (tool == 'triangle'){
-        		canvas.addEventListener('mousemove', Triangle.draw(), false );
-        		addShape(new Triangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'triangle'){
+      	canvas.addEventListener('mousemove', Triangle.draw, false );
+      	addShape(new Triangle("Triangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if (tool == 'diam'){
-        		canvas.addEventListener('mousemove', Diamond.draw(), false );
-        		addShape(new Diamond(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'diam'){
+    		canvas.addEventListener('mousemove', Diamond.draw, false );
+    		addShape(new Diamond("Diamond",start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+  		}
 
-      		else if (tool == 'heart'){
-        		canvas.addEventListener('mousemove', Heart.draw(), false );
-       			 addShape(new Heart(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+  		else if (tool == 'heart'){
+    		canvas.addEventListener('mousemove', Heart.draw, false );
+   			 addShape(new Heart("Heart", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+  		}
 
-      		else if (tool == 'text'){
-       			canvas.addEventListener('mousemove', Texts.draw(), false );
-       			addShape(new Texts(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+  		else if (tool == 'text'){
+   			canvas.addEventListener('mousemove', Texts.draw, false );
+   			addShape(new Texts("Textbox", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+  		}
 
-    	}, false);
+	}, false);
 
     canvas.addEventListener('mouseup', function(e){
       dragging = false;
@@ -192,65 +198,65 @@ if(window.addEventListener) {
           context.lineWidth = curThickness;
         }
 
-        if (tool == 'text'){
+      if (tool == 'text'){
 
-          var lines = textarea.value.split('\n');
-          var processed_lines= [];
+        var lines = textarea.value.split('\n');
+        var processed_lines= [];
 
-          for (var i = 0; i< lines.length; i++){
-            var chars = lines[i].length;
+        for (var i = 0; i< lines.length; i++){
+          var chars = lines[i].length;
 
-          for(var j; j< chars; j++){
-            var text_node = document.createTextNode(lines[i][j]);
-            temp_txt_context.appendChild(text_node);
+        for(var j; j< chars; j++){
+          var text_node = document.createTextNode(lines[i][j]);
+          temp_txt_context.appendChild(text_node);
 
-            temp_txt_context.style.position = 'absolute';
-            temp_txt_context.style.visibility = 'hidden';
-            temp_txt_context.style.display = 'block';
+          temp_txt_context.style.position = 'absolute';
+          temp_txt_context.style.visibility = 'hidden';
+          temp_txt_context.style.display = 'block';
 
-            var width = temp_txt_context.offsetWidth;
-            var height = temp_txt_context.offsetHeight;
+          var width = temp_txt_context.offsetWidth;
+          var height = temp_txt_context.offsetHeight;
 
-            temp_txt_context.style.position = '';
-            temp_txt_context.style.visibility = '';
-            temp_txt_context.style.display = 'none';
+          temp_txt_context.style.position = '';
+          temp_txt_context.style.visibility = '';
+          temp_txt_context.style.display = 'none';
 
-            if (width > parseInt(textarea.style.width)) {
-                       break;
-                  }
-              }
-           
-              processed_lines.push(temp_txt_context.textContent);
-                temp_txt_context.innerHTML = '';
-          }
-       
-          var ta_comp_style = getComputedStyle(textarea);
-          var fs = ta_comp_style.getPropertyValue('font-size');
-          var ff = ta_comp_style.getPropertyValue('font-family');
-        
-          context.font = fs + ' ' + ff;
-          context.textBaseline = 'top';
+          if (width > parseInt(textarea.style.width)) {
+                     break;
+                }
+            }
          
-          for (var n = 0; n < processed_lines.length; n++) {
-              var processed_line = processed_lines[n];
-               
-              context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
-          }
-          
-          context.drawImage(canvas, 0, 0);
-
-          context.clearRect(0, 0, canvas.width, canvas.height);
-       
-          textarea.style.display = 'none';
-          textarea.value = '';
-
+          processed_lines.push(temp_txt_context.textContent);
+          temp_txt_context.innerHTML = '';
         }
-        context.drawImage(canvas,0,0);
+     
+        var ta_comp_style = getComputedStyle(textarea);
+        var fs = ta_comp_style.getPropertyValue('font-size');
+        var ff = ta_comp_style.getPropertyValue('font-family');
         
-        points = [];
-        frameDraw();
+        context.font = fs + ' ' + ff;
+        context.textBaseline = 'top';
+       
+        for (var n = 0; n < processed_lines.length; n++) {
+            var processed_line = processed_lines[n];
+             
+            context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
+        }
+        
+        context.drawImage(canvas, 0, 0);
 
-    }, false);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+     
+        textarea.style.display = 'none';
+        textarea.value = '';
+
+      }
+      context.drawImage(canvas,0,0);
+      
+      points = [];
+      frameDraw();
+
+  }, false);
 
     canvas.addEventListener("touchstart", function(e){
       blockMenuHeaderScroll = true;
@@ -266,87 +272,89 @@ if(window.addEventListener) {
       mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
       mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
     
-        start_mouse.x = mouse.x;
-        start_mouse.y = mouse.y;
+      start_mouse.x = mouse.x;
+      start_mouse.y = mouse.y;
 
-        points.push({x:mouse.x, y:mouse.y});
+      points.push({x:mouse.x, y:mouse.y});
 
-        if(tool == 'line'){
-        		canvas.addEventListener('mousemove', Line.draw(), false );
-        		addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y));
-      		}
+       if(tool == 'line'){
+        canvas.addEventListener('mousemove', Line.draw, false );
+        addShape(new Line("Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y));
+      }
 
-      		else if(tool == 'rect') {
-        		canvas.addEventListener('mousemove', Rectangle.draw(), false );
-        		addShape(new Rectangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'rect') {
+        canvas.addEventListener('mousemove', Rectangle.draw, false );
+        addShape(new Rectangle("Rectangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'brush'){
-        		onBrush();
-        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
-        		addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'brush'){
+        onBrush();
+        canvas.addEventListener('mousemove', FreeForm.draw, false );
+        addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'pencil'){
-        		onPencil();
-        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
-        		myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'pencil'){
+        onPencil();
+        canvas.addEventListener('mousemove', FreeForm.draw, false );
+        myState.addShape(new FreeForm( "FreeForm", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'select'){
-        		canvas.addEventListener('mousemove', onSel, false);
-      		}
+      else if(tool == 'select'){
+        canvas.addEventListener('mousemove', onSel, false);
+      }
 
-      		else if(tool == 'choose'){
-        		console.log("choose");
-        		canvas.addEventListener('mousemove', onChoose, false);
-      		}
+      else if(tool == 'choose'){
+        console.log("choose");
+        canvas.addEventListener('mousemove', onChoose, false);
+      }
 
-      		else if(tool == 'erase'){
-        		canvas.addEventListener('mousemove', onErase, false);
-      		}
+      else if(tool == 'erase'){
+        canvas.addEventListener('mousemove', onErase, false);
+      }
 
-      		else if(tool == 'circle'){
-        		canvas.addEventListener('mousemove', Circle.draw(), false );
-        		addShape(new Circle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'circle'){
+        canvas.addEventListener('mousemove', Circle.draw, false );
+        addShape(new Circle( "Circle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if(tool == 'oval'){
-        		canvas.addEventListener('mousemove', Oval.draw(), false );
-        		addShape(new Oval(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if(tool == 'oval'){
+        canvas.addEventListener('mousemove', Oval.draw, false );
+        addShape(new Oval("Oval", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-     		else if (tool == 'square'){
-        		canvas.addEventListener('mousemove', Square.draw(), false );
-        		addShape(new Square(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'square'){
+        canvas.addEventListener('mousemove', Square.draw, false );
+        addShape(new Square("Square", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if( tool == 'cline'){
-       			canvas.addEventListener('mousemove', CLine.draw(), false );
-       			addShape(new CLine(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-     		 }
+      else if( tool == 'cline'){
+        canvas.addEventListener('mousemove', CLine.draw, false );
+        addShape(new CLine("Curved Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if (tool == 'triangle'){
-        		canvas.addEventListener('mousemove', Triangle.draw(), false );
-        		addShape(new Triangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'triangle'){
+        canvas.addEventListener('mousemove', Triangle.draw, false );
+        addShape(new Triangle("Triangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if (tool == 'diam'){
-        		canvas.addEventListener('mousemove', Diamond.draw(), false );
-        		addShape(new Diamond(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'diam'){
+        canvas.addEventListener('mousemove', Diamond.draw, false );
+        addShape(new Diamond("Diamond",start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if (tool == 'heart'){
-        		canvas.addEventListener('mousemove', Heart.draw(), false );
-       			 addShape(new Heart(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'heart'){
+        canvas.addEventListener('mousemove', Heart.draw, false );
+         addShape(new Heart("Heart", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
-      		else if (tool == 'text'){
-       			canvas.addEventListener('mousemove', Texts.draw(), false );
-       			addShape(new Texts(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      		}
+      else if (tool == 'text'){
+        canvas.addEventListener('mousemove', Texts.draw, false );
+        addShape(new Texts("Textbox", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      }
 
+       
     	}, false);
+
 
       canvas.addEventListener('touchend', function(e){
       	blockMenuHeaderScroll = false;
@@ -449,10 +457,8 @@ if(window.addEventListener) {
       var l = shapes.length;
       var tmpSelected = false;
       for (var i = l - 1; i >= 0; i--) {
-      	for (var j = selection.length - 1; j>>=0; j--){
-        	var mySel = shapes[i];
-       		 if (shapes[i].contains(selection[j]) && tmpSelected === false) {
-          		if (selection === mySel) {
+       		 if (shapes[i].contains(mouse.x, mouse.y) && tmpSelected === false) {
+          		if (canvas.selection === mySel) {
             		if (shapes[i].touchedAtHandles(mouse.x, mouse.y)) {
               			mouseDownSelected(e, mySel);
               			resizing = true;
@@ -463,8 +469,8 @@ if(window.addEventListener) {
               			dragging = true;
             		}
           		}
-          		selection = mySel;
-          		canvas.selected = true;
+          		canvas.selection = mySel;
+          		mySel.selected = true;
           		valid = false;
           		tmpSelected = true;
        		 } 
@@ -472,19 +478,18 @@ if(window.addEventListener) {
         		mySel.selected = false;
           		valid = false;
         	}
-      	}
       }
       if (tmpSelected === false) {
-      	 	selection = [];
+      	 	canvas.selection = null;
       }
     }, false);
 
 
   	mouseDownSelected = function(e, shape) {
     	mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-      	mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-      	start_mouse.x = mouse.x;
-      	start_mouse.y = mouse.y;
+    	mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+    	start_mouse.x = mouse.x;
+    	start_mouse.y = mouse.y;
       	
     	var self = shape;
 
@@ -521,10 +526,12 @@ if(window.addEventListener) {
     	}
     	valid = false; // something is resizing so we need to redraw
   	};
+
   	
   	mouseUpSelected = function(e) {
     	canvas.dragTL = canvas.dragTR = canvas.dragBL = canvas.dragBR = false;
   	};
+
   	
   	mouseMoveSelected = function(e, shape) {
     	mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
@@ -598,6 +605,7 @@ if(window.addEventListener) {
     	}
 
     	valid = false; // something is resizing so we need to redraw
+      uPush();
   	};
   	
   	canvas.selectionColor = '#000000';
@@ -609,30 +617,29 @@ if(window.addEventListener) {
 
 	var draw = function() {
 		if (!valid) {
-    		clear();//might bug out
+    	clearCanvas();//might bug out
 			var l = shapes.length;
     		for (var i = 0; i < l; i++) {
       			var shape = shapes[i];
-      			if (selection !== shape) {
+      			if (canvas.selection !== shape) {
         			if (shape.x > canvas.width || shape.y > canvas.height || shape.x + shape.w < 0 || shape.y + shape.h < 0) 
           				continue;
         			shapes[i].draw();
       			}
    		 	}
-
    
-    		if (selection !== []) {
-      			selection.draw();
+    		if (canvas.selection !== null) {
+      			canvas.selection.draw();
     		}
 
-   			 if (selection !== []) {
-      			context.strokeStyle = canvas.selectionColor;
-      			context.lineWidth = canvas.selectionWidth;
-      			var mySel = selection;
-      			context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
-    		}
+ 			 if (canvas.selection !== null ) {
+    			context.strokeStyle = canvas.selectionColor;
+    			context.lineWidth = canvas.selectionWidth;
+    			var mySel = canvas.selection;
+    			context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
+  		  }
     		valid = true;
- 		 }
+ 		}
 	};
 
 
@@ -641,7 +648,7 @@ if(window.addEventListener) {
   		valid = false;
 	};
 
-	var clear = function() {
+	var clearCanvas= function() {
   		context.clearRect(0, 0, this.width, this.height);
 	};
 
@@ -650,17 +657,17 @@ if(window.addEventListener) {
     function Shape(name, sx, sy, ex, ey, fill){
     	this.name = name;
     	this.sx = sx || 0;
-		this.sy = sy || 0;
-		this.ex = ex || 0;
-		this.ey = ey || 0;
-		this.fill = fill || 'none';
-		this.selected = false;
-		this.closeEnough = 8; 
-		this.frame = curFrame;           
-		this.stroke = curColour;
-		this.lw = curThickness;
-		this.lj = curLJoin;
-		this.colour = curColour;
+  		this.sy = sy || 0;
+  		this.ex = ex || 0;
+  		this.ey = ey || 0;
+  		this.fill = fill || '#FFFFFF';
+  		this.selected = false;
+  		this.closeEnough = 8; 
+  		this.frame = curFrame;           
+  		this.stroke = curColour;
+  		this.lw = curThickness;
+  		this.lj = curLJoin;
+  		this.colour = curColour;
       
     }
 
@@ -670,7 +677,7 @@ if(window.addEventListener) {
 
     /********************** STRAIGHT LINE FUNCTION *********************/
 
-    function Line(name,sx, sy, ex, ey, fill){
+    function Line (name,sx, sy, ex, ey, fill){
       Shape.call(this, name, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -679,7 +686,7 @@ if(window.addEventListener) {
            
     }
 
-    Line.prototype = subclassOf(Shape);
+    Line.prototype  = Object.create(Shape.prototype);
 
     Line.prototype.draw = function(){
       context.fillstyle = this.fill;
@@ -707,7 +714,7 @@ if(window.addEventListener) {
       this.h = Math.abs(this.ey - this.sy); 
     }
 
-    Triangle.prototype = subclassOf(Shape);
+    Triangle.prototype = Object.create(Shape.prototype);
 
     Triangle.prototype.draw = function(){     
       context.fillstyle = this.fill;
@@ -730,17 +737,17 @@ if(window.addEventListener) {
 
 
     /********************** DIAMOND FUNCTION *********************/
-    function Diamond(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Diamond(name,sx, sy, ex, ey, fill){
+      Shape.call(this,name, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy); 
     }
 
-    Diamond.prototype = subclassOf(Shape);
+    Diamond.prototype = Object.create(Shape.prototype);
 
-    Diamond.prototype.draw = function(context){
+    Diamond.prototype.draw = function(){
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(this.x, this.y);
@@ -771,7 +778,7 @@ if(window.addEventListener) {
       this.h = Math.abs(this.ey - this.sy); 
     }
 
-    Heart.prototype = subclassOf(Shape);
+    Heart.prototype = Object.create(Shape.prototype);
 
     Heart.prototype.draw = function(context){
       context.fillstyle = this.fill;
@@ -810,7 +817,7 @@ if(window.addEventListener) {
       this.h = Math.abs(this.ey - this.sy); 
     }
 
-    Rectangle.prototype = subclassOf(Shape);
+    Rectangle.prototype = Object.create(Shape.prototype);
 
     Rectangle.prototype.draw = function(context){
       context.fillstyle = this.fill;
@@ -835,7 +842,7 @@ if(window.addEventListener) {
       this.h = Math.abs(this.ey - this.sy); 
     }
 
-    Square.prototype = subclassOf(Shape);
+    Square.prototype = Object.create(Shape.prototype);
 
     Square.prototype.draw = function(context){
       context.fillstyle = this.fill;
@@ -859,7 +866,7 @@ if(window.addEventListener) {
       this.radius = Math.max(Math.abs(this.ex - this.sx), Math.abs(this.ey - this.sy)) / 2;      
     }
 
-    Circle.prototype = subclassOf(Shape);
+    Circle.prototype = Object.create(Shape.prototype);
 
     Circle.prototype.draw = function(context){
       context.fillstyle = this.fill;
@@ -887,7 +894,7 @@ if(window.addEventListener) {
       this.h = Math.abs(this.ey - this.sy);    
     }
 
-    Oval.prototype = subclassOf(Shape);
+    Oval.prototype = Object.create(Shape.prototype);
 
     Oval.prototype.draw = function(context){
       context.fillstyle = this.fill;
@@ -928,7 +935,7 @@ if(window.addEventListener) {
       this.h = Math.abs(this.ey - this.sy);    
     }
 
-    Texts.prototype = subclassOf(Shape);
+    Texts.prototype = Object.create(Shape.prototype);
 
     Texts.prototype.draw = function(context){
       context.fillstyle = this.fill;
@@ -945,7 +952,7 @@ if(window.addEventListener) {
     };
 
     Texts.prototype.toString=  function(){
-      console.log( 'Text ' + Shape.prototype.toString.call(this));
+      console.log( 'Textbox ' + Shape.prototype.toString.call(this));
     };
 
 
@@ -961,7 +968,7 @@ if(window.addEventListener) {
       this.h = this.points[max].y - this.point[min].y;
     }
 
-    CLine.prototype = subclass(Shape);
+    CLine.prototype = Object.create(Shape.prototype);
 
     CLine.prototype.draw = function(context) {
       if(this.points.length <5){
@@ -1003,6 +1010,7 @@ if(window.addEventListener) {
       Shape.call(this, sx, sy, ex, ey, fill);
       this.points = points;
       var xmax = points.indexOf(points.find(function(o){return o.x == (Math.max.apply(Math,points.map(function(o){return o.x})))}));
+      console.log(xmax);
       var xmin = points.indexOf(points.find(function(o){return o.x == (Math.min.apply(Math,points.map(function(o){return o.x})))}));
       var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
       var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
@@ -1010,9 +1018,9 @@ if(window.addEventListener) {
       this.h = this.points[max].y - this.point[min].y;
     }
 
-    FreeForm.prototype = subclass(Shape);
+    FreeForm.prototype = Object.create(Shape.prototype);
 
-    FreeForm.prototype.draw = function(context){
+    FreeForm.prototype.draw = function(){
       context.lineWidth = this.lw;
       context.lineJoin = this.lj;
 
@@ -1102,81 +1110,67 @@ if(window.addEventListener) {
 
 
   // Draws a white rectangle with a black border around it
-drawRectWithBorder = function(x, y, sideLength, context) {
-  context.save();
-  context.fillStyle = "#000000";
-  context.fillRect(x - (sideLength / 2), y - (sideLength / 2), sideLength, sideLength);
-  context.fillStyle = "#FFFFFF";
-  context.fillRect(x - ((sideLength - 1) / 2), y - ((sideLength - 1) / 2), sideLength - 1, sideLength - 1);
-  context.restore();
-};
+  drawRectWithBorder = function(x, y, sideLength, context) {
+    context.save();
+    context.fillStyle = "#000000";
+    context.fillRect(x - (sideLength / 2), y - (sideLength / 2), sideLength, sideLength);
+    context.fillStyle = "#FFFFFF";
+    context.fillRect(x - ((sideLength - 1) / 2), y - ((sideLength - 1) / 2), sideLength - 1, sideLength - 1);
+    context.restore();
+  };
 
-// checks if two points are close enough to each other depending on the closeEnough param
-function checkCloseEnough(p1, p2, closeEnough) {
-  return Math.abs(p1 - p2) < closeEnough;
-}
+  // checks if two points are close enough to each other depending on the closeEnough param
+  function checkCloseEnough(p1, p2, closeEnough) {
+    return Math.abs(p1 - p2) < closeEnough;
+  }
 
-/********************** INITIALISE TEXT CANVAS AND CONTEXT *********************/
-
-  		var textarea = document.createElement('textarea');
-  		textarea.id = 'text_tool';
-  		container.appendChild(textarea);
-
-  		var temp_txt_context = document.createElement('div');
-  		temp_txt_context.style.display = 'none';
-  		container.appendChild(temp_txt_context);
-
-  		textarea.addEventListener('mouseup', function(e){
-			canvas.removeEventListener('mousemove', draw,false);
-  		},false);
 	
-    var onBrush = function(){
-      curThickness = 5;
-      curLJoin = 'round';
-      context.lineWidth = curThickness;
-      context.lineJoin = curLJoin;
-    }
+  var onBrush = function(){
+    curThickness = 5;
+    curLJoin = 'round';
+    context.lineWidth = curThickness;
+    context.lineJoin = curLJoin;
+  }
 
-    var onPencil = function(){
-      curThickness = 1;
-      curLJoin = 'square';
-      context.lineWidth = curThickness;
-      context.lineJoin = curLJoin;
-    }
+  var onPencil = function(){
+    curThickness = 1;
+    curLJoin = 'square';
+    context.lineWidth = curThickness;
+    context.lineJoin = curLJoin;
+  }
 
-    /********************** ERASE FUNCTION *********************/
-    var onErase = function(e){
-      var points = [];
+  /********************** ERASE FUNCTION *********************/
+  var onErase = function(e){
+    var points = [];
 
-      curColour = 'white';  
-      context.strokeStyle = curColour;
-      context.fillstyle =curColour;
-    
-     points.push({x:mouse.x, y:mouse.y});
+    curColour = 'white';  
+    context.strokeStyle = curColour;
+    context.fillstyle =curColour;
+  
+   points.push({x:mouse.x, y:mouse.y});
 
-      if(points.length <3){
-        var b = points[0];
-        context.beginPath();
-        context.arc(b.x, b.y, context.lineWidth / 2, 0, Math.PI * 2, !0 );
-        context.fill();
-        context.closePath();
-        return;
-      }
-
-      //context.clearRect(0,0, canvas.width, canvas.height);
-
+    if(points.length <3){
+      var b = points[0];
       context.beginPath();
-      context.moveTo(points[0].x, points[0].y);
+      context.arc(b.x, b.y, context.lineWidth / 2, 0, Math.PI * 2, !0 );
+      context.fill();
+      context.closePath();
+      return;
+    }
 
-      for( var i = 1; i < points.length - 2; i++){
-        var c = (points[i].x + points[i+1].x) / 2;
-        var d = (points[i].y + points[i+1].y) / 2;
-        context.quadraticCurveTo(points[i].x, points[i].y,c,d);
-      }
+     
+    context.beginPath();
+    context.moveTo(points[0].x, points[0].y);
 
-     context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
-     context.stroke();
-    };
+    for( var i = 1; i < points.length - 2; i++){
+      var c = (points[i].x + points[i+1].x) / 2;
+      var d = (points[i].y + points[i+1].y) / 2;
+      context.quadraticCurveTo(points[i].x, points[i].y,c,d);
+    }
+
+   context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+   context.stroke();
+  };
 			
 		/**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
  	 	$('#tools div').on('click', function(){

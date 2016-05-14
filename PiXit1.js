@@ -56,7 +56,6 @@ if(window.addEventListener) {
 
 
     canvas.addEventListener('mousemove', function(e){
-      this.style.cursor = 'auto';
       mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
       mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
 
@@ -77,7 +76,10 @@ if(window.addEventListener) {
       mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
       mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
       if(myState.dragging){
-        var mouse = myState.getMouse(e);
+        mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+        start_mouse.x = mouse.x;
+        start_mouse.y = mouse.y;
         myState.selection.x = mouse.x - e.touches[0].pageX;
         myState.selection.y = mouse.y - e.touches[0].pageY;
         myState.valid = false;
@@ -191,9 +193,9 @@ if(window.addEventListener) {
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
       console.log("push");
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
+      canvas.removeEventListener('mousemove', Texts.draw(context), false);
+      canvas.removeEventListener('mousemove', Heart.draw(context), false);
+      canvas.removeEventListener('mousemove', Diamond.draw(context), false);
       canvas.removeEventListener('mousemove', onBrush, false);
       canvas.removeEventListener('mousemove', onErase,false);
       canvas.removeEventListener('mousemove', draw, false);
@@ -363,18 +365,18 @@ if(window.addEventListener) {
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
       console.log("push");
-      canvas.removeEventListener('touchmove', Line.draw, false);
-      canvas.removeEventListener('touchmove', Triangle.draw, false);
-      canvas.removeEventListener('touchmove', Rectangle.draw, false);
+      canvas.removeEventListener('touchmove', Line.draw(context), false);
+      canvas.removeEventListener('touchmove', Triangle.draw(context), false);
+      canvas.removeEventListener('touchmove', Rectangle.draw(context), false);
       canvas.removeEventListener('touchmove', onBrush, false);
       canvas.removeEventListener('touchmove', onErase,false);
-      canvas.removeEventListener('touchmove', Square.draw, false);
-      canvas.removeEventListener('touchmove', Heart.draw, false);
-      canvas.removeEventListener('touchmove', Oval.draw, false);
-      canvas.removeEventListener('touchmove', CLine.draw, false);
-      canvas.removeEventListener('touchmove', Diamond.draw, false);
-      canvas.removeEventListener('touchmove', Circle.draw, false);
-      canvas.removeEventListener('touchmove', Texts.draw, false);
+      canvas.removeEventListener('touchmove', Square.draw(context), false);
+      canvas.removeEventListener('touchmove', Heart.draw(context), false);
+      canvas.removeEventListener('touchmove', Oval.draw(context), false);
+      canvas.removeEventListener('touchmove', CLine.draw(context), false);
+      canvas.removeEventListener('touchmove', Diamond.draw(context), false);
+      canvas.removeEventListener('touchmove', Circle.draw(context), false);
+      canvas.removeEventListener('touchmove', Texts.draw(context), false);
       canvas.removeEventListener('touchmove', onPencil, false);
       canvas.removeEventListener('touchmove', onSel, false);
       canvas.removeEventListener('touchmove', onChoose, false);
@@ -492,7 +494,11 @@ if(window.addEventListener) {
 
     // mouse down handler for selected state
   mouseDownSelected = function(e, shape) {
-    var mouse = myState.getMouse(e);
+    mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+    
+      start_mouse.x = mouse.x;
+      start_mouse.y = mousse.y;
     var mouseX = mouse.x;
     var mouseY = mouse.y;
     var self = shape;
@@ -504,10 +510,6 @@ if(window.addEventListener) {
       myState.dragBR = true;
     }
 
-    // if there is, check which corner
-    //   (if any) was clicked
-    //
-    // 4 cases:
     // 1. top left
     else if (checkCloseEnough(mouseX, self.x, self.closeEnough) && checkCloseEnough(mouseY, self.y, self.closeEnough)) {
       myState.dragTL = true;
@@ -534,11 +536,19 @@ if(window.addEventListener) {
     }
     myState.valid = false; // something is resizing so we need to redraw
   };
+
+
   mouseUpSelected = function(e) {
     myState.dragTL = myState.dragTR = myState.dragBL = myState.dragBR = false;
   };
+
+
   mouseMoveSelected = function(e, shape) {
-    var mouse = myState.getMouse(e);
+    mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+    
+      start_mouse.x = mouse.x;
+      start_mouse.y = mouse.y;
     var mouseX = mouse.x;
     var mouseY = mouse.y;
 
@@ -606,16 +616,13 @@ if(window.addEventListener) {
 
     myState.valid = false; // something is resizing so we need to redraw
   };
-  // **** Options! ****
-
+  
     this.selectionColor = '#000000';
     this.selectionWidth = 0.5;
     this.interval = 30;
     setInterval(function() {
     myState.draw();
     }, myState.interval);
-
-  }
 
 
 CanvasState.prototype.draw = function() {

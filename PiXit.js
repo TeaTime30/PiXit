@@ -1037,8 +1037,7 @@ if(window.addEventListener) {
 		var j = 0;
 		var id;
 		play.addEventListener("click", function(e){
-			var time = parseInt(document.getElementById('frms').value);
-			var sec = 60/time;
+			var sec = parseInt(document.getElementById('frms').value);
 			var msec = sec*1000;
 			var count=0;
 			var keys= Object.keys(images);

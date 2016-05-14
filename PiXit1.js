@@ -13,198 +13,176 @@ var mouse = {x: 0, y: 0};
 var start_mouse = {x: 0, y:0};
 var last_mouse = {x: 0, y: 0};
 var points = [];
+var valid = false; // when set to false, the canvas will redraw everything
+var shapes = []; // the collection of things to be drawn
+var dragging = false; // Keep track of when we are dragging
+var resizing = false;
+var selection = []; // the current selected object. In the future we could turn this into an array for multiple selection
 
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
 	window.addEventListener('load', function () {
 
-  var canvas = new CanvasState(document.getElementById('canvas1'));
-  var context = canvas.getContext('2d');
+		/********************** INITIALISE CANVAS AND CONTEXT *********************/
+		var canvas = new CanvasState(document.getElementById('canvas1'));
+  		var context = canvas.getContext('2d');
+  		canvas.dragoffy = 0;
+  		canvas.dragoffx = 0;
+		var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+    	if (document.defaultView && document.defaultView.getComputedStyle) {
+	      	canvas.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
+	      	canvas.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
+	      	canvas.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
+	      	canvas.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
+    	}
 
-  /********************** INITIALISE CANVAS AND CONTEXT *********************/
-  function CanvasState(canvas){
-    this.canvas = canvas;
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.context = canvas.getContext('2d');
+    	var html = document.body.parentNode;
+    	canvas.htmlTop = html.offsetTop;
+    	canvas.htmlLeft = html.offsetLeft;
+    	
+		canvas.addEventListener('selectstart', function(e) {
+      		e.preventDefault();
+      		return false;
+    	}, false);
+		
+		canvas.addEventListener('mousemove', function(e){
+	      mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+	      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+	      if(dragging){
+	      	selection.push({x: (mouse.x - canvas.dragoffx), y: (mouse.y - canvas.dragoffy)});
+        	valid = false;
+          }
+          if (resizing){
+        	mouseMoveSelected(e,selection);
+      	  }
+		}, false);
 
-    var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-      this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
-      this.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
-      this.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
-      this.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
-    }
+    	canvas.addEventListener('touchmove', function(e){
+    		mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
+    		mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
+      
+      		if(dragging){
+        	selection.push(x: (mouse.x - e.touches[0].pageX), y: (mouse.y - e.touches[0].pageY));
+        	valid = false;
+      		}
 
-    var html = document.body.parentNode;
-    this.htmlTop = html.offsetTop;
-    this.htmlLeft = html.offsetLeft;
-
-    this.valid = false; // when set to false, the canvas will redraw everything
-    this.shapes = []; // the collection of things to be drawn
-    this.dragging = false; // Keep track of when we are dragging
-    this.selection = null; // the current selected object. In the future we could turn this into an array for multiple selection
-    this.dragoffx = 0; // See mousedown and mousemove events for explanation
-    this.dragoffy = 0;
-
-    var myState = this;
-
-    canvas.addEventListener('selectstart', function(e) {
-      e.preventDefault();
-      return false;
-    }, false);
-
-
-    canvas.addEventListener('mousemove', function(e){
-      mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-
-      if(myState.dragging){
-        myState.selection.x = mouse.x - myState.dragoffx;
-        myState.selection.y = mouse.y - myState.dragoffy;
-        myState.valid = false;
-      }
-
-      if(myState.resizing){
-        mouseMoveSelected(e, myState.selection);
-      }
-
-    }, false);
+    	}, false);
 
 
-    canvas.addEventListener('touchmove', function(e){
-      mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
-      mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
-      if(myState.dragging){
-        mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-        start_mouse.x = mouse.x;
-        start_mouse.y = mouse.y;
-        myState.selection.x = mouse.x - e.touches[0].pageX;
-        myState.selection.y = mouse.y - e.touches[0].pageY;
-        myState.valid = false;
-      }
+    	canvas.addEventListener('mousedown', function(e){
+      		context.lineWidth = curThickness;
+      		context.lineJoin = 'round';
+      		context.lineCap = 'round';
+      		context.strokeStyle = curColour;
+      		context.fillstyle =curColour;
 
-      if(myState.resizing){
-        mouseMoveSelected(e, myState.selection);
-      }
-    }, false);
+      		$("#thickmenu").addClass("hide");
 
-
-    canvas.addEventListener('mousedown', function(e){
-      myState.context.lineWidth = curThickness;
-      myState.context.lineJoin = 'round';
-      myState.context.lineCap = 'round';
-      myState.context.strokeStyle = curColour;
-      myState.context.fillstyle =curColour;
-
-      $("#thickmenu").addClass("hide");
-
-      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+      		mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      		mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
     
-      start_mouse.x = mouse.x;
-      start_mouse.y = mouse.y;
+      		start_mouse.x = mouse.x;
+      		start_mouse.y = mouse.y;
 
-      points.push({x:mouse.x, y:mouse.y});
+      		points.push({x:mouse.x, y:mouse.y});
 
-      if(tool == 'line'){
-        canvas.addEventListener('mousemove', Line.draw(context), false );
-        myState.addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		if(tool == 'line'){
+        		canvas.addEventListener('mousemove', Line.draw(), false );
+        		addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y));
+      		}
 
-      else if(tool == 'rect') {
-        canvas.addEventListener('mousemove', Rectangle.draw(context), false );
-        myState.addShape(new Rectangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if(tool == 'rect') {
+        		canvas.addEventListener('mousemove', Rectangle.draw(), false );
+        		addShape(new Rectangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if(tool == 'brush'){
-        onBrush();
-        canvas.addEventListener('mousemove', FreeForm.draw(context), false );
-        myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if(tool == 'brush'){
+        		onBrush();
+        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
+        		addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if(tool == 'pencil'){
-        onPencil();
-        canvas.addEventListener('mousemove', FreeForm.draw(context), false );
-        myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if(tool == 'pencil'){
+        		onPencil();
+        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
+        		myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if(tool == 'select'){
-        canvas.addEventListener('mousemove', onSel, false);
-      }
+      		else if(tool == 'select'){
+        		canvas.addEventListener('mousemove', onSel, false);
+      		}
 
-      else if(tool == 'choose'){
-        console.log("choose");
-        canvas.addEventListener('mousemove', onChoose, false);
-      }
+      		else if(tool == 'choose'){
+        		console.log("choose");
+        		canvas.addEventListener('mousemove', onChoose, false);
+      		}
 
-      else if(tool == 'erase'){
-        canvas.addEventListener('mousemove', onErase, false);
-      }
+      		else if(tool == 'erase'){
+        		canvas.addEventListener('mousemove', onErase, false);
+      		}
 
-      else if(tool == 'circle'){
-        canvas.addEventListener('mousemove', Circle.draw(context), false );
-        myState.addShape(new Circle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if(tool == 'circle'){
+        		canvas.addEventListener('mousemove', Circle.draw(), false );
+        		addShape(new Circle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if(tool == 'oval'){
-        canvas.addEventListener('mousemove', Oval.draw(context), false );
-        myState.addShape(new Oval(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if(tool == 'oval'){
+        		canvas.addEventListener('mousemove', Oval.draw(), false );
+        		addShape(new Oval(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if (tool == 'square'){
-        canvas.addEventListener('mousemove', Square.draw(context), false );
-        myState.addShape(new Square(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+     		else if (tool == 'square'){
+        		canvas.addEventListener('mousemove', Square.draw(), false );
+        		addShape(new Square(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if( tool == 'cline'){
-       canvas.addEventListener('mousemove', CLine.draw(context), false );
-       myState.addShape(new CLine(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if( tool == 'cline'){
+       			canvas.addEventListener('mousemove', CLine.draw(), false );
+       			addShape(new CLine(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+     		 }
 
-      else if (tool == 'triangle'){
-        canvas.addEventListener('mousemove', Triangle.draw(context), false );
-        myState.addShape(new Triangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if (tool == 'triangle'){
+        		canvas.addEventListener('mousemove', Triangle.draw(), false );
+        		addShape(new Triangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if (tool == 'diam'){
-        canvas.addEventListener('mousemove', Diamond.draw(context), false );
-        myState.addShape(new Diamond(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if (tool == 'diam'){
+        		canvas.addEventListener('mousemove', Diamond.draw(), false );
+        		addShape(new Diamond(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if (tool == 'heart'){
-        canvas.addEventListener('mousemove', Heart.draw(context), false );
-        myState.addShape(new Heart(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if (tool == 'heart'){
+        		canvas.addEventListener('mousemove', Heart.draw(), false );
+       			 addShape(new Heart(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      else if (tool == 'text'){
-       canvas.addEventListener('mousemove', Texts.draw(context), false );
-       myState.addShape(new Texts(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-      }
+      		else if (tool == 'text'){
+       			canvas.addEventListener('mousemove', Texts.draw(), false );
+       			addShape(new Texts(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-    }, false);
+    	}, false);
 
     canvas.addEventListener('mouseup', function(e){
-      myState.dragging = false;
-      myState.resizing = false;
+      dragging = false;
+      resizing = false;
       mouseUpSelected(e);
       uPush();
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
       console.log("push");
-      canvas.removeEventListener('mousemove', Texts.draw(context), false);
-      canvas.removeEventListener('mousemove', Heart.draw(context), false);
-      canvas.removeEventListener('mousemove', Diamond.draw(context), false);
+      canvas.removeEventListener('mousemove', Texts.draw, false);
+      canvas.removeEventListener('mousemove', Rectangle.draw, false);
+      canvas.removeEventListener('mousemove', Square.draw, false);
       canvas.removeEventListener('mousemove', onBrush, false);
       canvas.removeEventListener('mousemove', onErase,false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw, false);
-      canvas.removeEventListener('mousemove', draw,false);
+      canvas.removeEventListener('mousemove', Circle.draw, false);
+      canvas.removeEventListener('mousemove', Oval.draw, false);
+      canvas.removeEventListener('mousemove', Heart.draw, false);
+      canvas.removeEventListener('mousemove', Line.draw, false);
+      canvas.removeEventListener('mousemove', CLine.draw, false);
+      canvas.removeEventListener('mousemove', Triangle.draw, false);
+      canvas.removeEventListener('mousemove', Diamond.draw,false);
       canvas.removeEventListener('mousemove', onPencil, false);
       canvas.removeEventListener('mousemove', onSel, false);
       canvas.removeEventListener('mousemove', onChoose, false);
@@ -267,25 +245,22 @@ if(window.addEventListener) {
           textarea.value = '';
 
         }
-
         context.drawImage(canvas,0,0);
         
         points = [];
-
-        //uPush();
-
         frameDraw();
 
     }, false);
 
     canvas.addEventListener("touchstart", function(e){
-
       blockMenuHeaderScroll = true;
       context.lineWidth = curThickness;
-      context.lineJoin = 'round';
-      context.lineCap = 'round';
+      curLJoin = 'round';
+      context.lineJoin = curLJoin;
+      context.lineCap = curLJoin;
       context.strokeStyle = curColour;
       context.fillstyle =curColour;
+      
       $("#thickmenu").addClass("hide");
 
       mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
@@ -297,98 +272,112 @@ if(window.addEventListener) {
         points.push({x:mouse.x, y:mouse.y});
 
         if(tool == 'line'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+        		canvas.addEventListener('mousemove', Line.draw(), false );
+        		addShape(new Line(start_mouse.x, start_mouse.y, mouse.x,mouse.y));
+      		}
 
-        else if(tool == 'rect') {
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if(tool == 'rect') {
+        		canvas.addEventListener('mousemove', Rectangle.draw(), false );
+        		addShape(new Rectangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if(tool == 'brush'){
-          canvas.addEventListener('touchmove', onBrush, false);
-        }
+      		else if(tool == 'brush'){
+        		onBrush();
+        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
+        		addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if(tool == 'pencil'){
-          canvas.addEventListener('touchmove', onPencil, false);
-        }
+      		else if(tool == 'pencil'){
+        		onPencil();
+        		canvas.addEventListener('mousemove', FreeForm.draw(), false );
+        		myState.addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if(tool == 'select'){
-          canvas.addEventListener('touchmove', onSel, false);
-        }
+      		else if(tool == 'select'){
+        		canvas.addEventListener('mousemove', onSel, false);
+      		}
 
-        else if(tool == 'choose'){
-          console.log("choose");
-          canvas.addEventListener('touchmove', onChoose, false);
-        }
+      		else if(tool == 'choose'){
+        		console.log("choose");
+        		canvas.addEventListener('mousemove', onChoose, false);
+      		}
 
-        else if(tool == 'erase'){
-          canvas.addEventListener('touchmove', onErase, false);
-        }
+      		else if(tool == 'erase'){
+        		canvas.addEventListener('mousemove', onErase, false);
+      		}
 
-        else if(tool == 'circle'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if(tool == 'circle'){
+        		canvas.addEventListener('mousemove', Circle.draw(), false );
+        		addShape(new Circle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if(tool == 'oval'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if(tool == 'oval'){
+        		canvas.addEventListener('mousemove', Oval.draw(), false );
+        		addShape(new Oval(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if (tool == 'square'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+     		else if (tool == 'square'){
+        		canvas.addEventListener('mousemove', Square.draw(), false );
+        		addShape(new Square(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if( tool == 'cline'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if( tool == 'cline'){
+       			canvas.addEventListener('mousemove', CLine.draw(), false );
+       			addShape(new CLine(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+     		 }
 
-        else if (tool == 'triangle'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if (tool == 'triangle'){
+        		canvas.addEventListener('mousemove', Triangle.draw(), false );
+        		addShape(new Triangle(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if (tool == 'diam'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if (tool == 'diam'){
+        		canvas.addEventListener('mousemove', Diamond.draw(), false );
+        		addShape(new Diamond(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if (tool == 'heart'){
-          canvas.addEventListener('touchmove',draw, false);
-        }
+      		else if (tool == 'heart'){
+        		canvas.addEventListener('mousemove', Heart.draw(), false );
+       			 addShape(new Heart(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-        else if (tool == 'text'){
-          canvas.addEventListener('touchmove', draw, false);
-        }
+      		else if (tool == 'text'){
+       			canvas.addEventListener('mousemove', Texts.draw(), false );
+       			addShape(new Texts(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      		}
 
-      }, false);
+    	}, false);
 
       canvas.addEventListener('touchend', function(e){
-      blockMenuHeaderScroll = false;
-      uPush();
-      last_mouse.x = mouse.x;
-      last_mouse.y = mouse.y;
-      console.log("push");
-      canvas.removeEventListener('touchmove', Line.draw(context), false);
-      canvas.removeEventListener('touchmove', Triangle.draw(context), false);
-      canvas.removeEventListener('touchmove', Rectangle.draw(context), false);
-      canvas.removeEventListener('touchmove', onBrush, false);
-      canvas.removeEventListener('touchmove', onErase,false);
-      canvas.removeEventListener('touchmove', Square.draw(context), false);
-      canvas.removeEventListener('touchmove', Heart.draw(context), false);
-      canvas.removeEventListener('touchmove', Oval.draw(context), false);
-      canvas.removeEventListener('touchmove', CLine.draw(context), false);
-      canvas.removeEventListener('touchmove', Diamond.draw(context), false);
-      canvas.removeEventListener('touchmove', Circle.draw(context), false);
-      canvas.removeEventListener('touchmove', Texts.draw(context), false);
-      canvas.removeEventListener('touchmove', onPencil, false);
-      canvas.removeEventListener('touchmove', onSel, false);
-      canvas.removeEventListener('touchmove', onChoose, false);
+      	blockMenuHeaderScroll = false;
+      	uPush();
+      	last_mouse.x = mouse.x;
+      	last_mouse.y = mouse.y;
+      	console.log("push");
+      	canvas.removeEventListener('touchmove', Line.draw, false);
+      	canvas.removeEventListener('touchmove', Triangle.draw, false);
+      	canvas.removeEventListener('touchmove', Rectangle.draw, false);
+      	canvas.removeEventListener('touchmove', onBrush, false);
+      	canvas.removeEventListener('touchmove', onErase,false);
+      	canvas.removeEventListener('touchmove', Square.draw, false);
+      	canvas.removeEventListener('touchmove', Heart.draw, false);
+      	canvas.removeEventListener('touchmove', Oval.draw, false);
+      	canvas.removeEventListener('touchmove', CLine.draw, false);
+      	canvas.removeEventListener('touchmove', Diamond.draw, false);
+      	canvas.removeEventListener('touchmove', Circle.draw, false);
+      	canvas.removeEventListener('touchmove', Texts.draw, false);
+      	canvas.removeEventListener('touchmove', onPencil, false);
+      	canvas.removeEventListener('touchmove', onSel, false);
+      	canvas.removeEventListener('touchmove', onChoose, false);
       
-      if(tool == 'select'){
+      	if(tool == 'select'){
           context.setLineDash([]);
           context.lineWidth = curThickness;
         }
 
         if (tool == 'text'){
 
-          var lines = textarea.value.split('\n');
+        var lines = textarea.value.split('\n');
         var processed_lines= [];
 
         for (var i = 0; i< lines.length; i++){
@@ -441,9 +430,7 @@ if(window.addEventListener) {
         }
 
         context.drawImage(canvas,0,0);
-
         points = [];
-
         frameDraw();
 
     }, false);
@@ -459,238 +446,232 @@ if(window.addEventListener) {
 
       points.push({x:mouse.x, y:mouse.y});
 
-      var shapes = myState.shapes;
       var l = shapes.length;
       var tmpSelected = false;
       for (var i = l - 1; i >= 0; i--) {
-        var mySel = shapes[i];
-        if (shapes[i].contains(mouse.x, mouse/y) && tmpSelected === false) {
-          if (myState.selection === mySel) {
-            if (shapes[i].touchedAtHandles(mouse.x, mouse.y)) {
-              mouseDownSelected(e, mySel);
-              myState.resizing = true;
-            } 
-            else {
-              myState.dragoffx = mx - mySel.x;
-              myState.dragoffy = my - mySel.y;
-              myState.dragging = true;
-            }
-          }
-          myState.selection = mySel;
-          mySel.selected = true;
-          myState.valid = false;
-          tmpSelected = true;
-        } 
-        else {
-          mySel.selected = false;
-          myState.valid = false;
-        }
+      	for (var j = selection.length - 1; j>>=0; j--){
+        	var mySel = shapes[i];
+       		 if (shapes[i].contains(selection[j]) && tmpSelected === false) {
+          		if (selection === mySel) {
+            		if (shapes[i].touchedAtHandles(mouse.x, mouse.y)) {
+              			mouseDownSelected(e, mySel);
+              			resizing = true;
+            		} 
+           			else {
+              			canvas.dragoffx = mouse.x - mySel.x;
+              			canvas.dragoffy = mouse.y - mySel.y;
+              			dragging = true;
+            		}
+          		}
+          		selection = mySel;
+          		canvas.selected = true;
+          		valid = false;
+          		tmpSelected = true;
+       		 } 
+        	else {
+        		mySel.selected = false;
+          		valid = false;
+        	}
+      	}
       }
       if (tmpSelected === false) {
-        myState.selection = null;
+      	 	selection = [];
       }
     }, false);
 
 
-    // mouse down handler for selected state
-  mouseDownSelected = function(e, shape) {
-    mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-    
-      start_mouse.x = mouse.x;
-      start_mouse.y = mousse.y;
-    var mouseX = mouse.x;
-    var mouseY = mouse.y;
-    var self = shape;
+  	mouseDownSelected = function(e, shape) {
+    	mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      	mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+      	start_mouse.x = mouse.x;
+      	start_mouse.y = mouse.y;
+      	
+    	var self = shape;
 
-    // if there isn't a rect yet
-    if (self.w === undefined) {
-      self.x = mouseY;
-      self.y = mouseX;
-      myState.dragBR = true;
-    }
+    	// if there isn't a rect yet
+    	if (self.w === undefined) {
+      		self.x = mouse.y;
+      		self.y = mouse.x;
+      		canvas.dragBR = true;
+    	}
+    	// 4 cases:
+    	// 1. top left
+    	else if (checkCloseEnough(mouse.x, self.x, self.closeEnough) && checkCloseEnough(mouse.y, self.y, self.closeEnough)) {
+      		canvas.dragTL = true;
+      		e.target.style.cursor='nw-resize';
+    	}
+    	// 2. top right
+    	else if (checkCloseEnough(mouse.x, self.x + self.w, self.closeEnough) && checkCloseEnough(mouse.y, self.y, self.closeEnough)) {
+      		canvas.dragTR = true;
+      		e.target.style.cursor='ne-resize';
+    	}
+    	// 3. bottom left
+    	else if (checkCloseEnough(mouse.x, self.x, self.closeEnough) && checkCloseEnough(mouse.y, self.y + self.h, self.closeEnough)) {
+      		canvas.dragBL = true;
+      		e.target.style.cursor='sw-resize';
+    	}
+    	// 4. bottom right
+    	else if (checkCloseEnough(mouse.x, self.x + self.w, self.closeEnough) && checkCloseEnough(mouse.y, self.y + self.h, self.closeEnough)) {
+      		canvas.dragBR = true;
+      		e.target.style.cursor='se-resize';
+    	}
+    	// (5.) none of them
+    	else {
+      		// handle not resizing
+    	}
+    	valid = false; // something is resizing so we need to redraw
+  	};
+  	
+  	mouseUpSelected = function(e) {
+    	canvas.dragTL = canvas.dragTR = canvas.dragBL = canvas.dragBR = false;
+  	};
+  	
+  	mouseMoveSelected = function(e, shape) {
+    	mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      	mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+      	start_mouse.x = mouse.x;
+      	start_mouse.y = mouse.y;
 
-    // 1. top left
-    else if (checkCloseEnough(mouseX, self.x, self.closeEnough) && checkCloseEnough(mouseY, self.y, self.closeEnough)) {
-      myState.dragTL = true;
-      e.target.style.cursor='nw-resize';
-    }
-    // 2. top right
-    else if (checkCloseEnough(mouseX, self.x + self.w, self.closeEnough) && checkCloseEnough(mouseY, self.y, self.closeEnough)) {
-      myState.dragTR = true;
-      e.target.style.cursor='ne-resize';
-    }
-    // 3. bottom left
-    else if (checkCloseEnough(mouseX, self.x, self.closeEnough) && checkCloseEnough(mouseY, self.y + self.h, self.closeEnough)) {
-      myState.dragBL = true;
-      e.target.style.cursor='sw-resize';
-    }
-    // 4. bottom right
-    else if (checkCloseEnough(mouseX, self.x + self.w, self.closeEnough) && checkCloseEnough(mouseY, self.y + self.h, self.closeEnough)) {
-      myState.dragBR = true;
-      e.target.style.cursor='se-resize';
-    }
-    // (5.) none of them
-    else {
-      // handle not resizing
-    }
-    myState.valid = false; // something is resizing so we need to redraw
-  };
+    	if (canvas.dragTL) {
+      		e.target.style.cursor='nw-resize';
+      		// switch to top right handle
+      		if (((shape.x + shape.w) - mouse.x) < 0) {
+        		canvas.dragTL = false;
+        		canvas.dragTR = true;
+      		}
+      		// switch to top bottom left
+      		if (((shape.y + shape.h) - mouse.y) < 0) {
+        		canvas.dragTL = false;
+        		canvas.dragBL = true;
+      		}
+      		shape.w += shape.x - mouse.x;
+      		shape.h += shape.y - mouse.y;
+      		shape.x = mouse.x;
+      		shape.y = mouse.y;
+    	} 
+    	else if (canvas.dragTR) {
+      		e.target.style.cursor='ne-resize';
+      		// switch to top left handle
+      		if ((shape.x - mouse.x) > 0) {
+        	canvas.dragTR = false;
+        	canvas.dragTL = true;
+      	}
+      	// switch to bottom right handle
+      	if (((shape.y + shape.h) - mouse.x) < 0) {
+        	canvas.dragTR = false;
+        	canvas.dragBR = true;
+      	}
+      	shape.w = Math.abs(shape.x - mouse.x);
+      	shape.h += shape.y - mouse.y;
+      	shape.y = mouse.y;
+    	} 
+    	else if (canvas.dragBL) {
+      		e.target.style.cursor='sw-resize';
+      		// switch to bottom right handle
+      		if (((shape.x + shape.w) - mouse.x) < 0) {
+        		canvas.dragBL = false;
+        		canvas.dragBR = true;
+      		}
+      		// switch to top left handle
+      		if ((shape.y - mouse.y) > 0) {
+        		canvas.dragBL = false;
+        		canvas.dragTL = true;
+      		}
+      		shape.w += shape.x - mouse.x;
+      		shape.h = Math.abs(shape.y - mouse.x);
+     	 	shape.x = mouse.x;
+    	} 
+    	else if (canvas.dragBR) {
+      		e.target.style.cursor='se-resize';
+      		// switch to bottom left handle
+      		if ((shape.x - mouse.x) > 0) {
+        		canvas.dragBR = false;
+        		canvas.dragBL = true;
+      		}
+      		// switch to top right handle
+      		if ((shape.y - mouse.y) > 0) {
+        		canvas.dragBR = false;
+       			 canvas.dragTR = true;
+      		}
+      		shape.w = Math.abs(shape.x - mouse.x);
+      		shape.h = Math.abs(shape.y - mouse.y);
+    	}
 
-
-  mouseUpSelected = function(e) {
-    myState.dragTL = myState.dragTR = myState.dragBL = myState.dragBR = false;
-  };
-
-
-  mouseMoveSelected = function(e, shape) {
-    mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-    
-      start_mouse.x = mouse.x;
-      start_mouse.y = mouse.y;
-    var mouseX = mouse.x;
-    var mouseY = mouse.y;
-
-    if (myState.dragTL) {
-      e.target.style.cursor='nw-resize';
-      // switch to top right handle
-      if (((shape.x + shape.w) - mouseX) < 0) {
-        myState.dragTL = false;
-        myState.dragTR = true;
-      }
-      // switch to top bottom left
-      if (((shape.y + shape.h) - mouseY) < 0) {
-        myState.dragTL = false;
-        myState.dragBL = true;
-      }
-      shape.w += shape.x - mouseX;
-      shape.h += shape.y - mouseY;
-      shape.x = mouseX;
-      shape.y = mouseY;
-    } else if (myState.dragTR) {
-      e.target.style.cursor='ne-resize';
-      // switch to top left handle
-      if ((shape.x - mouseX) > 0) {
-        myState.dragTR = false;
-        myState.dragTL = true;
-      }
-      // switch to bottom right handle
-      if (((shape.y + shape.h) - mouseY) < 0) {
-        myState.dragTR = false;
-        myState.dragBR = true;
-      }
-      shape.w = Math.abs(shape.x - mouseX);
-      shape.h += shape.y - mouseY;
-      shape.y = mouseY;
-    } else if (myState.dragBL) {
-      e.target.style.cursor='sw-resize';
-      // switch to bottom right handle
-      if (((shape.x + shape.w) - mouseX) < 0) {
-        myState.dragBL = false;
-        myState.dragBR = true;
-      }
-      // switch to top left handle
-      if ((shape.y - mouseY) > 0) {
-        myState.dragBL = false;
-        myState.dragTL = true;
-      }
-      shape.w += shape.x - mouseX;
-      shape.h = Math.abs(shape.y - mouseY);
-      shape.x = mouseX;
-    } else if (myState.dragBR) {
-      e.target.style.cursor='se-resize';
-      // switch to bottom left handle
-      if ((shape.x - mouseX) > 0) {
-        myState.dragBR = false;
-        myState.dragBL = true;
-      }
-      // switch to top right handle
-      if ((shape.y - mouseY) > 0) {
-        myState.dragBR = false;
-        myState.dragTR = true;
-      }
-      shape.w = Math.abs(shape.x - mouseX);
-      shape.h = Math.abs(shape.y - mouseY);
-    }
-
-    myState.valid = false; // something is resizing so we need to redraw
-  };
-  
-    this.selectionColor = '#000000';
-    this.selectionWidth = 0.5;
-    this.interval = 30;
+    	valid = false; // something is resizing so we need to redraw
+  	};
+  	
+  	canvas.selectionColor = '#000000';
+    canvas.selectionWidth = 0.5;
+    canvas.interval = 30;
     setInterval(function() {
-    myState.draw();
-    }, myState.interval);
+    	draw();
+    }, canvas.interval);
 
+	var draw = function() {
+		if (!valid) {
+    		clear();//might bug out
+			var l = shapes.length;
+    		for (var i = 0; i < l; i++) {
+      			var shape = shapes[i];
+      			if (selection !== shape) {
+        			if (shape.x > canvas.width || shape.y > canvas.height || shape.x + shape.w < 0 || shape.y + shape.h < 0) 
+          				continue;
+        			shapes[i].draw();
+      			}
+   		 	}
 
-CanvasState.prototype.draw = function() {
-  if (!this.valid) {
-    var context = this.context;
-    var shapes = this.shapes;
-    this.clear();
-
-    var l = shapes.length;
-    for (var i = 0; i < l; i++) {
-      var shape = shapes[i];
-      if (this.selection !== shape) {
-        if (shape.x > this.width || shape.y > this.height || shape.x + shape.w < 0 || shape.y + shape.h < 0) 
-          continue;
-        shapes[i].draw(context);
-      }
-    }
    
-    if (this.selection !== null) {
-      this.selection.draw(context);
-    }
+    		if (selection !== []) {
+      			selection.draw();
+    		}
 
-    if (this.selection !== null) {
-      context.strokeStyle = this.selectionColor;
-      context.lineWidth = this.selectionWidth;
-      var mySel = this.selection;
-      context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
-    }
+   			 if (selection !== []) {
+      			context.strokeStyle = canvas.selectionColor;
+      			context.lineWidth = canvas.selectionWidth;
+      			var mySel = selection;
+      			context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
+    		}
+    		valid = true;
+ 		 }
+	};
 
-    this.valid = true;
-  }
-};
 
+	var addShape = function(shape) {
+  		shapes.push(shape);
+  		valid = false;
+	};
 
-CanvasState.prototype.addShape = function(shape) {
-  this.shapes.push(shape);
-  this.valid = false;
-};
-
-CanvasState.prototype.clear = function() {
-  this.context.clearRect(0, 0, this.width, this.height);
-};
+	var clear = function() {
+  		context.clearRect(0, 0, this.width, this.height);
+	};
 
 
     /***********SHAPE CONSTRUCTOR***********/
-    function Shape(sx, sy, ex, ey, fill){
-      this.sx = sx || 0;
-      this.sy = sy || 0;
-      this.ex = ex || 0;
-      this.ey = ey || 0;
-      this.fill = fill || 'none';
-      this.selected = false;
-      this.closeEnough = 8;      
-      this.stroke = curColour;
-      this.lw = curThickness;
-      this.lj = curLJoin;
-      this.colour = curColour;
+    function Shape(name, sx, sy, ex, ey, fill){
+    	this.name = name;
+    	this.sx = sx || 0;
+		this.sy = sy || 0;
+		this.ex = ex || 0;
+		this.ey = ey || 0;
+		this.fill = fill || 'none';
+		this.selected = false;
+		this.closeEnough = 8; 
+		this.frame = curFrame;           
+		this.stroke = curColour;
+		this.lw = curThickness;
+		this.lj = curLJoin;
+		this.colour = curColour;
       
     }
 
     Shape.prototype.toString=  function(){
-      consol.log('Shape at' + 'Start x:' + this.sx + ' Start y:' + this.sy + ' End x:' + this.ex + ' End y:' + this.ey );
+      console.log('Shape at' + 'Start x:' + this.sx + ' Start y:' + this.sy + ' End x:' + this.ex + ' End y:' + this.ey );
     };
 
     /********************** STRAIGHT LINE FUNCTION *********************/
 
-    function Line(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Line(name,sx, sy, ex, ey, fill){
+      Shape.call(this, name, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -700,7 +681,7 @@ CanvasState.prototype.clear = function() {
 
     Line.prototype = subclassOf(Shape);
 
-    Line.prototype.draw = function(context){
+    Line.prototype.draw = function(){
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(this.sx, this.sy);
@@ -718,8 +699,8 @@ CanvasState.prototype.clear = function() {
     };
 
     /********************** TRIANGLE FUNCTION *********************/
-    function Triangle(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Triangle(name, sx, sy, ex, ey, fill){
+      Shape.call(this, name, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -728,7 +709,7 @@ CanvasState.prototype.clear = function() {
 
     Triangle.prototype = subclassOf(Shape);
 
-    Triangle.prototype.draw = function(context){     
+    Triangle.prototype.draw = function(){     
       context.fillstyle = this.fill;
       context.beginPath();
       context.moveTo(this.x, this.y);

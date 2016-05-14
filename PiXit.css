@@ -301,3 +301,12 @@ figure{
 .btn:active{
 	background-color:#325E4C;
 }
+.tool-btn:hover{
+	background-color:#259C6D;
+}
+.tool-btn:active{
+	background-color:#325E4C;
+}
+.active-tool{
+	background-color:#325E4C;
+}

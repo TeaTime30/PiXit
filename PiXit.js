@@ -23,6 +23,7 @@ if(window.addEventListener) {
   		var container_style = getComputedStyle(container);  
  		canvas.width = parseInt(container_style.getPropertyValue('width'));
   		canvas.height = parseInt(container_style.getPropertyValue('height'));
+		activeTool();
 		showSelected();
 		frameDraw();
  		/********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
@@ -415,14 +416,25 @@ if(window.addEventListener) {
 	
 		/**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
  	 	$('#tools div').on('click', function(){
+			
  	 		tool = $(this).attr('id');
+			activeTool();
  	 		console.log("Tool selected: " + tool);
  		})
 
  		$('#shapes div').on('click', function(){
   			tool = $(this).attr('id');
-  			console.log("Tool selected: " + tool);
+			activeTool();
+			console.log("Tool selected: " + tool);
  		})
+		function activeTool(){
+		$("#tools div").removeClass("tool-btn active-tool");
+		$("#tools div").addClass("tool-btn");
+		$("#shapes div").removeClass("tool-btn active-tool");
+		$("#shapes div").addClass("tool-btn");
+		;
+		$("#"+tool).addClass("active-tool");
+		}
 
 		/***********************SELECTING A COLOUR*************************/
  		var clr = $("#colour");
@@ -445,10 +457,16 @@ if(window.addEventListener) {
 				thickTiles[i].addEventListener('click', function(e) {
 					curThickness = parseInt(this.id);
 					temp_context.lineWidth = curThickness;
+					
+					
 
 				});
 			}
+			$(document).on( 'click',".thick",function(e) {
+			$("#thickmenu").addClass("hide");})
 			tool="brush";
+			activeTool();
+			
 		});
 		
 	

@@ -24,7 +24,7 @@ if(window.addEventListener) {
  		canvas.width = parseInt(container_style.getPropertyValue('width'));
   		canvas.height = parseInt(container_style.getPropertyValue('height'));
 		showSelected();
-
+		frameDraw();
  		/********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
 
   		var temp_canvas = document.createElement('canvas');

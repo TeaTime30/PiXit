@@ -43,18 +43,36 @@
 
 ul{
 	list-style-type: none;
+	margin-top:0px;
+	padding:0px;
+}
+li{
+	height:10px;
+	padding:5px 10px 5px 10px;
+	width:80px;
+
+}
+
+li:hover{
+	background-color: #259C6D;
+
+}
+li:active{
+	background-color:#325E4C;
+}
+li span{
+	float:right;
+	font-size:12px;
 }
 
 #thickmenu{
-	background-color: #E2D38A;
-	height: 110px;
-	width: 78px;
+	background-color: #0BC37B;
+	
 	position: absolute;
+	z-index:2;
 }
 
-.thick {
-	margin-bottom: 10px;
-}
+
 
 .hide{
 	display:none;
@@ -93,6 +111,7 @@ ul{
 	height: 130px;
 	border-bottom: 1px solid black;
 }
+
 
 
 #colour{
@@ -252,8 +271,12 @@ figure{
 }
 
 #colour-picker {
-    padding: 0px !important;
-    border: 0px !important;
+    padding: 0px;
+    border: 0px ;
+	
+}
+#picker{
+	padding-top: 15px;
 }
 #object-tab{
 	height: 440px;
@@ -263,5 +286,18 @@ figure{
 	border:1px solid black;
 }
 .active-frame{
-	border:2px solid blue;
+	border:4px solid #0BC37B;
+}
+.btn{
+	text-align:center;
+	padding:5px 5px 5px 5px;
+	background-color:#0BC37B;
+	border-radius:8px;
+	color:white;
+}
+.btn:hover{
+	background-color: #259C6D ;
+}
+.btn:active{
+	background-color:#325E4C;
 }

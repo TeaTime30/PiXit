@@ -1,0 +1,8 @@
+#0BC37B -normal
+#259C6D -hover
+#325E4C -clicked
+
+Menu background:- #a6de62
+signin background:- #579CD5
+about background:- #EFEDC2
+git/pin background:- #262641

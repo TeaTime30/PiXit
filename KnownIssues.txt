@@ -35,3 +35,17 @@
 	(can add close button on playback)
 
 2.Change scope of undo (global). Allow for undo of all functions.
+
+==================================================================
+-		UI Fixes needed											 -
+==================================================================
+1.Interaction with buttons:
+	-on hover
+	-when selected
+2. Change "Apply colors" button (done)
+3.Update icon images
+4.finish the UI for objects
+5.finish the UI for objects timeline
+6.A screen for displaying animation
+7.fix thickness button (done)
+

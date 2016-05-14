@@ -448,7 +448,9 @@ if(window.addEventListener) {
 
 				});
 			}
+			tool="brush";
 		});
+		
 	
 
 		/*********************** UNDO ARRAY FUNCTION*************************/

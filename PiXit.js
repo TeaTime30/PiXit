@@ -8,11 +8,14 @@ var undoArr = new Array();
 var redoArr = new Array();
 var selectArray = new Array();
 var tool = 'brush'; //Default tool
-var tempFile = new Array();
+var shapeArray = new Array();
+var frameArray = new Array();
+frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n@@\n");
 var delFile = new Array();
 var sanimid = 0;
 var lineStyle = "round";
 var fillColour = "#ffffff"
+var testFile = "";
 
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
@@ -183,11 +186,11 @@ if(window.addEventListener) {
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
         if(addShape){
-          tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
+          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n**\n");
           addShape = false;
         }
         else if(addFree){
-          tempFile.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>");
+          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n**\n");
           addFree = false;
         }
       temp_canvas.removeEventListener('mousemove', onLine, false);
@@ -361,11 +364,11 @@ if(window.addEventListener) {
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
         if(addShape){
-          tempFile.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n\n");
+          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n##\n");
           addShape = false;
         }
         else if(addFree){
-          tempFile.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>");
+          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n**\n");
           addFree = false;
         }
         console.log("push");
@@ -472,6 +475,9 @@ if(window.addEventListener) {
         if (tool == 'save'){
           onSave();
         }
+        if (tool == 'open'){
+          onOpen();
+        }
     })
 
     /***********************SELECTING A COLOUR*************************/
@@ -517,7 +523,7 @@ if(window.addEventListener) {
 
     var undo = document.getElementById("undo");
     undo.addEventListener("click", undo1);
-    var fl = tempFile.pop();
+    var fl = shapeArray.pop();
     delFile.push(fl);
      function undo1 (e){
       if (undoindex > 0){   
@@ -562,23 +568,41 @@ if(window.addEventListener) {
 
 
     /*********************** OPEN ANIMATES FILE FUNCTION*************************/
-
+    var onOpen = function(){
+      console.log("Hello Open!");
+      var fileArr = testFile.split("&&");
+      var tempFrames = fileArr[1].split("@@");
+      tempFrames = tempFrames.splice(tempFrames.length-1, 1);
+      var tempShapes = fileArr[2].split("**");
+      tempShapes = tempShapes.splice(tempShapes.length-1, 1);
+      console.log(tempFrames);
+    }
 
 
     /*********************** SAVE ANIMATES FUNCTION***********************/
 
     var onSave = function(){
-      var rate = parseInt(document.getElementById('frms').value);
-      tempFile.push("<rate>" + rate + "</rate>");
+      var rate = "<rate>" + parseInt(document.getElementById('frms').value) + "</rate>\n";
       console.log("*************************************************NEW SCRIPT************************************************");
-      for(var i = 0; i < tempFile.length; i++){
-        console.log(tempFile[i])
-      }/*
+      console.log(rate);
+      testFile += rate + "&&\n";
+      console.log("&&");
+      for(var i = 0; i < frameArray.length; i++){
+        console.log(frameArray[i]);
+        testFile += frameArray[i];
+      }
+      console.log("&&");
+      testFile += "&&\n";
+      for(var i = 0; i < shapeArray.length; i++){
+        console.log(shapeArray[i]);
+        testFile += shapeArray[i];
+      }
+      /*
       console.log("print to file");
       var fh = fopen("test.xml", 3);
       if(fh != -1){
-        for(var i = 0; i < tempFile.length; i++){
-          fwrite(tempFile[i]);
+        for(var i = 0; i < shapeArray.length; i++){
+          fwrite(shapeArray[i]);
         }
       }
       fclose();
@@ -1056,6 +1080,7 @@ if(window.addEventListener) {
       reset1();
       shapeid = 0;
       curFrame++;
+      frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n@@\n");
       frameDraw();
     });
 
@@ -1085,6 +1110,13 @@ if(window.addEventListener) {
       $("#frmimg"+curFrame).after(img);
       reset1();
       curFrame++;
+      frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n@@\n");
+      for(var i = 0; i < shapeArray.length; i++){
+        if(shapeArray[i].includes("<frameid>" + (curFrame-1) + "</frameid>")) {
+          var copyInd = shapeArray[i].indexOf("<frameid>") + 9;
+          shapeArray.push(shapeArray[i].substring(0, copyInd) + curFrame + shapeArray[i].substring(copyInd+1));
+        } 
+      }
       frameDraw();
     });
 
@@ -1103,6 +1135,14 @@ if(window.addEventListener) {
         var curImg = new Image();
         curImg.src = images[images.length-1];
         context.drawImage(curImg,0,0);
+        var popped = frameArray.pop();
+        console.log(popped.indexOf("<frameid>") + 9);
+
+        for(var i = 0; i < shapeArray.length; i++){
+          if(shapeArray[i].includes("<frameid>" + (popped[popped.indexOf("<frameid>") + 9]) + "</frameid>")) {
+            shapeArray.splice(i, 1);
+          } 
+        }
         reset1();
       }   
 

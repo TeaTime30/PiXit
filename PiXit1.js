@@ -22,33 +22,40 @@ if(window.addEventListener) {
     $("#thickmenu").addClass("hide");
 		var canvas = document.getElementById('canvas1');
   	var context = canvas.getContext('2d');
+    var container = document.querySelector('#canvas');
+    var container_style = getComputedStyle(container);  
+    canvas.width = parseInt(container_style.getPropertyValue('width'));
+    canvas.height = parseInt(container_style.getPropertyValue('height'));
     canvas.dragoffy = 0;
   	canvas.dragoffx = 0;
     canvas.selection = null; // the current selected object. In the future we could turn this into an array for multiple selection
 
 
-		var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-      canvas.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
-	    canvas.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
-	    canvas.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
-	    canvas.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
-    }
+    /********************** INITIALISE TEXT CANVAS AND CONTEXT *********************/
+    var textarea = document.createElement('textarea');
+    textarea.id = 'text_tool';
+    container.appendChild(textarea);
 
-    var html = document.body.parentNode;
-    canvas.htmlTop = html.offsetTop;
-    canvas.htmlLeft = html.offsetLeft;
-    	
-		canvas.addEventListener('selectstart', function(e) {
-      e.preventDefault();
-      return false;
-    }, false);
+    var txt_context = document.createElement('div');
+    txt_context.style.display = 'none';
+    container.appendChild(txt_context);
+
+    textarea.addEventListener('mouseup', function(e){
+      canvas.removeEventListener('mousemove', Texts.draw,false);
+    },false);
+  
 
 
     /********************** CAPTURE MOUSE MOVEMENT *********************/
     var mouse = {x: 0, y: 0};
     var start_mouse = {x: 0, y:0};
     var last_mouse = {x: 0, y: 0};
+    
+      
+    canvas.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    }, false);
 		
 		canvas.addEventListener('mousemove', function(e){
 	    mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
@@ -84,7 +91,7 @@ if(window.addEventListener) {
       context.lineJoin = 'round';
       context.lineCap = 'round';
       context.strokeStyle = curColour;
-      context.fillstyle =curColour;
+      context.fillStyle =curColour;
 
       $("#thickmenu").addClass("hide");
 
@@ -107,8 +114,9 @@ if(window.addEventListener) {
 
       else if(tool == 'brush'){
         onBrush();
-        canvas.addEventListener('mousemove', FreeForm.draw, false );
         addShape(new FreeForm("FreeForm", curColour));
+        canvas.addEventListener('mousemove', FreeForm.draw, false );
+        
       }
 
       else if(tool == 'pencil'){
@@ -213,26 +221,26 @@ if(window.addEventListener) {
 
         for(var j; j< chars; j++){
           var text_node = document.createTextNode(lines[i][j]);
-          temp_txt_context.appendChild(text_node);
+          txt_context.appendChild(text_node);
 
-          temp_txt_context.style.position = 'absolute';
-          temp_txt_context.style.visibility = 'hidden';
-          temp_txt_context.style.display = 'block';
+          txt_context.style.position = 'absolute';
+          txt_context.style.visibility = 'hidden';
+          txt_context.style.display = 'block';
 
-          var width = temp_txt_context.offsetWidth;
-          var height = temp_txt_context.offsetHeight;
+          var width = txt_context.offsetWidth;
+          var height = txt_context.offsetHeight;
 
-          temp_txt_context.style.position = '';
-          temp_txt_context.style.visibility = '';
-          temp_txt_context.style.display = 'none';
+          txt_context.style.position = '';
+          txt_context.style.visibility = '';
+          txt_context.style.display = 'none';
 
           if (width > parseInt(textarea.style.width)) {
                      break;
                 }
             }
          
-          processed_lines.push(temp_txt_context.textContent);
-          temp_txt_context.innerHTML = '';
+          processed_lines.push(txt_context.textContent);
+          txt_context.innerHTML = '';
         }
      
         var ta_comp_style = getComputedStyle(textarea);
@@ -271,7 +279,7 @@ if(window.addEventListener) {
       context.lineJoin = curLJoin;
       context.lineCap = curLJoin;
       context.strokeStyle = curColour;
-      context.fillstyle =curColour;
+      context.fillStyle =curColour;
       
       $("#thickmenu").addClass("hide");
 
@@ -399,26 +407,26 @@ if(window.addEventListener) {
 
           for(var j; j< chars; j++){
             var text_node = document.createTextNode(lines[i][j]);
-            temp_txt_context.appendChild(text_node);
+            txt_context.appendChild(text_node);
 
-            temp_txt_context.style.position = 'absolute';
-            temp_txt_context.style.visibility = 'hidden';
-            temp_txt_context.style.display = 'block';
+            txt_context.style.position = 'absolute';
+            txt_context.style.visibility = 'hidden';
+            txt_context.style.display = 'block';
 
-            var width = temp_txt_context.offsetWidth;
-            var height = temp_txt_context.offsetHeight;
+            var width = txt_context.offsetWidth;
+            var height = txt_context.offsetHeight;
 
-            temp_txt_context.style.position = '';
-            temp_txt_context.style.visibility = '';
-            temp_txt_context.style.display = 'none';
+            txt_context.style.position = '';
+            txt_context.style.visibility = '';
+            txt_context.style.display = 'none';
 
             if (width > parseInt(textarea.style.width)) {
                        break;
                   }
               }
            
-              processed_lines.push(temp_txt_context.textContent);
-                temp_txt_context.innerHTML = '';
+              processed_lines.push(txt_context.textContent);
+                txt_context.innerHTML = '';
           }
        
           var ta_comp_style = getComputedStyle(textarea);
@@ -660,7 +668,7 @@ if(window.addEventListener) {
 
 
     /***********SHAPE CONSTRUCTOR***********/
-    function Shape(name, fill){
+    var Shape  = function(name, fill){
     	this.name = name;
     	this.sx = start_mouse.x;
   		this.sy = start_mouse.y;
@@ -675,7 +683,7 @@ if(window.addEventListener) {
   		this.lj = curLJoin;
   		this.colour = curColour;
       
-    }
+    };
 
     Shape.prototype.toString=  function(){
       console.log('Shape at' + 'Start x:' + this.sx + ' Start y:' + this.sy + ' End x:' + this.ex + ' End y:' + this.ey );
@@ -683,24 +691,27 @@ if(window.addEventListener) {
 
     /********************** STRAIGHT LINE FUNCTION *********************/
 
-    function Line (name,fill){
-      Shape.call(this, name, fill);
-      this.x = Math.min(this.ex, this.sx);
-      this.y = Math.min(this.ey, this.sy);
-      this.w = Math.abs(this.ex - this.sx);
-      this.h = Math.abs(this.ey - this.sy);
+    var Line = function (name,fill){
+      Shape.call(this, name, fill);    
            
-    }
+    };
 
     Line.prototype  = Object.create(Shape.prototype);
 
     Line.prototype.draw = function(){
-      context.fillstyle = this.fill;
+      this.x = Math.min(start_mouse.x, start_mouse.y);
+      this.y = Math.min(mouse.x, mouse.y);
+      this.w = Math.abs(mouse.x - start_mouse.x);
+      this.h = Math.abs(mouse.y - start_mouse.y);
+
+      context.fillStyle = this.fill;
       context.beginPath();
-      context.moveTo(this.sx, this.sy);
-      context.lineTo(this.ex, this.ey);
+      context.moveTo(start_mouse.x, start_mouse.y);
+      context.lineTo( mouse.x, mouse.y);
       context.stroke();
       context.closePath();
+
+      console.log(this.x, this.y, this.w, this.h);
 
       if (this.selected === true) {
         this.drawHandles(context);
@@ -712,18 +723,19 @@ if(window.addEventListener) {
     };
 
     /********************** TRIANGLE FUNCTION *********************/
-    function Triangle(name,fill){
+    var Triangle = function(name,fill){
       Shape.call(this, name, fill);
+    };
+
+    Triangle.prototype = Object.create(Shape.prototype);
+
+    Triangle.prototype.draw = function(){ 
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy); 
-    }
 
-    Triangle.prototype = Object.create(Shape.prototype);
-
-    Triangle.prototype.draw = function(){     
-      context.fillstyle = this.fill;
+      context.fillStyle = this.fill;
       context.beginPath();
       context.moveTo(this.x, this.y);
       context.lineTo(this.x + this.w / 2, this.y + this.h);
@@ -743,18 +755,18 @@ if(window.addEventListener) {
 
 
     /********************** DIAMOND FUNCTION *********************/
-    function Diamond(name, fill){
+    var Diamond = function(name, fill){
       Shape.call(this,name, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy); 
-    }
+    };
 
     Diamond.prototype = Object.create(Shape.prototype);
 
     Diamond.prototype.draw = function(){
-      context.fillstyle = this.fill;
+      context.fillStyle = this.fill;
       context.beginPath();
       context.moveTo(this.x, this.y);
       context.lineTo(this.x + this.w / 2, this.y + this.h);
@@ -776,18 +788,18 @@ if(window.addEventListener) {
 
 
     /********************** HEART FUNCTION *********************/
-    function Heart(name, fill){
+    var Heart = function(name, fill){
       Shape.call(this,name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy); 
-    }
+    };
 
     Heart.prototype = Object.create(Shape.prototype);
 
-    Heart.prototype.draw = function(context){
-      context.fillstyle = this.fill;
+    Heart.prototype.draw = function(){
+      context.fillStyle = this.fill;
       context.beginPath();
       context.moveTo(75,40);
                
@@ -815,18 +827,23 @@ if(window.addEventListener) {
 
 
     /********************** RECTANGLE FUNCTION *********************/
-    function Rectangle(name, fill){
+    var Rectangle = function(name, fill){
       Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy); 
-    }
+    };
 
     Rectangle.prototype = Object.create(Shape.prototype);
 
-    Rectangle.prototype.draw = function(context){
-      context.fillstyle = this.fill;
+    Rectangle.prototype.draw = function(){
+      console.log(this.fill);
+      console.log(this.sx);
+      console.log(this.sy);
+      console.log(this.ex);
+      console.log(this.sy);
+      context.fillStyle = this.fill;
       context.strokeRect(this.x, this.y, this.w, this.h);
 
       if (this.selected === true){
@@ -840,18 +857,18 @@ if(window.addEventListener) {
 
 
     /********************** SQUARE FUNCTION *********************/
-    function Square(name, fill){
+    var Square = function(name, fill){
       Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy); 
-    }
+    };
 
     Square.prototype = Object.create(Shape.prototype);
 
-    Square.prototype.draw = function(context){
-      context.fillstyle = this.fill;
+    Square.prototype.draw = function(){
+      context.fillStyle = this.fill;
       context.strokeRect(this.x, this.y, this.w, this.h);
 
       if (this.selected === true) {
@@ -865,17 +882,18 @@ if(window.addEventListener) {
 
 
     /********************** CIRCLE FUNCTION *********************/
-    function Circle(name, fill){
+    var Circle = function(name, fill){
       Shape.call(this, name, fill);
+      console.log(fill);
       this.x = (this.ex + this.sx) / 2;
       this.y = (this.ey + this.sy) / 2;
       this.radius = Math.max(Math.abs(this.ex - this.sx), Math.abs(this.ey - this.sy)) / 2;      
-    }
+    };
 
     Circle.prototype = Object.create(Shape.prototype);
 
-    Circle.prototype.draw = function(context){
-      context.fillstyle = this.fill;
+    Circle.prototype.draw = function(){
+      context.fillStyle = this.fill;
       context.beginPath();
       context.arc(this.x, this.y, this.radius,0, Math.PI*2, false);
       context.stroke();
@@ -892,18 +910,18 @@ if(window.addEventListener) {
 
 
     /********************** OVAL FUNCTION *********************/
-    function Oval(name, fill){
+    var Oval = function(name, fill){
       Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy);    
-    }
+    };
 
     Oval.prototype = Object.create(Shape.prototype);
 
-    Oval.prototype.draw = function(context){
-      context.fillstyle = this.fill;
+    Oval.prototype.draw = function(){
+      context.fillStyle = this.fill;
       var kappa = .5522848;
       ox = (w / 2) * kappa, // control point offset horizontal
       oy = (h / 2) * kappa, // control point offset vertical
@@ -933,18 +951,18 @@ if(window.addEventListener) {
 
 
 /********************** TEXT FUNCTION *********************/
-    function Texts(name,fill){
+    var Texts = function(name,fill){
       Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
       this.h = Math.abs(this.ey - this.sy);    
-    }
+    };
 
     Texts.prototype = Object.create(Shape.prototype);
 
-    Texts.prototype.draw = function(context){
-      textarea.fillstyle = this.fill;
+    Texts.prototype.draw = function(){
+      textarea.fillStyle = this.fill;
       textarea.style.left = this.x + 'px';
       textarea.style.top = this.y + 'px';
       textarea.style.width = this.w + 'px';
@@ -967,7 +985,7 @@ if(window.addEventListener) {
     /********************** CURVED LINE FUNCTION *********************/
       var points = [];
 
-     function CLine(name,fill){
+     var CLine = function(name,fill){
       points.push({x:mouse.x, y:mouse.y});
       Shape.call(this, name, fill);
       this.points = points;
@@ -976,12 +994,12 @@ if(window.addEventListener) {
       var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
       var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
       this.w = this.points[xmax].x - this.points[xmin].x;
-      this.h = this.points[ymax].y - this.point[ymin].y;
-    }
+      this.h = this.points[ymax].y - this.points[ymin].y;
+    };
 
     CLine.prototype = Object.create(Shape.prototype);
 
-    CLine.prototype.draw = function(context) {
+    CLine.prototype.draw = function() {
       if(this.points.length <5){
         var b = this.points[0];
         context.beginPath();
@@ -1019,7 +1037,7 @@ if(window.addEventListener) {
     /********************** FREEFORM FUNCTION *********************/
     var points = [];
 
-    function FreeForm(name,fill){
+    var FreeForm = function(name,fill){
       points.push({x:mouse.x, y:mouse.y});
       Shape.call(this,name, fill);
       this.points = points;
@@ -1029,13 +1047,13 @@ if(window.addEventListener) {
       var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
       var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
       this.w = this.points[xmax].x - this.points[xmin].x;
-      this.h = this.points[ymax].y - this.point[ymin].y;
-    }
+      this.h = this.points[ymax].y - this.points[ymin].y;
+    };
 
     FreeForm.prototype = Object.create(Shape.prototype);
     
 
-    FreeForm.prototype.draw = function(e){
+    FreeForm.prototype.draw = function(){
       
       if(this.points.length <3){
         var b = this.points[0];
@@ -1070,7 +1088,7 @@ if(window.addEventListener) {
 
   
     /***********SHAPE HANDLES***********/
-    Shape.prototype.drawhandles = function(context){
+    Shape.prototype.drawhandles = function(){
       drawBorder(this.x, this.y, this.closeEnough, context);
       drawBorder(this.x + this.w, this.y, this.closeEnough, context);
       drawBorder(this.x, this.y + this.h, this. closeEnough, context);
@@ -1158,7 +1176,7 @@ if(window.addEventListener) {
 
     curColour = 'white';  
     context.strokeStyle = curColour;
-    context.fillstyle =curColour;
+    context.fillStyle =curColour;
   
    points.push({x:mouse.x, y:mouse.y});
 

@@ -310,3 +310,31 @@ figure{
 .active-tool{
 	background-color:#325E4C;
 }
+.icon-btn:hover{
+	background-color: #259C6D ;
+}
+.icon-btn:active{
+	background-color:#325E4C;
+}
+.header{
+	background-color:#0BC37B;
+	height:30px;
+	padding:5px 5px 5px 10px;
+	color:white;
+	
+}
+#objects{
+	overflow-y:scroll;
+	height:400px;
+}
+.object-header{
+	border:2px solid black;
+	padding:5px 5px 5px 5px;
+	
+}
+.object-header:hover{
+	background-color:#259C6D;
+}
+.object{
+	border:2px solid black;
+}

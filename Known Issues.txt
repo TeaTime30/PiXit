@@ -34,6 +34,8 @@ NOTES
 
 Can use a list to cycle through parallel objects moving
 
+For path for vector animation : calculate full path, use iterator to calculate changes. Show line segments ( where shape is in a particular segment).
+
 Change x and y as select moves object
 
 Store path of object as it moves in a list

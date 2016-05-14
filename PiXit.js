@@ -1037,7 +1037,7 @@ if(window.addEventListener) {
 		var j = 0;
 		var id;
 		play.addEventListener("click", function(e){
-			var sec = parseInt(document.getElementById('frms').value);
+			var sec = parseFloat(document.getElementById('frms').value);
 			var msec = sec*1000;
 			var count=0;
 			var keys= Object.keys(images);
@@ -1048,7 +1048,7 @@ if(window.addEventListener) {
 				$("#canvas").prepend(playScreen);
 				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
 				
-				console.log("Frame played:" + count+" key:"+ key+" keys:"+keys);
+				console.log("Frame played:" + count+" key:"+ key+" sec:"+sec);
 				count++;
 			}
 			/*$("#playDiv").remove();*/

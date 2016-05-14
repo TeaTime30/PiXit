@@ -893,7 +893,7 @@ if(window.addEventListener) {
 	    	}
 			//Save all points in array
 			points.push({x:mouse.x, y:mouse.y});
-      console.log(points);
+
 			if(points.length <3){
 				var b = points[0];
 				temp_context.beginPath();

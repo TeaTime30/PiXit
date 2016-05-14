@@ -9,10 +9,6 @@ var undoArr = new Array();
 var redoArr = new Array();
 var selectArray = new Array();
 var tool = 'brush'; //Default tool
-var mouse = {x: 0, y: 0};
-var start_mouse = {x: 0, y:0};
-var last_mouse = {x: 0, y: 0};
-var points = [];
 var valid = false; // when set to false, the canvas will redraw everything
 var shapes = []; // the collection of things to be drawn
 var dragging = false; // Keep track of when we are dragging
@@ -47,6 +43,12 @@ if(window.addEventListener) {
       e.preventDefault();
       return false;
     }, false);
+
+
+    /********************** CAPTURE MOUSE MOVEMENT *********************/
+    var mouse = {x: 0, y: 0};
+    var start_mouse = {x: 0, y:0};
+    var last_mouse = {x: 0, y: 0};
 		
 		canvas.addEventListener('mousemove', function(e){
 	    mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
@@ -75,6 +77,7 @@ if(window.addEventListener) {
 
     }, false);
 
+    /********************** DRAWING ON CONTEXT *********************/
 
     canvas.addEventListener('mousedown', function(e){
       context.lineWidth = curThickness;
@@ -92,80 +95,81 @@ if(window.addEventListener) {
 
     	points.push({x:mouse.x, y:mouse.y});
 
-      if(tool == 'line'){
-      	canvas.addEventListener('mousemove', Line.draw, false );
-      	addShape(new Line("Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y));
+       if(tool == 'line'){
+        canvas.addEventListener('mousemove', Line.draw, false );
+        addShape(new Line("Line",'#FFFFFF'));
       }
 
       else if(tool == 'rect') {
-      	canvas.addEventListener('mousemove', Rectangle.draw, false );
-      	addShape(new Rectangle("Rectangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        canvas.addEventListener('mousemove', Rectangle.draw, false );
+        addShape(new Rectangle("Rectangle", '#FFFFFF'));
       }
 
       else if(tool == 'brush'){
-      	onBrush();
-      	canvas.addEventListener('mousemove', FreeForm.draw, false );
-      	addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        onBrush();
+        canvas.addEventListener('mousemove', FreeForm.draw, false );
+        addShape(new FreeForm("FreeForm", curColour));
       }
 
       else if(tool == 'pencil'){
         onPencil();
         canvas.addEventListener('mousemove', FreeForm.draw, false );
-        myState.addShape(new FreeForm( "FreeForm", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        myState.addShape(new FreeForm( "FreeForm",curColour));
       }
 
       else if(tool == 'select'){
-      	canvas.addEventListener('mousemove', onSel, false);
+        canvas.addEventListener('mousemove', onSel, false);
       }
 
       else if(tool == 'choose'){
-      	console.log("choose");
-      	canvas.addEventListener('mousemove', onChoose, false);
+        console.log("choose");
+        canvas.addEventListener('mousemove', onChoose, false);
       }
 
       else if(tool == 'erase'){
-      	canvas.addEventListener('mousemove', onErase, false);
+        canvas.addEventListener('mousemove', onErase, false);
       }
 
       else if(tool == 'circle'){
-      	canvas.addEventListener('mousemove', Circle.draw, false );
-      	addShape(new Circle( "Circle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        canvas.addEventListener('mousemove', Circle.draw, false );
+        addShape(new Circle( "Circle",'#FFFFFF'));
       }
 
       else if(tool == 'oval'){
-      	canvas.addEventListener('mousemove', Oval.draw, false );
-      	addShape(new Oval("Oval", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        canvas.addEventListener('mousemove', Oval.draw, false );
+        addShape(new Oval("Oval",'#FFFFFF'));
       }
 
-     	else if (tool == 'square'){
-      	canvas.addEventListener('mousemove', Square.draw, false );
-      	addShape(new Square("Square", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+      else if (tool == 'square'){
+        canvas.addEventListener('mousemove', Square.draw, false );
+        addShape(new Square("Square",'#FFFFFF'));
       }
 
       else if( tool == 'cline'){
-      	canvas.addEventListener('mousemove', CLine.draw, false );
-      	addShape(new CLine("Curved Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-     	}
+        canvas.addEventListener('mousemove', CLine.draw, false );
+        addShape(new CLine("Curved Line", '#FFFFFF'));
+      }
 
       else if (tool == 'triangle'){
-      	canvas.addEventListener('mousemove', Triangle.draw, false );
-      	addShape(new Triangle("Triangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        canvas.addEventListener('mousemove', Triangle.draw, false );
+        addShape(new Triangle("Triangle", '#FFFFFF'));
       }
 
       else if (tool == 'diam'){
-    		canvas.addEventListener('mousemove', Diamond.draw, false );
-    		addShape(new Diamond("Diamond",start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-  		}
+        canvas.addEventListener('mousemove', Diamond.draw, false );
+        addShape(new Diamond("Diamond", '#FFFFFF'));
+      }
 
-  		else if (tool == 'heart'){
-    		canvas.addEventListener('mousemove', Heart.draw, false );
-   			 addShape(new Heart("Heart", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-  		}
+      else if (tool == 'heart'){
+        canvas.addEventListener('mousemove', Heart.draw, false );
+         addShape(new Heart("Heart", '#FFFFFF'))
+      }
 
-  		else if (tool == 'text'){
-   			canvas.addEventListener('mousemove', Texts.draw, false );
-   			addShape(new Texts("Textbox", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
-  		}
+      else if (tool == 'text'){
+        canvas.addEventListener('mousemove', Texts.draw, false );
+        addShape(new Texts("Textbox", '#FFFFFF'))
+      }
+
 
 	}, false);
 
@@ -173,6 +177,7 @@ if(window.addEventListener) {
       dragging = false;
       resizing = false;
       mouseUpSelected(e);
+      draw();
       uPush();
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
@@ -258,6 +263,7 @@ if(window.addEventListener) {
 
   }, false);
 
+
     canvas.addEventListener("touchstart", function(e){
       blockMenuHeaderScroll = true;
       context.lineWidth = curThickness;
@@ -279,24 +285,24 @@ if(window.addEventListener) {
 
        if(tool == 'line'){
         canvas.addEventListener('mousemove', Line.draw, false );
-        addShape(new Line("Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y));
+        addShape(new Line("Line",'#FFFFFF'));
       }
 
       else if(tool == 'rect') {
         canvas.addEventListener('mousemove', Rectangle.draw, false );
-        addShape(new Rectangle("Rectangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Rectangle("Rectangle", '#FFFFFF'));
       }
 
       else if(tool == 'brush'){
         onBrush();
         canvas.addEventListener('mousemove', FreeForm.draw, false );
-        addShape(new FreeForm(start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new FreeForm("FreeForm", curColour));
       }
 
       else if(tool == 'pencil'){
         onPencil();
         canvas.addEventListener('mousemove', FreeForm.draw, false );
-        myState.addShape(new FreeForm( "FreeForm", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        myState.addShape(new FreeForm( "FreeForm",curColour));
       }
 
       else if(tool == 'select'){
@@ -314,42 +320,42 @@ if(window.addEventListener) {
 
       else if(tool == 'circle'){
         canvas.addEventListener('mousemove', Circle.draw, false );
-        addShape(new Circle( "Circle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Circle( "Circle",'#FFFFFF'));
       }
 
       else if(tool == 'oval'){
         canvas.addEventListener('mousemove', Oval.draw, false );
-        addShape(new Oval("Oval", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Oval("Oval",'#FFFFFF'));
       }
 
       else if (tool == 'square'){
         canvas.addEventListener('mousemove', Square.draw, false );
-        addShape(new Square("Square", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Square("Square",'#FFFFFF'));
       }
 
       else if( tool == 'cline'){
         canvas.addEventListener('mousemove', CLine.draw, false );
-        addShape(new CLine("Curved Line", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new CLine("Curved Line", '#FFFFFF'));
       }
 
       else if (tool == 'triangle'){
         canvas.addEventListener('mousemove', Triangle.draw, false );
-        addShape(new Triangle("Triangle", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Triangle("Triangle", '#FFFFFF'));
       }
 
       else if (tool == 'diam'){
         canvas.addEventListener('mousemove', Diamond.draw, false );
-        addShape(new Diamond("Diamond",start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Diamond("Diamond", '#FFFFFF'));
       }
 
       else if (tool == 'heart'){
         canvas.addEventListener('mousemove', Heart.draw, false );
-         addShape(new Heart("Heart", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+         addShape(new Heart("Heart", '#FFFFFF'))
       }
 
       else if (tool == 'text'){
         canvas.addEventListener('mousemove', Texts.draw, false );
-        addShape(new Texts("Textbox", start_mouse.x, start_mouse.y, mouse.x,mouse.y))
+        addShape(new Texts("Textbox", '#FFFFFF'))
       }
 
        
@@ -654,12 +660,12 @@ if(window.addEventListener) {
 
 
     /***********SHAPE CONSTRUCTOR***********/
-    function Shape(name, sx, sy, ex, ey, fill){
+    function Shape(name, fill){
     	this.name = name;
-    	this.sx = sx || 0;
-  		this.sy = sy || 0;
-  		this.ex = ex || 0;
-  		this.ey = ey || 0;
+    	this.sx = start_mouse.x;
+  		this.sy = start_mouse.y;
+  		this.ex = mouse.x;
+  		this.ey = mouse.y;
   		this.fill = fill || '#FFFFFF';
   		this.selected = false;
   		this.closeEnough = 8; 
@@ -677,8 +683,8 @@ if(window.addEventListener) {
 
     /********************** STRAIGHT LINE FUNCTION *********************/
 
-    function Line (name,sx, sy, ex, ey, fill){
-      Shape.call(this, name, sx, sy, ex, ey, fill);
+    function Line (name,fill){
+      Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -706,8 +712,8 @@ if(window.addEventListener) {
     };
 
     /********************** TRIANGLE FUNCTION *********************/
-    function Triangle(name, sx, sy, ex, ey, fill){
-      Shape.call(this, name, sx, sy, ex, ey, fill);
+    function Triangle(name,fill){
+      Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -737,7 +743,7 @@ if(window.addEventListener) {
 
 
     /********************** DIAMOND FUNCTION *********************/
-    function Diamond(name,sx, sy, ex, ey, fill){
+    function Diamond(name, fill){
       Shape.call(this,name, sx, sy, ex, ey, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
@@ -770,8 +776,8 @@ if(window.addEventListener) {
 
 
     /********************** HEART FUNCTION *********************/
-    function Heart(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Heart(name, fill){
+      Shape.call(this,name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -809,8 +815,8 @@ if(window.addEventListener) {
 
 
     /********************** RECTANGLE FUNCTION *********************/
-    function Rectangle(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Rectangle(name, fill){
+      Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -834,8 +840,8 @@ if(window.addEventListener) {
 
 
     /********************** SQUARE FUNCTION *********************/
-    function Square(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Square(name, fill){
+      Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -859,8 +865,8 @@ if(window.addEventListener) {
 
 
     /********************** CIRCLE FUNCTION *********************/
-    function Circle(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Circle(name, fill){
+      Shape.call(this, name, fill);
       this.x = (this.ex + this.sx) / 2;
       this.y = (this.ey + this.sy) / 2;
       this.radius = Math.max(Math.abs(this.ex - this.sx), Math.abs(this.ey - this.sy)) / 2;      
@@ -886,8 +892,8 @@ if(window.addEventListener) {
 
 
     /********************** OVAL FUNCTION *********************/
-    function Oval(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Oval(name, fill){
+      Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -927,8 +933,8 @@ if(window.addEventListener) {
 
 
 /********************** TEXT FUNCTION *********************/
-    function Texts(sx, sy, ex, ey, fill){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    function Texts(name,fill){
+      Shape.call(this, name, fill);
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
@@ -938,15 +944,15 @@ if(window.addEventListener) {
     Texts.prototype = Object.create(Shape.prototype);
 
     Texts.prototype.draw = function(context){
-      context.fillstyle = this.fill;
-      context.style.left = this.x + 'px';
-      context.style.top = this.y + 'px';
-      context.style.width = this.w + 'px';
-      context.style.height = this.h + 'px';
-      context.style.display = 'block';
+      textarea.fillstyle = this.fill;
+      textarea.style.left = this.x + 'px';
+      textarea.style.top = this.y + 'px';
+      textarea.style.width = this.w + 'px';
+      textarea.style.height = this.h + 'px';
+      textarea.style.display = 'block';
 
       if (this.selected === true) {
-        this.drawHandles(context);
+        this.drawHandles(textarea);
       }
 
     };
@@ -959,13 +965,18 @@ if(window.addEventListener) {
     
 
     /********************** CURVED LINE FUNCTION *********************/
-     function CLine(sx, sy, ex, ey, fill, points){
-      Shape.call(this, sx, sy, ex, ey, fill);
+      var points = [];
+
+     function CLine(name,fill){
+      points.push({x:mouse.x, y:mouse.y});
+      Shape.call(this, name, fill);
       this.points = points;
-      max = Math.max.apply(Math,points.map(function(o){return o.y}))    ;
-      min = 
-      this.w = this.points[max].x - this.points[min].x;
-      this.h = this.points[max].y - this.point[min].y;
+      var xmax = points.indexOf(points.find(function(o){return o.x == (Math.max.apply(Math,points.map(function(o){return o.x})))}));
+      var xmin = points.indexOf(points.find(function(o){return o.x == (Math.min.apply(Math,points.map(function(o){return o.x})))}));
+      var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
+      var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
+      this.w = this.points[xmax].x - this.points[xmin].x;
+      this.h = this.points[ymax].y - this.point[ymin].y;
     }
 
     CLine.prototype = Object.create(Shape.prototype);
@@ -998,6 +1009,7 @@ if(window.addEventListener) {
       }
     };
 
+
     CLine.prototype.toString=  function(){
       console.log( 'Curved Line ' + Shape.prototype.toString.call(this));
     };
@@ -1005,25 +1017,26 @@ if(window.addEventListener) {
 
 
     /********************** FREEFORM FUNCTION *********************/
-    
-    function FreeForm(sx, sy, ex, ey, fill, points){
-      Shape.call(this, sx, sy, ex, ey, fill);
+    var points = [];
+
+    function FreeForm(name,fill){
+      points.push({x:mouse.x, y:mouse.y});
+      Shape.call(this,name, fill);
       this.points = points;
+      console.log(points);
       var xmax = points.indexOf(points.find(function(o){return o.x == (Math.max.apply(Math,points.map(function(o){return o.x})))}));
-      console.log(xmax);
       var xmin = points.indexOf(points.find(function(o){return o.x == (Math.min.apply(Math,points.map(function(o){return o.x})))}));
       var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
       var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
       this.w = this.points[xmax].x - this.points[xmin].x;
-      this.h = this.points[max].y - this.point[min].y;
+      this.h = this.points[ymax].y - this.point[ymin].y;
     }
 
     FreeForm.prototype = Object.create(Shape.prototype);
+    
 
-    FreeForm.prototype.draw = function(){
-      context.lineWidth = this.lw;
-      context.lineJoin = this.lj;
-
+    FreeForm.prototype.draw = function(e){
+      
       if(this.points.length <3){
         var b = this.points[0];
         context.beginPath();
@@ -1125,14 +1138,14 @@ if(window.addEventListener) {
   }
 
 	
-  var onBrush = function(){
+  var onBrush = function(e){
     curThickness = 5;
     curLJoin = 'round';
     context.lineWidth = curThickness;
     context.lineJoin = curLJoin;
   }
 
-  var onPencil = function(){
+  var onPencil = function(e){
     curThickness = 1;
     curLJoin = 'square';
     context.lineWidth = curThickness;

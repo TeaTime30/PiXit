@@ -1,6 +1,6 @@
 <!--TEMPLATE ONE - Relational Script-->
 <shape>
-	<shapename>shape</shapename>
+	<shapename>value</shapename>
 	<shapeid>value</shapeid>
 	<frameid>value</frameid>
 	<startx>value</startx>
@@ -31,13 +31,18 @@
 <sanim>
 	<sanimid>value</sanimid>
 	<order>value</order>
-	<pathid>value</pathid>
+	<point>
+		<x>value</x>
+		<y>value</y>
+	</point>
 </sanim>
 
 <frame>
 	<frameid>value</frameid>
 	<order>value</order>
 </frame>
+
+<rate>value</rate>
 
 <!-- Could represent free-form shape record and path record
 <path>  

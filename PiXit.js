@@ -568,6 +568,8 @@ if(window.addEventListener) {
     /*********************** SAVE ANIMATES FUNCTION***********************/
 
     var onSave = function(){
+      var rate = parseInt(document.getElementById('frms').value);
+      tempFile.push("<rate>" + rate + "</rate>");
       console.log("*************************************************NEW SCRIPT************************************************");
       for(var i = 0; i < tempFile.length; i++){
         console.log(tempFile[i])
@@ -1084,7 +1086,6 @@ if(window.addEventListener) {
       reset1();
       curFrame++;
       frameDraw();
-
     });
 
 

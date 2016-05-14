@@ -10,6 +10,8 @@ Possible Solutions
    well as array of objects. Google API can stores strings and JSON files.
 2. Saving to and Opening from Drive Using REST API and Nodejs
 
+3. For path (vector animation) can put an indication above corners(touch handles) and in the centre of the shape.
+
 Required Technologies
 --------------------------------------------------------------------------------------
 JSON
@@ -27,15 +29,3 @@ REST API (Depends on Nodejs)
  - https://developers.google.com/drive/v3/web/appdata#inserting_a_file_into_the_application_data_folder
  - https://developers.google.com/drive/v3/web/savetodrive#getting_started
  - https://developers.google.com/drive/v3/web/integrate-open#open_and_convert_google_docs_in_your_app
-
-
-NOTES
- For path (vector animation) can put an indication above corners(touch handles) and in the centre of the shape.
-
-Can use a list to cycle through parallel objects moving
-
-Change x and y as select moves object
-
-Store path of object as it moves in a list
-
-

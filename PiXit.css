@@ -108,7 +108,7 @@ li span{
 }
 
 #shapes{
-	height: 130px;
+	height: 140px;
 	border-bottom: 1px solid black;
 }
 
@@ -325,10 +325,11 @@ figure{
 }
 #objects{
 	overflow-y:scroll;
+	overflow-x:hidden;
 	height:400px;
 }
 .object-header{
-	border:2px solid black;
+	border:1px solid black;
 	padding:5px 5px 5px 5px;
 	
 }
@@ -337,4 +338,14 @@ figure{
 }
 .object{
 	border:2px solid black;
+}
+#object-tab{
+	overflow-x:hidden;
+}
+input[type="text"]#obj1name{
+	width:125px;
+	border:none;
+}
+#object-tab label{
+	margin-left:5px;
 }

@@ -1,3 +1,11 @@
+var fileName = "";
+
+function UseData(){
+   $.Watermark.HideAll();
+   //Do Stuff
+   $.Watermark.ShowAll();
+}
+
 /**********************GLOBAL VARIABLES*********************/
 var curColour = "#000000";
 var curThickness = 5;
@@ -10,7 +18,7 @@ var selectArray = new Array();
 var tool = 'brush'; //Default tool
 var shapeArray = new Array();
 var frameArray = new Array();
-frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n@@\n");
+frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n<!--@@-->\n");
 var delFile = new Array();
 var sanimid = 0;
 var lineStyle = "round";
@@ -186,11 +194,11 @@ if(window.addEventListener) {
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
         if(addShape){
-          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n**\n");
+          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n<!--**-->\n");
           addShape = false;
         }
         else if(addFree){
-          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n**\n");
+          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n<!--**-->\n");
           addFree = false;
         }
       temp_canvas.removeEventListener('mousemove', onLine, false);
@@ -364,11 +372,11 @@ if(window.addEventListener) {
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
         if(addShape){
-          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n##\n");
+          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n<!--**-->\n");
           addShape = false;
         }
         else if(addFree){
-          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n**\n");
+          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n<!--**-->\n");
           addFree = false;
         }
         console.log("push");
@@ -570,12 +578,12 @@ if(window.addEventListener) {
     /*********************** OPEN ANIMATES FILE FUNCTION*************************/
     var onOpen = function(){
       console.log("*****************************************PARSED FILE*****************************************");
-      var fileArr = testFile.split("&&");
+      var fileArr = testFile.split("<!--&&-->");
       var rt = parseInt(fileArr[0].match(/\d*(?=<\/rate>)/)[0], 10);
       console.log("Rate: " + rt)
-      var tempFrames = fileArr[1].split("@@");
+      var tempFrames = fileArr[1].split("<!--@@-->");
       tempFrames.pop();
-      var tempShapes = fileArr[2].split("**");
+      var tempShapes = fileArr[2].split("<!--**-->");
       tempShapes.pop();
       for(var i = 0; i < tempFrames.length; i++) {
         var frmid = parseInt(tempFrames[i].match(/\d*(?=<\/frameid>)/)[0], 10);
@@ -625,29 +633,46 @@ if(window.addEventListener) {
       var rate = "<rate>" + parseInt(document.getElementById('frms').value) + "</rate>\n";
       console.log("*************************************************NEW SCRIPT************************************************");
       console.log(rate);
-      testFile += rate + "&&\n";
-      console.log("&&");
+      testFile += rate + "<!--&&-->\n";
+      console.log("<!--&&-->");
       for(var i = 0; i < frameArray.length; i++){
         console.log(frameArray[i]);
         testFile += frameArray[i];
       }
-      console.log("&&");
-      testFile += "&&\n";
+      console.log("<!--&&-->");
+      testFile += "<!--&&-->\n";
       for(var i = 0; i < shapeArray.length; i++){
         console.log(shapeArray[i]);
         testFile += shapeArray[i];
       }
-      /*
-      console.log("print to file");
-      var fh = fopen("test.xml", 3);
-      if(fh != -1){
-        for(var i = 0; i < shapeArray.length; i++){
-          fwrite(shapeArray[i]);
-        }
-      }
-      fclose();
-      window.open("test.xml", "_self");*/
-      //window.location.assign("test.xml");
+      var form = document.createElement("form");
+      console.log(form);
+      form.setAttribute('id', 'saving');
+      var box = document.createElement("input");
+      box.setAttribute('id', 'file');
+      var bt = document.createElement("div");
+      bt.setAttribute('id', 'sv');
+      form.appendChild(box);
+      $("#saving").delay(1000).fadeIn(200);
+      $("#file").Watermark("File Name");
+
+       $("#sv").click(function() {
+        fileName = $('#file').val();
+
+       });
+      var saveFile = new Blob([testFile], {type: 'text/xml'});
+      var link = document.createElement('a');
+      link.style = "display: none";
+      document.body.appendChild(link);
+      var url = window.URL.createObjectURL(saveFile);
+      link.href = url;
+      link.download = "output.xml";
+      link.click();
+      window.URL.revokeObjectURL(url);
+      console.log(url);
+
+      //link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
+      //link.classList.add('dragout');
     }
 
 
@@ -1120,7 +1145,7 @@ if(window.addEventListener) {
       reset1();
       shapeid = 0;
       curFrame++;
-      frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n@@\n");
+      frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n<!--@@-->\n");
       frameDraw();
     });
 
@@ -1150,7 +1175,7 @@ if(window.addEventListener) {
       $("#frmimg"+curFrame).after(img);
       reset1();
       curFrame++;
-      frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n@@\n");
+      frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n<!--@@-->\n");
       var val = shapeArray.length;
       for(var i = 0; i < val; i++){
         if(shapeArray[i].includes("<frameid>" + (curFrame-1) + "</frameid>")) {
@@ -1210,7 +1235,7 @@ if(window.addEventListener) {
         $("#playDiv").delay(msec*(i+1)).fadeIn(msec-100).fadeOut(100);
         console.log("Frame played:" + i);
       }
-      $("#playDiv").remove();
+      //$("#playDiv").remove();
     });
 
   

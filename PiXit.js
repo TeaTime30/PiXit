@@ -571,53 +571,83 @@ if(window.addEventListener) {
 
     /*********************** OPEN ANIMATES FILE FUNCTION*************************/
     var onOpen = function(){
-      console.log("*****************************************PARSED FILE*****************************************");
-      var fileArr = testFile.split("<!--&&-->");
-      var rt = parseInt(fileArr[0].match(/\d*(?=<\/rate>)/)[0], 10);
-      console.log("Rate: " + rt)
-      var tempFrames = fileArr[1].split("<!--@@-->");
-      tempFrames.pop();
-      var tempShapes = fileArr[2].split("<!--**-->");
-      tempShapes.pop();
-      for(var i = 0; i < tempFrames.length; i++) {
-        var frmid = parseInt(tempFrames[i].match(/\d*(?=<\/frameid>)/)[0], 10);
-        var ord = parseInt(tempFrames[i].match(/\d*(?=<\/order>)/)[0], 10);
-        console.log("frame(" + frmid + ", " + ord + ")");
-        for(var j = 0; j < tempShapes.length; j++){
-          if(tempShapes[j].includes("<frameid>" + frmid + "</frameid>") && tempShapes[j].includes("<shape>")) {
-            var nm = tempShapes[j].match(/[a-z]*(?=<\/shapename>)/)[0];
-            var sid = parseInt(tempShapes[j].match(/\d*(?=<\/shapeid>)/)[0], 10);
-            var sx = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/startx>)/)[0], 10);
-            var sy = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/starty>)/)[0], 10);
-            var ex = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/endx>)/)[0], 10);
-            var ey = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/endy>)/)[0], 10);
-            var wd = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/width>)/)[0], 10);
-            var ln = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/length>)/)[0], 10);
-            var lncol = tempShapes[j].match(/#([0-9a-fA-F])*(?=<\/linecolour>)/)[0];
-            var flcol = tempShapes[j].match(/#([0-9a-fA-F])*(?=<\/fillcolour>)/)[0];
-            var lnwght = parseInt(tempShapes[j].match(/\d*(?=<\/lineweight>)/)[0], 10);
-            var stl = tempShapes[j].match(/[a-z]*(?=<\/linestyle>)/)[0];
-            var sanim = parseInt(tempShapes[j].match(/\d*(?=<\/sanimid>)/)[0], 10);
-            console.log(name + "(" + sid + ", " + sx + ", " + sy + ", " + ex + ", " + ey + ", " + wd + ", " + ln + ", " + lncol + ", " + flcol + ", " + lnwght + ", " + stl + ", " + sanim + ")");
-          }
-          else if(tempShapes[j].includes("<frameid>" + frmid + "</frameid>") && tempShapes[j].includes("<freeform>")) {
-            var pts = tempShapes[j].split("<point>");
-            var sid = parseInt(pts[0].match(/\d*(?=<\/shapeid>)/)[0], 10);
-            var lncol = pts[0].match(/#([0-9a-fA-F])*(?=<\/linecolour>)/)[0];
-            var lnwght = parseInt(pts[0].match(/\d*(?=<\/lineweight>)/)[0], 10);
-            var stl = pts[0].match(/[a-z]*(?=<\/linestyle>)/)[0];
-            var pnts = new Array();
-            console.log("freeform(" + sid + ", " + lncol + ", " + lnwght + ", " + stl + ")");
-            console.log("Points:\n")
-            for(var k = 1; k<pts.length; k++){
-              var pntx = parseInt(pts[k].match(/[0-9.]*(?=<\/x>)/)[0], 10);
-              var pnty = parseInt(pts[k].match(/[0-9.]*(?=<\/y>)/)[0], 10);
-              pnts.push({x: pntx, y: pnty});
-              console.log("{x: " + pntx + ", y: " + pnty + "}");
+
+      var menu = document.getElementById('menu');
+      menu.innerHTML = menu.innerHTML + '<input type=\"file\" id=\"files\" name=\"files[]\" multiple /><br><output id=\"list\"></output>';
+
+      function handleFileSelect(e) {
+        var files = e.target.files;
+        var f = files[0];
+        var tempFile = "";
+        console.log(files[0]);
+        if(!f.type.match('xml.*')) {
+          alert("Incorrect file type");
+          $("#files").remove();
+          $("#list").remove();
+        }
+        else {
+          var reader = new FileReader();
+
+          reader.onload = function(e) {
+            tempFile = reader.result;
+            console.log(reader.result);
+
+
+            console.log("*****************************************PARSED FILE*****************************************");
+            var fileArr = tempFile.split("<!--&&-->");
+            var rt = parseInt(fileArr[0].match(/\d*(?=<\/rate>)/)[0], 10);
+            console.log("Rate: " + rt)
+            var tempFrames = fileArr[1].split("<!--@@-->");
+            tempFrames.pop();
+            var tempShapes = fileArr[2].split("<!--**-->");
+            tempShapes.pop();
+            for(var i = 0; i < tempFrames.length; i++) {
+              var frmid = parseInt(tempFrames[i].match(/\d*(?=<\/frameid>)/)[0], 10);
+              var ord = parseInt(tempFrames[i].match(/\d*(?=<\/order>)/)[0], 10);
+              console.log("frame(" + frmid + ", " + ord + ")");
+              for(var j = 0; j < tempShapes.length; j++){
+                if(tempShapes[j].includes("<frameid>" + frmid + "</frameid>") && tempShapes[j].includes("<shape>")) {
+                  var nm = tempShapes[j].match(/[a-z]*(?=<\/shapename>)/)[0];
+                  var sid = parseInt(tempShapes[j].match(/\d*(?=<\/shapeid>)/)[0], 10);
+                  var sx = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/startx>)/)[0], 10);
+                  var sy = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/starty>)/)[0], 10);
+                  var ex = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/endx>)/)[0], 10);
+                  var ey = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/endy>)/)[0], 10);
+                  var wd = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/width>)/)[0], 10);
+                  var ln = parseInt(tempShapes[j].match(/[0-9.]*(?=<\/length>)/)[0], 10);
+                  var lncol = tempShapes[j].match(/#([0-9a-fA-F])*(?=<\/linecolour>)/)[0];
+                  var flcol = tempShapes[j].match(/#([0-9a-fA-F])*(?=<\/fillcolour>)/)[0];
+                  var lnwght = parseInt(tempShapes[j].match(/\d*(?=<\/lineweight>)/)[0], 10);
+                  var stl = tempShapes[j].match(/[a-z]*(?=<\/linestyle>)/)[0];
+                  var sanim = parseInt(tempShapes[j].match(/\d*(?=<\/sanimid>)/)[0], 10);
+                  console.log(name + "(" + sid + ", " + sx + ", " + sy + ", " + ex + ", " + ey + ", " + wd + ", " + ln + ", " + lncol + ", " + flcol + ", " + lnwght + ", " + stl + ", " + sanim + ")");
+                }
+                else if(tempShapes[j].includes("<frameid>" + frmid + "</frameid>") && tempShapes[j].includes("<freeform>")) {
+                  var pts = tempShapes[j].split("<point>");
+                  var sid = parseInt(pts[0].match(/\d*(?=<\/shapeid>)/)[0], 10);
+                  var lncol = pts[0].match(/#([0-9a-fA-F])*(?=<\/linecolour>)/)[0];
+                  var lnwght = parseInt(pts[0].match(/\d*(?=<\/lineweight>)/)[0], 10);
+                  var stl = pts[0].match(/[a-z]*(?=<\/linestyle>)/)[0];
+                  var pnts = new Array();
+                  console.log("freeform(" + sid + ", " + lncol + ", " + lnwght + ", " + stl + ")");
+                  console.log("Points:\n")
+                  for(var k = 1; k<pts.length; k++){
+                    var pntx = parseInt(pts[k].match(/[0-9.]*(?=<\/x>)/)[0], 10);
+                    var pnty = parseInt(pts[k].match(/[0-9.]*(?=<\/y>)/)[0], 10);
+                    pnts.push({x: pntx, y: pnty});
+                    console.log("{x: " + pntx + ", y: " + pnty + "}");
+                  }
+                }
+              }
             }
           }
         }
+          
+          reader.readAsText(f);
       }
+
+      document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
     }
 
 

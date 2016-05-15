@@ -303,10 +303,27 @@ figure{
 #sv {
     font-family: "Calibri";
     color: black;
-    font-size: 20px;
+    font-size: 15px;
     background-color: #DFDB81;
     position: absolute;
     height: 30px;
     width: 195px;
     margin-top: 25px;
+}
+
+#files {
+    font-family: "Comic Sans MS";
+    font-size: 15px;
+    color: black;
+    background-color: #BCD7EE;
+    width: 250px;
+    height: 50px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 35px;
+    position: relative;
+}
+
+#list {
+	color: white;
 }

@@ -267,9 +267,14 @@ figure{
 
 #saving {
     background-color: #a6de62;
-    height: 180px;
+    height: 60px;
     padding-top: 25px;
-    margin-left: 475px; 
+    width: 195px;
+    text-align: center;
+    /*margin-left: 475px; */
+    position: absolute;
+	margin-left: 1011px;
+	margin-top: 0px;
 }
 
 #file { 
@@ -290,7 +295,7 @@ figure{
     border: 1px solid #848484;
     outline:0; 
     height:30px; 
-    width: 300px; 
+    width: 150px; 
     padding-left:10px; 
     font-size: 16px;
   } 
@@ -298,8 +303,10 @@ figure{
 #sv {
     font-family: "Calibri";
     color: black;
+    font-size: 20px;
     background-color: #DFDB81;
+    position: absolute;
     height: 30px;
-    width: 400px;
-    margin-left: 475px;
+    width: 195px;
+    margin-top: 25px;
 }

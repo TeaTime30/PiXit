@@ -1,11 +1,5 @@
 var fileName = "";
 
-function UseData(){
-   $.Watermark.HideAll();
-   //Do Stuff
-   $.Watermark.ShowAll();
-}
-
 /**********************GLOBAL VARIABLES*********************/
 var curColour = "#000000";
 var curThickness = 5;
@@ -652,24 +646,39 @@ if(window.addEventListener) {
       box.setAttribute('id', 'file');
       var bt = document.createElement("div");
       bt.setAttribute('id', 'sv');
+      bt.innerHTML = bt.innerHTML + "Save";
       form.appendChild(box);
+      console.log($("#saving"));
+      $("#menu").prepend(form);
+      $("#saving").append(bt);
       $("#saving").delay(1000).fadeIn(200);
+
       $("#file").Watermark("File Name");
 
-       $("#sv").click(function() {
+      $("#sv").click(function() {
         fileName = $('#file').val();
+        console.log(fileName);
 
-       });
-      var saveFile = new Blob([testFile], {type: 'text/xml'});
-      var link = document.createElement('a');
-      link.style = "display: none";
-      document.body.appendChild(link);
-      var url = window.URL.createObjectURL(saveFile);
-      link.href = url;
-      link.download = "output.xml";
-      link.click();
-      window.URL.revokeObjectURL(url);
-      console.log(url);
+        var saveFile = new Blob([testFile], {type: 'text/xml'});
+        var link = document.createElement('a');
+        link.style = "display: none";
+        document.body.appendChild(link);
+        var url = window.URL.createObjectURL(saveFile);
+        link.href = url;
+        link.download = fileName;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        console.log(url);
+        $("#saving").remove();
+        $("#file").remove();
+        $("#bt").remove();
+      });
+
+      function UseData(){
+         $.Watermark.HideAll();
+         //Do Stuff
+         $.Watermark.ShowAll();
+      }
 
       //link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
       //link.classList.add('dragout');

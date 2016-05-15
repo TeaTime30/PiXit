@@ -571,7 +571,7 @@ if(window.addEventListener) {
 
     /*********************** OPEN ANIMATES FILE FUNCTION*************************/
     var onOpen = function(){
-
+      var alt = "";
       var menu = document.getElementById('menu');
       menu.innerHTML = menu.innerHTML + '<input type=\"file\" id=\"files\" name=\"files[]\" multiple /><br><output id=\"list\"></output>';
 
@@ -579,7 +579,6 @@ if(window.addEventListener) {
         var files = e.target.files;
         var f = files[0];
         var tempFile = "";
-        console.log(files[0]);
         if(!f.type.match('xml.*')) {
           alert("Incorrect file type");
           $("#files").remove();
@@ -590,11 +589,16 @@ if(window.addEventListener) {
 
           reader.onload = function(e) {
             tempFile = reader.result;
-            console.log(reader.result);
 
+            $("#files").remove();
+            $("#list").remove();
 
             console.log("*****************************************PARSED FILE*****************************************");
             var fileArr = tempFile.split("<!--&&-->");
+            if (fileArr.length < 3) {
+              alert("Incorrect file structure");
+              return;
+            }
             var rt = parseInt(fileArr[0].match(/\d*(?=<\/rate>)/)[0], 10);
             console.log("Rate: " + rt)
             var tempFrames = fileArr[1].split("<!--@@-->");
@@ -620,7 +624,50 @@ if(window.addEventListener) {
                   var lnwght = parseInt(tempShapes[j].match(/\d*(?=<\/lineweight>)/)[0], 10);
                   var stl = tempShapes[j].match(/[a-z]*(?=<\/linestyle>)/)[0];
                   var sanim = parseInt(tempShapes[j].match(/\d*(?=<\/sanimid>)/)[0], 10);
-                  console.log(name + "(" + sid + ", " + sx + ", " + sy + ", " + ex + ", " + ey + ", " + wd + ", " + ln + ", " + lncol + ", " + flcol + ", " + lnwght + ", " + stl + ", " + sanim + ")");
+                  if(stl != 'round'){
+                    alt += "Unsupported Style Type:- " + stl + "\n";
+                    stl = "round";
+                  }
+                  console.log(nm + "(" + sid + ", " + sx + ", " + sy + ", " + ex + ", " + ey + ", " + wd + ", " + ln + ", " + lncol + ", " + flcol + ", " + lnwght + ", " + stl + ", " + sanim + ")");
+                  if(nm == 'line'){
+                    // var ln = Line(sid, frmid, sx, sy, ex, ey, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'cline'){
+                    // var cl = CLine(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'rectangle'){
+                    // var rect = Rectangle(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'circle'){
+                    // var cr = Circle(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'square'){
+                    // var sq = Square(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'triangle'){
+                    // var tri = Triangle(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'oval'){
+                    // var oval = Oval(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'heart'){
+                    // var hrt = Heart(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else if(nm == 'diamond'){
+                    // var diam = Diamond(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
+                    
+                  }
+                  else {
+                    alt += "Unsupported object:- " + nm + "\n";
+                  }
                 }
                 else if(tempShapes[j].includes("<frameid>" + frmid + "</frameid>") && tempShapes[j].includes("<freeform>")) {
                   var pts = tempShapes[j].split("<point>");
@@ -637,13 +684,17 @@ if(window.addEventListener) {
                     pnts.push({x: pntx, y: pnty});
                     console.log("{x: " + pntx + ", y: " + pnty + "}");
                   }
+                  if(alt.length > 0){
+                    alert(alt);
+                  }
+                  //var fr = FreeForm(sid, lncol, lnwght, stl, pnts);
                 }
               }
             }
           }
         }
-          
-          reader.readAsText(f);
+
+        reader.readAsText(f);
       }
 
       document.getElementById('files').addEventListener('change', handleFileSelect, false);
@@ -655,22 +706,16 @@ if(window.addEventListener) {
 
     var onSave = function(){
       var rate = "<rate>" + parseInt(document.getElementById('frms').value) + "</rate>\n";
-      console.log("*************************************************NEW SCRIPT************************************************");
-      console.log(rate);
       testFile += rate + "<!--&&-->\n";
-      console.log("<!--&&-->");
       for(var i = 0; i < frameArray.length; i++){
         console.log(frameArray[i]);
         testFile += frameArray[i];
       }
-      console.log("<!--&&-->");
       testFile += "<!--&&-->\n";
       for(var i = 0; i < shapeArray.length; i++){
-        console.log(shapeArray[i]);
         testFile += shapeArray[i];
       }
       var form = document.createElement("form");
-      console.log(form);
       form.setAttribute('id', 'saving');
       var box = document.createElement("input");
       box.setAttribute('id', 'file');
@@ -687,7 +732,6 @@ if(window.addEventListener) {
 
       $("#sv").click(function() {
         fileName = $('#file').val();
-        console.log(fileName);
 
         var saveFile = new Blob([testFile], {type: 'text/xml'});
         var link = document.createElement('a');
@@ -698,7 +742,6 @@ if(window.addEventListener) {
         link.download = fileName;
         link.click();
         window.URL.revokeObjectURL(url);
-        console.log(url);
         $("#saving").remove();
         $("#file").remove();
         $("#bt").remove();
@@ -706,12 +749,8 @@ if(window.addEventListener) {
 
       function UseData(){
          $.Watermark.HideAll();
-         //Do Stuff
          $.Watermark.ShowAll();
       }
-
-      //link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-      //link.classList.add('dragout');
     }
 
 

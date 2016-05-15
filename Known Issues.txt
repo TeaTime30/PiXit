@@ -1,8 +1,13 @@
+Completed Tasks
+--------------------------------------------------------------------------------------
+1. Saves files as XML locally.
+2. Opens files from local folders.
+3. Basic pseudo-parsing to ensure file format is correct.
+4. Interprets file to ascertain values and pass to shape constructors.
+
 Issues
 --------------------------------------------------------------------------------------
-1. Saving objects.
-2. Needs possible extension for saving file locally
-3. Should change shapeid to reset for new frames.
+1. Cloud support for storage.
 
 Possible Solutions
 --------------------------------------------------------------------------------------
@@ -18,10 +23,10 @@ Google API
  - https://developers.google.com/google-apps/realtime/realtime-quickstart#step_1_set_up_the_sample
 JQuery
  - https://github.com/johnculviner/jquery.fileDownload
-Nodejs
+Nodejs [May not be necessary]
  - http://www.tutorialspoint.com/nodejs/nodejs_environment_setup.htm
  - Installer: https://nodejs.org/en/blog/release/v0.12.0/
-REST API (Depends on Nodejs)
+REST API (Depends on Nodejs) [May not be necessary]
  - https://developers.google.com/drive/v3/web/about-sdk#create_and_open_files_directly_from_the_drive_ui
  - https://developers.google.com/drive/v3/web/enable-sdk#enable_the_drive_api
  - https://developers.google.com/drive/v3/web/appdata#inserting_a_file_into_the_application_data_folder

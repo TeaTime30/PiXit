@@ -4,6 +4,7 @@
 	height:75px;
 	border: 1px solid black;	
 	border-bottom: solid white;
+	
 }
 
 #menu > div{
@@ -37,6 +38,7 @@
 	display:inline;
 	vertical-align:top;
 	float: left;
+	
 	
 }
 
@@ -109,7 +111,7 @@ li span{
 
 #shapes{
 	height: 130px;
-	border-bottom: 1px solid black;
+	border-bottom:2px solid black;
 }
 
 
@@ -222,12 +224,13 @@ figure{
 }
 
 #player{
-	text-align: center;
+	
 	padding-bottom: 3px;
-	height:20px;
+	padding-top:10px;
+	display:inline;
 }
 #player img{
-	padding-left:10px;
+
 	height:20px;
 	width:20px;
 }
@@ -268,6 +271,7 @@ figure{
 	height: 5px;
 	width:200px;
 	background-color: blue;
+	
 }
 
 #colour-picker {
@@ -321,7 +325,8 @@ figure{
 	height:30px;
 	padding:5px 5px 5px 10px;
 	color:white;
-	
+	display:block;
+	text-align:left;
 }
 #objects{
 	overflow-y:scroll;

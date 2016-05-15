@@ -40,11 +40,11 @@
 -		UI Fixes needed											 -
 ==================================================================
 1.Interaction with buttons:
-	-on hover
-	-when selected
+	-on hover (almost done)
+	-when selected (almost done)
 2. Change "Apply colors" button (done)
-3.Update icon images
-4.finish the UI for objects
+3.Update icon images (kinda done)
+4.finish the UI for objects (started)
 5.finish the UI for objects timeline
 6.A screen for displaying animation
 7.fix thickness button (done)

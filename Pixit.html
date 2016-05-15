@@ -9,7 +9,7 @@
 		<title>PiXit Beta</title>
 	</head>
 	<body>
-		<div id="menu">
+		<div id="menu" >
 			<p>MENU</p>
 			<div id="new" class="icon-btn"><figure><img src="icons/newfile.png"><figcaption> New</figcaption></figure></div>
 			<div id="open"class="icon-btn"><figure><img src="icons/openfile.png"><figcaption> Open</figcapton></figure></div>
@@ -19,11 +19,12 @@
 			<div id="copy"class="icon-btn"><figure><img src="icons/copy.png"><figcaption>Copy</figcaption></figure></div>
 			<div id="paste"class="icon-btn"><figure><img src="icons/paste.png"><figcaption>Paste</figcaption></figure></div>
 			<div id="undo"class="icon-btn"><figure><img src="icons/undo.png"><figcaption>Undo</figcaption></figure></div>
-			<div id="redo"class="icon-btn"><figure><img src="icons/redo.png"><figcaption>Redo</figcaption></figure></div>
+			<div id="redo"class="icon-btn"><figure><img src="icons/redo.png"><figcaption>Redo</figcaption></figure></div><br>
+		
 		</div>
 		<div id="left-menu">
 			<div id="tools" class="left-menu">
-				<p>Tools</p>
+				<span class="header">Tools</span>
 				<div id="brush"class="tool-btn"><img src="icons/brush.png"></div>
 				<div id="pencil"class="tool-btn"><img src="icons/pencil.png"></div>
 				<div id="thickness"class="tool-btn"><img src="icons/lineweight.png">
@@ -68,7 +69,7 @@
 
 			
 			<div id="colour" class="left-menu">
-				<p>Colours</p>
+				<p >Colours</p>
 				<div>
 						<button class="colours" id="#000000" style="background-color:#000000"></button>
 						<button class="colours" id="#cccccc" style="background-color:#cccccc"></button>
@@ -100,9 +101,9 @@
 						<button class="colours" id="#cc99ff" style="background-color:#cc99ff"></button>
 						<button class="colours" id="#ff99cc" style="background-color:#ff99cc"></button>
 				</div>
-			</div>
+			</div><br>
                 <div id="picker">
-                    <p>Colour Picker</p>
+                    <p >Colour Picker</p><br>
                     <input type="color" id="colour-picker"> <button class="colours btn">Apply Colour</button>
                 </div>
 				
@@ -138,13 +139,11 @@
 				<canvas id="canvas1" ></canvas>
 			</div>
 			<div id="frameandtools">
-				<div>Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-					<input id="frms" type="number" name="frmpsec" min="0" max="70" value="1">frames/sec
+				<div class="header">Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+					<input id="frms" type="number" name="frmpsec" min="0" max="70" value="1">&nbsp;&nbsp;frames/sec &nbsp; &nbsp;
+					<div id ="player"><img id="play" src="icons/play.png"></div>
 				</div>
-
-				<div id ="player">
-					<img src="icons/reverse.png"><img src="icons/pause.png"><img src="icons/stop.png"><img id="play" src="icons/play.png"><img src="icons/fastforward.png">
-				</div>
+				
 				<div id="fft">
 					<div id="frames">
 						<img class="frame" id = "frmimg1" src=""></img>

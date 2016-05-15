@@ -528,7 +528,7 @@ if(window.addEventListener) {
         img.onload = function(){
           img.width = 600;
           img.height = 400;
-          context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width - 100, canvas.height - 100);
+          context.drawImage(img, 0, 0, canvas.width - 100, canvas.height - 100);
           console.log(img);
           uPush();
         }

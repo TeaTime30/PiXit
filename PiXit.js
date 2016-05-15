@@ -1057,6 +1057,7 @@ if(window.addEventListener) {
           count++;
         }
 
+        $("#playDiv").delay(0).fadeIn(msec-100);
 
         $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
         e.preventDefault();

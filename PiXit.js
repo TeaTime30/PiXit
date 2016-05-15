@@ -1040,28 +1040,44 @@ if(window.addEventListener) {
 
 
 		/***********************PLAY ANIMATION*********************/
-		var play = document.getElementById("play");
-		var j = 0;
-		var id;
-		play.addEventListener("click", function(e){
-			var time = parseInt(document.getElementById('frms').value);
-			var sec = 60/time;
-			var msec = sec*1000;
-			var count=0;
-			var keys= Object.keys(images);
-			for(var key in keys){
-				var playScreen = document.createElement("img");
-				playScreen.setAttribute("id", "playDiv");
-				playScreen.src = images[keys[key]];
-				$("#canvas").prepend(playScreen);
-				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
-				
-				console.log("Frame played:" + count+" key:"+ key+" keys:"+keys);
-				count++;
-			}
-			/*$("#playDiv").remove();*/
-		});
+		$(function(){
 
-	
 
-}, false); }
+      $('[data-popup-open]').on('click', function(e){
+        var targeted_popup_class = jQuery(this).attr('data-popup-open');
+
+      var j = 0;
+      var time = parseInt(document.getElementById('frms').value);
+      var sec = 60/time;
+      var msec = sec*1000;
+      var count=0;
+      var keys= Object.keys(images);
+
+        for(var key in keys){
+          var playScreen = document.createElement("img");
+          console.log(playScreen);
+          playScreen.setAttribute("id", "playDiv");
+          playScreen.src = images[keys[key]];
+          $("#popcontainer").prepend(playScreen);
+          $("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
+          console.log("Frame played:" + count+" key:"+ key+" keys:"+keys);
+          count++;
+        }
+
+
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        e.preventDefault();
+      });
+
+      $('[data-popup-close]').on('click', function(e)  {
+        var targeted_popup_class = jQuery(this).attr('data-popup-close');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+ 
+        e.preventDefault();
+      });
+
+    });
+
+  },
+false); }
+

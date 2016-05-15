@@ -105,26 +105,7 @@
                     <input type="color" id="colour-picker"> <button class="colours">Apply Colour</button>
                 </div>
 				
-                <!--
-                Custom Colours
-				<div>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-				</div>
-				<div>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
-				</div>
-                -->
-
-
-				<script>
+                				<script>
 				function update(picker) {
 			    	curColour = picker.toHEXString();		
 			    	console.log(curColour);    	
@@ -142,7 +123,10 @@
 				</div>
 
 				<div id ="player">
-					<img src="icons/reverse.png"><img src="icons/pause.png"><img src="icons/stop.png"><img id="play" src="icons/play.png"><img src="icons/fastforward.png">
+					<img src="icons/reverse.png"><img src="icons/pause.png"><img src="icons/stop.png"><a data-popup-open="popup-1" href ="#"> <img id="play" src="icons/play.png"></a> <img src="icons/fastforward.png">
+				</div>
+				<div id="popcontainer" class="popup" data-popup="popup-1">
+					<a class="popup-close" data-popup-close="popup-1" href="#">x</a>			
 				</div>
 				<div id="fft">
 					<div id="frames">

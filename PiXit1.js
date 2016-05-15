@@ -13,22 +13,34 @@ var valid = false; // when set to false, the canvas will redraw everything
 var shapes = []; // the collection of things to be drawn
 var dragging = false; // Keep track of when we are dragging
 var resizing = false;
+var points = [];
+var func = function (){};
 
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
-	window.addEventListener('load', function () {
+  window.addEventListener('load', function () {
 
-		/********************** INITIALISE CANVAS AND CONTEXT *********************/
+    /********************** INITIALISE CANVAS AND CONTEXT *********************/
     $("#thickmenu").addClass("hide");
-		var canvas = document.getElementById('canvas1');
-  	var context = canvas.getContext('2d');
+    var canvas = document.getElementById('canvas1');
+    var context = canvas.getContext('2d');
     var container = document.querySelector('#canvas');
     var container_style = getComputedStyle(container);  
     canvas.width = parseInt(container_style.getPropertyValue('width'));
     canvas.height = parseInt(container_style.getPropertyValue('height'));
     canvas.dragoffy = 0;
-  	canvas.dragoffx = 0;
+    canvas.dragoffx = 0;
     canvas.selection = null; // the current selected object. In the future we could turn this into an array for multiple selection
+
+
+    /********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
+    var temp_canvas = document.createElement('canvas');
+    var temp_context = temp_canvas.getContext('2d');
+    temp_canvas.id = 'temp_canvas';
+    temp_canvas.width = canvas.width;
+    temp_canvas.height = canvas.height;
+
+    container.appendChild(temp_canvas);
 
 
     /********************** INITIALISE TEXT CANVAS AND CONTEXT *********************/
@@ -52,77 +64,74 @@ if(window.addEventListener) {
     var last_mouse = {x: 0, y: 0};
     
       
-    canvas.addEventListener('selectstart', function(e) {
+    temp_canvas.addEventListener('selectstart', function(e) {
       e.preventDefault();
       return false;
     }, false);
-		
-		canvas.addEventListener('mousemove', function(e){
-	    mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-	    mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-	      
+    
+    temp_canvas.addEventListener('mousemove', function(e){
+      mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+        
       if(dragging){
-	     	canvas.selection.x = mouse.x - canvas.dragoffx;
+        canvas.selection.x = mouse.x - canvas.dragoffx;
         canvas.selection.y = mouse.y - canvas.dragoffy;
-       	valid = false;
+        valid = false;
       }
 
       if (resizing){
-       	mouseMoveSelected(e,selection);
+        mouseMoveSelected(e,selection);
       }
-		}, false);
+    }, false);
 
-    canvas.addEventListener('touchmove', function(e){
-    	mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
-    	mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
+    temp_canvas.addEventListener('touchmove', function(e){
+      mouse.x = e.touches[0].pageX - $('#canvas').offset().left;
+      mouse.y = e.touches[0].pageY - $('#canvas').offset().top;
       
-    	if(dragging){
+      if(dragging){
         canvas.selection.x = mouse.x - canvas.dragOffx;
         canvas.selection.y = mouse.y - canvas.dragoffy;
-       	valid = false;
-    	}
+        valid = false;
+      }
 
     }, false);
 
     /********************** DRAWING ON CONTEXT *********************/
+    var shp = Object;
 
-    canvas.addEventListener('mousedown', function(e){
-      context.lineWidth = curThickness;
-      context.lineJoin = 'round';
-      context.lineCap = 'round';
-      context.strokeStyle = curColour;
-      context.fillStyle =curColour;
+    temp_canvas.addEventListener('mousedown', function(e){
+      temp_context.lineWidth = curThickness;
+      temp_context.lineJoin = 'round';
+      temp_context.lineCap = 'round';
+      temp_context.strokeStyle = curColour;
+      temp_context.fillStyle =curColour;
 
       $("#thickmenu").addClass("hide");
 
       mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
       mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-    	start_mouse.x = mouse.x;
-    	start_mouse.y = mouse.y;
+      start_mouse.x = mouse.x;
+      start_mouse.y = mouse.y;
 
-    	points.push({x:mouse.x, y:mouse.y});
+      points.push({x:mouse.x, y:mouse.y});
 
        if(tool == 'line'){
-        canvas.addEventListener('mousemove', Line.draw, false );
-        addShape(new Line("Line",'#FFFFFF'));
+        shp = new Line("Line",'#FFFFFF');
+        addShape(shp);
+        shp.draw();
+        temp_canvas.addEventListener('mousemove', function(){shp.draw();}, false );
       }
 
       else if(tool == 'rect') {
-        canvas.addEventListener('mousemove', Rectangle.draw, false );
-        addShape(new Rectangle("Rectangle", '#FFFFFF'));
+        shp = new Rectangle("Rectangle", '#000000');
       }
 
       else if(tool == 'brush'){
-        onBrush();
-        addShape(new FreeForm("FreeForm", curColour));
-        canvas.addEventListener('mousemove', FreeForm.draw, false );
-        
+        shp = new FreeForm("FreeForm", curColour, new Array());
       }
 
       else if(tool == 'pencil'){
-        onPencil();
-        canvas.addEventListener('mousemove', FreeForm.draw, false );
-        myState.addShape(new FreeForm( "FreeForm",curColour));
+        shp = new FreeForm("FreeForm", curColour, new Array());
       }
 
       else if(tool == 'select'){
@@ -139,76 +148,72 @@ if(window.addEventListener) {
       }
 
       else if(tool == 'circle'){
-        canvas.addEventListener('mousemove', Circle.draw, false );
-        addShape(new Circle( "Circle",'#FFFFFF'));
+        shp = new Circle( "Circle",'#000000');
       }
 
       else if(tool == 'oval'){
-        canvas.addEventListener('mousemove', Oval.draw, false );
-        addShape(new Oval("Oval",'#FFFFFF'));
+        shp = new Oval("Oval",'#FFFFFF');
       }
 
       else if (tool == 'square'){
-        canvas.addEventListener('mousemove', Square.draw, false );
-        addShape(new Square("Square",'#FFFFFF'));
+        shp = new Square("Square",'#FFFFFF');
       }
 
       else if( tool == 'cline'){
-        canvas.addEventListener('mousemove', CLine.draw, false );
-        addShape(new CLine("Curved Line", '#FFFFFF'));
+        shp = new CLine("Curved Line", '#FFFFFF');
       }
 
       else if (tool == 'triangle'){
-        canvas.addEventListener('mousemove', Triangle.draw, false );
-        addShape(new Triangle("Triangle", '#FFFFFF'));
+        shp = new Triangle("Triangle", '#FFFFFF');
       }
 
       else if (tool == 'diam'){
-        canvas.addEventListener('mousemove', Diamond.draw, false );
-        addShape(new Diamond("Diamond", '#FFFFFF'));
+        shp = new Diamond("Diamond", '#FFFFFF');
       }
 
       else if (tool == 'heart'){
-        canvas.addEventListener('mousemove', Heart.draw, false );
-         addShape(new Heart("Heart", '#FFFFFF'))
+        shp = new Heart("Heart", '#FFFFFF');
       }
 
       else if (tool == 'text'){
-        canvas.addEventListener('mousemove', Texts.draw, false );
+        temp_canvas.addEventListener('mousemove', Texts.draw, false );
         addShape(new Texts("Textbox", '#FFFFFF'))
       }
+      //addShape(shp);
+      //func = function() {shp.draw();};
+      //temp_canvas.addEventListener('mousemove', func, false );
 
 
-	}, false);
+  }, false);
 
     canvas.addEventListener('mouseup', function(e){
       dragging = false;
       resizing = false;
-      mouseUpSelected(e);
+      //mouseUpSelected(e);
       draw();
       uPush();
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
       console.log("push");
-      canvas.removeEventListener('mousemove', Texts.draw, false);
-      canvas.removeEventListener('mousemove', Rectangle.draw, false);
-      canvas.removeEventListener('mousemove', Square.draw, false);
-      canvas.removeEventListener('mousemove', onBrush, false);
-      canvas.removeEventListener('mousemove', onErase,false);
-      canvas.removeEventListener('mousemove', Circle.draw, false);
-      canvas.removeEventListener('mousemove', Oval.draw, false);
-      canvas.removeEventListener('mousemove', Heart.draw, false);
-      canvas.removeEventListener('mousemove', Line.draw, false);
-      canvas.removeEventListener('mousemove', CLine.draw, false);
-      canvas.removeEventListener('mousemove', Triangle.draw, false);
-      canvas.removeEventListener('mousemove', Diamond.draw,false);
-      canvas.removeEventListener('mousemove', onPencil, false);
-      canvas.removeEventListener('mousemove', onSel, false);
-      canvas.removeEventListener('mousemove', onChoose, false);
+      temp_canvas.removeEventListener('mousemove', Texts.draw, false);
+      temp_canvas.removeEventListener('mousemove', Rectangle.draw, false);
+      temp_canvas.removeEventListener('mousemove', Square.draw, false);
+      temp_canvas.removeEventListener('mousemove', func, false);
+      temp_canvas.removeEventListener('mousemove', onErase,false);
+      temp_canvas.removeEventListener('mousemove', Circle.draw, false);
+      temp_canvas.removeEventListener('mousemove', Oval.draw, false);
+      temp_canvas.removeEventListener('mousemove', Heart.draw, false);
+      temp_canvas.removeEventListener('mousemove', Line.prototype.draw, false);
+      temp_canvas.removeEventListener('mousemove', CLine.draw, false);
+      temp_canvas.removeEventListener('mousemove', Triangle.draw, false);
+      temp_canvas.removeEventListener('mousemove', Diamond.draw,false);
+      temp_canvas.removeEventListener('mousemove', onPencil, false);
+      temp_canvas.removeEventListener('mousemove', onSel, false);
+      temp_canvas.removeEventListener('mousemove', onChoose, false);
       
       if(tool == 'select'){
-          context.setLineDash([]);
-          context.lineWidth = curThickness;
+          temp_context.setLineDash([]);
+          temp_context.lineWidth = curThickness;
         }
 
       if (tool == 'text'){
@@ -247,24 +252,25 @@ if(window.addEventListener) {
         var fs = ta_comp_style.getPropertyValue('font-size');
         var ff = ta_comp_style.getPropertyValue('font-family');
         
-        context.font = fs + ' ' + ff;
-        context.textBaseline = 'top';
+        temp_context.font = fs + ' ' + ff;
+        temp_context.textBaseline = 'top';
        
         for (var n = 0; n < processed_lines.length; n++) {
             var processed_line = processed_lines[n];
              
-            context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
+            temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
         }
         
         context.drawImage(canvas, 0, 0);
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        temp_context.clearRect(0, 0, canvas.width, canvas.height);
      
         textarea.style.display = 'none';
         textarea.value = '';
 
       }
-      context.drawImage(canvas,0,0);
+      context.drawImage(temp_canvas,0,0);
+      temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
       
       points = [];
       frameDraw();
@@ -272,14 +278,14 @@ if(window.addEventListener) {
   }, false);
 
 
-    canvas.addEventListener("touchstart", function(e){
+    temp_canvas.addEventListener("touchstart", function(e){
       blockMenuHeaderScroll = true;
-      context.lineWidth = curThickness;
+      temp_context.lineWidth = curThickness;
       curLJoin = 'round';
-      context.lineJoin = curLJoin;
-      context.lineCap = curLJoin;
-      context.strokeStyle = curColour;
-      context.fillStyle =curColour;
+      temp_context.lineJoin = curLJoin;
+      temp_context.lineCap = curLJoin;
+      temp_context.strokeStyle = curColour;
+      temp_context.fillStyle =curColour;
       
       $("#thickmenu").addClass("hide");
 
@@ -292,25 +298,20 @@ if(window.addEventListener) {
       points.push({x:mouse.x, y:mouse.y});
 
        if(tool == 'line'){
-        canvas.addEventListener('mousemove', Line.draw, false );
-        addShape(new Line("Line",'#FFFFFF'));
+        shp = new Line("Line",'#FFFFFF');
+        shp.draw();
       }
 
       else if(tool == 'rect') {
-        canvas.addEventListener('mousemove', Rectangle.draw, false );
-        addShape(new Rectangle("Rectangle", '#FFFFFF'));
+        shp = new Rectangle("Rectangle", '#000000');
       }
 
       else if(tool == 'brush'){
-        onBrush();
-        canvas.addEventListener('mousemove', FreeForm.draw, false );
-        addShape(new FreeForm("FreeForm", curColour));
+        shp = new FreeForm("FreeForm", curColour, new Array());
       }
 
       else if(tool == 'pencil'){
-        onPencil();
-        canvas.addEventListener('mousemove', FreeForm.draw, false );
-        myState.addShape(new FreeForm( "FreeForm",curColour));
+        shp = new FreeForm("FreeForm", curColour, new Array());
       }
 
       else if(tool == 'select'){
@@ -327,74 +328,69 @@ if(window.addEventListener) {
       }
 
       else if(tool == 'circle'){
-        canvas.addEventListener('mousemove', Circle.draw, false );
-        addShape(new Circle( "Circle",'#FFFFFF'));
+        shp = new Circle( "Circle",'#000000');
       }
 
       else if(tool == 'oval'){
-        canvas.addEventListener('mousemove', Oval.draw, false );
-        addShape(new Oval("Oval",'#FFFFFF'));
+        shp = new Oval("Oval",'#FFFFFF');
       }
 
       else if (tool == 'square'){
-        canvas.addEventListener('mousemove', Square.draw, false );
-        addShape(new Square("Square",'#FFFFFF'));
+        shp = new Square("Square",'#FFFFFF');
       }
 
       else if( tool == 'cline'){
-        canvas.addEventListener('mousemove', CLine.draw, false );
-        addShape(new CLine("Curved Line", '#FFFFFF'));
+        shp = new CLine("Curved Line", '#FFFFFF');
       }
 
       else if (tool == 'triangle'){
-        canvas.addEventListener('mousemove', Triangle.draw, false );
-        addShape(new Triangle("Triangle", '#FFFFFF'));
+        shp = new Triangle("Triangle", '#FFFFFF');
       }
 
       else if (tool == 'diam'){
-        canvas.addEventListener('mousemove', Diamond.draw, false );
-        addShape(new Diamond("Diamond", '#FFFFFF'));
+        shp = new Diamond("Diamond", '#FFFFFF');
       }
 
       else if (tool == 'heart'){
-        canvas.addEventListener('mousemove', Heart.draw, false );
-         addShape(new Heart("Heart", '#FFFFFF'))
+        shp = new Heart("Heart", '#FFFFFF');
       }
 
       else if (tool == 'text'){
-        canvas.addEventListener('mousemove', Texts.draw, false );
+        temp_canvas.addEventListener('mousemove', Texts.draw, false );
         addShape(new Texts("Textbox", '#FFFFFF'))
       }
+      //addShape(shp);
+      //func = function() {shp.draw();};
+      //temp_canvas.addEventListener('touchstart', func, false );
 
-       
-    	}, false);
+    }, false);
 
 
-      canvas.addEventListener('touchend', function(e){
-      	blockMenuHeaderScroll = false;
-      	uPush();
-      	last_mouse.x = mouse.x;
-      	last_mouse.y = mouse.y;
-      	console.log("push");
-      	canvas.removeEventListener('touchmove', Line.draw, false);
-      	canvas.removeEventListener('touchmove', Triangle.draw, false);
-      	canvas.removeEventListener('touchmove', Rectangle.draw, false);
-      	canvas.removeEventListener('touchmove', onBrush, false);
-      	canvas.removeEventListener('touchmove', onErase,false);
-      	canvas.removeEventListener('touchmove', Square.draw, false);
-      	canvas.removeEventListener('touchmove', Heart.draw, false);
-      	canvas.removeEventListener('touchmove', Oval.draw, false);
-      	canvas.removeEventListener('touchmove', CLine.draw, false);
-      	canvas.removeEventListener('touchmove', Diamond.draw, false);
-      	canvas.removeEventListener('touchmove', Circle.draw, false);
-      	canvas.removeEventListener('touchmove', Texts.draw, false);
-      	canvas.removeEventListener('touchmove', onPencil, false);
-      	canvas.removeEventListener('touchmove', onSel, false);
-      	canvas.removeEventListener('touchmove', onChoose, false);
+      temp_canvas.addEventListener('touchend', function(e){
+        blockMenuHeaderScroll = false;
+        uPush();
+        last_mouse.x = mouse.x;
+        last_mouse.y = mouse.y;
+        console.log("push");
+        temp_canvas.removeEventListener('touchmove', Line.draw, false);
+        temp_canvas.removeEventListener('touchmove', Triangle.draw, false);
+        temp_canvas.removeEventListener('touchmove', Rectangle.draw, false);
+        temp_canvas.removeEventListener('touchmove', onBrush, false);
+        temp_canvas.removeEventListener('touchmove', onErase,false);
+        temp_canvas.removeEventListener('touchmove', Square.draw, false);
+        temp_canvas.removeEventListener('touchmove', Heart.draw, false);
+        temp_canvas.removeEventListener('touchmove', Oval.draw, false);
+        temp_canvas.removeEventListener('touchmove', CLine.draw, false);
+        temp_canvas.removeEventListener('touchmove', Diamond.draw, false);
+        temp_canvas.removeEventListener('touchmove', Circle.draw, false);
+        temp_canvas.removeEventListener('touchmove', Texts.draw, false);
+        temp_canvas.removeEventListener('touchmove', onPencil, false);
+        temp_canvas.removeEventListener('touchmove', onSel, false);
+        temp_canvas.removeEventListener('touchmove', onChoose, false);
       
-      	if(tool == 'select'){
-          context.setLineDash([]);
-          context.lineWidth = curThickness;
+        if(tool == 'select'){
+          temp_context.setLineDash([]);
+          temp_context.lineWidth = curThickness;
         }
 
         if (tool == 'text'){
@@ -442,16 +438,17 @@ if(window.addEventListener) {
               context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
           }
           
-          context.drawImage(canvas, 0, 0);
+          context.drawImage(temp_canvas, 0, 0);
 
-          context.clearRect(0, 0, canvas.width, canvas.height);
+          temp_context.clearRect(0, 0, canvas.width, canvas.height);
        
           textarea.style.display = 'none';
           textarea.value = '';
 
         }
 
-        context.drawImage(canvas,0,0);
+        context.drawImage(temp_canvas,0,0);
+        temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
         points = [];
         frameDraw();
 
@@ -468,220 +465,225 @@ if(window.addEventListener) {
 
       points.push({x:mouse.x, y:mouse.y});
 
-      var l = shapes.length;
+      /*var l = shapes.length;
       var tmpSelected = false;
       for (var i = l - 1; i >= 0; i--) {
-       		 if (shapes[i].contains(mouse.x, mouse.y) && tmpSelected === false) {
-          		if (canvas.selection === mySel) {
-            		if (shapes[i].touchedAtHandles(mouse.x, mouse.y)) {
-              			mouseDownSelected(e, mySel);
-              			resizing = true;
-            		} 
-           			else {
-              			canvas.dragoffx = mouse.x - mySel.x;
-              			canvas.dragoffy = mouse.y - mySel.y;
-              			dragging = true;
-            		}
-          		}
-          		canvas.selection = mySel;
-          		mySel.selected = true;
-          		valid = false;
-          		tmpSelected = true;
-       		 } 
-        	else {
-        		mySel.selected = false;
-          		valid = false;
-        	}
+           if (shapes[i].contains(mouse.x, mouse.y) && tmpSelected === false) {
+              if (canvas.selection === mySel) {
+                if (shapes[i].touchedAtHandles(mouse.x, mouse.y)) {
+                    mouseDownSelected(e, mySel);
+                    resizing = true;
+                } 
+                else {
+                    canvas.dragoffx = mouse.x - mySel.x;
+                    canvas.dragoffy = mouse.y - mySel.y;
+                    dragging = true;
+                }
+              }
+              canvas.selection = mySel;
+              mySel.selected = true;
+              valid = false;
+              tmpSelected = true;
+           } 
+          else {
+            mySel.selected = false;
+              valid = false;
+          }
       }
       if (tmpSelected === false) {
-      	 	canvas.selection = null;
+          canvas.selection = null;
       }
+      */
     }, false);
 
 
-  	mouseDownSelected = function(e, shape) {
-    	mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-    	mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-    	start_mouse.x = mouse.x;
-    	start_mouse.y = mouse.y;
-      	
-    	var self = shape;
+/*
+    mouseDownSelected = function(e, shape) {
+      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+      mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+      start_mouse.x = mouse.x;
+      start_mouse.y = mouse.y;
+        
+      var self = shape;
 
-    	// if there isn't a rect yet
-    	if (self.w === undefined) {
-      		self.x = mouse.y;
-      		self.y = mouse.x;
-      		canvas.dragBR = true;
-    	}
-    	// 4 cases:
-    	// 1. top left
-    	else if (checkCloseEnough(mouse.x, self.x, self.closeEnough) && checkCloseEnough(mouse.y, self.y, self.closeEnough)) {
-      		canvas.dragTL = true;
-      		e.target.style.cursor='nw-resize';
-    	}
-    	// 2. top right
-    	else if (checkCloseEnough(mouse.x, self.x + self.w, self.closeEnough) && checkCloseEnough(mouse.y, self.y, self.closeEnough)) {
-      		canvas.dragTR = true;
-      		e.target.style.cursor='ne-resize';
-    	}
-    	// 3. bottom left
-    	else if (checkCloseEnough(mouse.x, self.x, self.closeEnough) && checkCloseEnough(mouse.y, self.y + self.h, self.closeEnough)) {
-      		canvas.dragBL = true;
-      		e.target.style.cursor='sw-resize';
-    	}
-    	// 4. bottom right
-    	else if (checkCloseEnough(mouse.x, self.x + self.w, self.closeEnough) && checkCloseEnough(mouse.y, self.y + self.h, self.closeEnough)) {
-      		canvas.dragBR = true;
-      		e.target.style.cursor='se-resize';
-    	}
-    	// (5.) none of them
-    	else {
-      		// handle not resizing
-    	}
-    	valid = false; // something is resizing so we need to redraw
-  	};
+      // if there isn't a rect yet
+      if (self.w === undefined) {
+          self.x = mouse.y;
+          self.y = mouse.x;
+          canvas.dragBR = true;
+      }
+      // 4 cases:
+      // 1. top left
+      else if (checkCloseEnough(mouse.x, self.x, self.closeEnough) && checkCloseEnough(mouse.y, self.y, self.closeEnough)) {
+          canvas.dragTL = true;
+          e.target.style.cursor='nw-resize';
+      }
+      // 2. top right
+      else if (checkCloseEnough(mouse.x, self.x + self.w, self.closeEnough) && checkCloseEnough(mouse.y, self.y, self.closeEnough)) {
+          canvas.dragTR = true;
+          e.target.style.cursor='ne-resize';
+      }
+      // 3. bottom left
+      else if (checkCloseEnough(mouse.x, self.x, self.closeEnough) && checkCloseEnough(mouse.y, self.y + self.h, self.closeEnough)) {
+          canvas.dragBL = true;
+          e.target.style.cursor='sw-resize';
+      }
+      // 4. bottom right
+      else if (checkCloseEnough(mouse.x, self.x + self.w, self.closeEnough) && checkCloseEnough(mouse.y, self.y + self.h, self.closeEnough)) {
+          canvas.dragBR = true;
+          e.target.style.cursor='se-resize';
+      }
+      // (5.) none of them
+      else {
+          // handle not resizing
+      }
+      valid = false; // something is resizing so we need to redraw
+    };
 
-  	
-  	mouseUpSelected = function(e) {
-    	canvas.dragTL = canvas.dragTR = canvas.dragBL = canvas.dragBR = false;
-  	};
+    
+    mouseUpSelected = function(e) {
+      canvas.dragTL = canvas.dragTR = canvas.dragBL = canvas.dragBR = false;
+    };
 
-  	
-  	mouseMoveSelected = function(e, shape) {
-    	mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-      	mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-      	start_mouse.x = mouse.x;
-      	start_mouse.y = mouse.y;
+    
+    mouseMoveSelected = function(e, shape) {
+      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+        start_mouse.x = mouse.x;
+        start_mouse.y = mouse.y;
 
-    	if (canvas.dragTL) {
-      		e.target.style.cursor='nw-resize';
-      		// switch to top right handle
-      		if (((shape.x + shape.w) - mouse.x) < 0) {
-        		canvas.dragTL = false;
-        		canvas.dragTR = true;
-      		}
-      		// switch to top bottom left
-      		if (((shape.y + shape.h) - mouse.y) < 0) {
-        		canvas.dragTL = false;
-        		canvas.dragBL = true;
-      		}
-      		shape.w += shape.x - mouse.x;
-      		shape.h += shape.y - mouse.y;
-      		shape.x = mouse.x;
-      		shape.y = mouse.y;
-    	} 
-    	else if (canvas.dragTR) {
-      		e.target.style.cursor='ne-resize';
-      		// switch to top left handle
-      		if ((shape.x - mouse.x) > 0) {
-        	canvas.dragTR = false;
-        	canvas.dragTL = true;
-      	}
-      	// switch to bottom right handle
-      	if (((shape.y + shape.h) - mouse.x) < 0) {
-        	canvas.dragTR = false;
-        	canvas.dragBR = true;
-      	}
-      	shape.w = Math.abs(shape.x - mouse.x);
-      	shape.h += shape.y - mouse.y;
-      	shape.y = mouse.y;
-    	} 
-    	else if (canvas.dragBL) {
-      		e.target.style.cursor='sw-resize';
-      		// switch to bottom right handle
-      		if (((shape.x + shape.w) - mouse.x) < 0) {
-        		canvas.dragBL = false;
-        		canvas.dragBR = true;
-      		}
-      		// switch to top left handle
-      		if ((shape.y - mouse.y) > 0) {
-        		canvas.dragBL = false;
-        		canvas.dragTL = true;
-      		}
-      		shape.w += shape.x - mouse.x;
-      		shape.h = Math.abs(shape.y - mouse.x);
-     	 	shape.x = mouse.x;
-    	} 
-    	else if (canvas.dragBR) {
-      		e.target.style.cursor='se-resize';
-      		// switch to bottom left handle
-      		if ((shape.x - mouse.x) > 0) {
-        		canvas.dragBR = false;
-        		canvas.dragBL = true;
-      		}
-      		// switch to top right handle
-      		if ((shape.y - mouse.y) > 0) {
-        		canvas.dragBR = false;
-       			 canvas.dragTR = true;
-      		}
-      		shape.w = Math.abs(shape.x - mouse.x);
-      		shape.h = Math.abs(shape.y - mouse.y);
-    	}
+      if (canvas.dragTL) {
+          e.target.style.cursor='nw-resize';
+          // switch to top right handle
+          if (((shape.x + shape.w) - mouse.x) < 0) {
+            canvas.dragTL = false;
+            canvas.dragTR = true;
+          }
+          // switch to top bottom left
+          if (((shape.y + shape.h) - mouse.y) < 0) {
+            canvas.dragTL = false;
+            canvas.dragBL = true;
+          }
+          shape.w += shape.x - mouse.x;
+          shape.h += shape.y - mouse.y;
+          shape.x = mouse.x;
+          shape.y = mouse.y;
+      } 
+      else if (canvas.dragTR) {
+          e.target.style.cursor='ne-resize';
+          // switch to top left handle
+          if ((shape.x - mouse.x) > 0) {
+          canvas.dragTR = false;
+          canvas.dragTL = true;
+        }
+        // switch to bottom right handle
+        if (((shape.y + shape.h) - mouse.x) < 0) {
+          canvas.dragTR = false;
+          canvas.dragBR = true;
+        }
+        shape.w = Math.abs(shape.x - mouse.x);
+        shape.h += shape.y - mouse.y;
+        shape.y = mouse.y;
+      } 
+      else if (canvas.dragBL) {
+          e.target.style.cursor='sw-resize';
+          // switch to bottom right handle
+          if (((shape.x + shape.w) - mouse.x) < 0) {
+            canvas.dragBL = false;
+            canvas.dragBR = true;
+          }
+          // switch to top left handle
+          if ((shape.y - mouse.y) > 0) {
+            canvas.dragBL = false;
+            canvas.dragTL = true;
+          }
+          shape.w += shape.x - mouse.x;
+          shape.h = Math.abs(shape.y - mouse.x);
+        shape.x = mouse.x;
+      } 
+      else if (canvas.dragBR) {
+          e.target.style.cursor='se-resize';
+          // switch to bottom left handle
+          if ((shape.x - mouse.x) > 0) {
+            canvas.dragBR = false;
+            canvas.dragBL = true;
+          }
+          // switch to top right handle
+          if ((shape.y - mouse.y) > 0) {
+            canvas.dragBR = false;
+             canvas.dragTR = true;
+          }
+          shape.w = Math.abs(shape.x - mouse.x);
+          shape.h = Math.abs(shape.y - mouse.y);
+      }
 
-    	valid = false; // something is resizing so we need to redraw
+      valid = false; // something is resizing so we need to redraw
       uPush();
-  	};
-  	
-  	canvas.selectionColor = '#000000';
+    };
+    
+    canvas.selectionColor = '#000000';
     canvas.selectionWidth = 0.5;
     canvas.interval = 30;
     setInterval(function() {
-    	draw();
+      draw();
     }, canvas.interval);
 
-	var draw = function() {
-		if (!valid) {
-    	clearCanvas();//might bug out
-			var l = shapes.length;
-    		for (var i = 0; i < l; i++) {
-      			var shape = shapes[i];
-      			if (canvas.selection !== shape) {
-        			if (shape.x > canvas.width || shape.y > canvas.height || shape.x + shape.w < 0 || shape.y + shape.h < 0) 
-          				continue;
-        			shapes[i].draw();
-      			}
-   		 	}
+  var draw = function() {
+    if (!valid) {
+      clearCanvas();//might bug out
+      var l = shapes.length;
+        for (var i = 0; i < l; i++) {
+            var shape = shapes[i];
+            if (canvas.selection !== shape) {
+              if (shape.x > canvas.width || shape.y > canvas.height || shape.x + shape.w < 0 || shape.y + shape.h < 0) 
+                  continue;
+              shapes[i].draw();
+            }
+        }
    
-    		if (canvas.selection !== null) {
-      			canvas.selection.draw();
-    		}
+        if (canvas.selection !== null) {
+            canvas.selection.draw();
+        }
 
- 			 if (canvas.selection !== null ) {
-    			context.strokeStyle = canvas.selectionColor;
-    			context.lineWidth = canvas.selectionWidth;
-    			var mySel = canvas.selection;
-    			context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
-  		  }
-    		valid = true;
- 		}
-	};
+       if (canvas.selection !== null ) {
+          context.strokeStyle = canvas.selectionColor;
+          context.lineWidth = canvas.selectionWidth;
+          var mySel = canvas.selection;
+          context.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
+        }
+        valid = true;
+    }
+  }; 
+  */
 
 
-	var addShape = function(shape) {
-  		shapes.push(shape);
-  		valid = false;
-	};
+  var addShape = function(shape) {
+      shapes.push(shape);
+      valid = false;
+  };
+  /*
 
-	var clearCanvas= function() {
-  		context.clearRect(0, 0, this.width, this.height);
-	};
+  var clearCanvas= function() {
+      context.clearRect(0, 0, this.width, this.height);
+  };
+  */
 
 
     /***********SHAPE CONSTRUCTOR***********/
     var Shape  = function(name, fill){
-    	this.name = name;
-    	this.sx = start_mouse.x;
-  		this.sy = start_mouse.y;
-  		this.ex = mouse.x;
-  		this.ey = mouse.y;
-  		this.fill = fill || '#FFFFFF';
-  		this.selected = false;
-  		this.closeEnough = 8; 
-  		this.frame = curFrame;           
-  		this.stroke = curColour;
-  		this.lw = curThickness;
-  		this.lj = curLJoin;
-  		this.colour = curColour;
+      this.name = name;
+      this.sx = start_mouse.x;
+      this.sy = start_mouse.y;
+      this.ex = mouse.x;
+      this.ey = mouse.y;
+      this.fill = fill || '#FFFFFF';
+      this.selected = false;
+      this.closeEnough = 8; 
+      this.frame = curFrame;           
+      this.stroke = curColour;
+      this.lw = curThickness;
+      this.lj = curLJoin;
+      this.colour = curColour;
       
     };
 
@@ -703,13 +705,14 @@ if(window.addEventListener) {
       this.y = Math.min(mouse.x, mouse.y);
       this.w = Math.abs(mouse.x - start_mouse.x);
       this.h = Math.abs(mouse.y - start_mouse.y);
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
-      context.fillStyle = this.fill;
-      context.beginPath();
-      context.moveTo(start_mouse.x, start_mouse.y);
-      context.lineTo( mouse.x, mouse.y);
-      context.stroke();
-      context.closePath();
+      temp_context.fillStyle = this.fill;
+      temp_context.beginPath();
+      temp_context.moveTo(start_mouse.x, start_mouse.y);
+      temp_context.lineTo( mouse.x, mouse.y);
+      temp_context.stroke();
+      temp_context.closePath();
 
       console.log(this.x, this.y, this.w, this.h);
 
@@ -1035,25 +1038,31 @@ if(window.addEventListener) {
 
 
     /********************** FREEFORM FUNCTION *********************/
-    var points = [];
 
-    var FreeForm = function(name,fill){
-      points.push({x:mouse.x, y:mouse.y});
-      Shape.call(this,name, fill);
-      this.points = points;
-      console.log(points);
-      var xmax = points.indexOf(points.find(function(o){return o.x == (Math.max.apply(Math,points.map(function(o){return o.x})))}));
-      var xmin = points.indexOf(points.find(function(o){return o.x == (Math.min.apply(Math,points.map(function(o){return o.x})))}));
-      var ymax = points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
-      var ymin = points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
-      this.w = this.points[xmax].x - this.points[xmin].x;
-      this.h = this.points[ymax].y - this.points[ymin].y;
+    var FreeForm = function(nme, fill, pnts){
+      Shape.call(this, name, fill);
+      this.points = pnts;
+      var xmax = this.points.indexOf(points.find(function(o){return o.x == (Math.max.apply(Math,points.map(function(o){return o.x})))}));
+      var xmin = this.points.indexOf(points.find(function(o){return o.x == (Math.min.apply(Math,points.map(function(o){return o.x})))}));
+      var ymax = this.points.indexOf(points.find(function(o){return o.y == (Math.max.apply(Math,points.map(function(o){return o.y})))}));
+      var ymin = this.points.indexOf(points.find(function(o){return o.y == (Math.min.apply(Math,points.map(function(o){return o.y})))}));
+      if(this.points.length > 0){
+        this.w = this.points[xmax].x - this.points[xmin].x;
+        this.h = this.points[ymax].y - this.points[ymin].y;
+      }
     };
 
     FreeForm.prototype = Object.create(Shape.prototype);
     
 
     FreeForm.prototype.draw = function(){
+
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      this.points.push({x:mouse.x, y:mouse.y});
+      addFree = true;
       
       if(this.points.length <3){
         var b = this.points[0];
@@ -1063,6 +1072,7 @@ if(window.addEventListener) {
         context.closePath();
         return;
       }
+      context.clearRect(0,0, canvas.width, canvas.height);
 
       context.beginPath();
       context.moveTo(this.points[0].x, this.points[0].y);
@@ -1079,6 +1089,9 @@ if(window.addEventListener) {
       if (this.selected === true) {
         this.drawHandles(context);
       }
+      console.log(this.points);
+      points = this.points;
+      return this.points;
 
     };
 
@@ -1136,8 +1149,8 @@ if(window.addEventListener) {
         }
     };
 
-		
-		$("#thickmenu").addClass("hide");
+    
+    $("#thickmenu").addClass("hide");
 
 
   // Draws a white rectangle with a black border around it
@@ -1155,7 +1168,7 @@ if(window.addEventListener) {
     return Math.abs(p1 - p2) < closeEnough;
   }
 
-	
+  
   var onBrush = function(e){
     curThickness = 5;
     curLJoin = 'round';
@@ -1202,266 +1215,266 @@ if(window.addEventListener) {
    context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
    context.stroke();
   };
-			
-		/**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
- 	 	$('#tools div').on('click', function(){
- 	 		tool = $(this).attr('id');
- 	 		console.log("Tool selected: " + tool);
- 		})
+      
+    /**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
+    $('#tools div').on('click', function(){
+      tool = $(this).attr('id');
+      console.log("Tool selected: " + tool);
+    })
 
- 		$('#shapes div').on('click', function(){
-  			tool = $(this).attr('id');
-  			console.log("Shape selected: " + tool);
- 		})
+    $('#shapes div').on('click', function(){
+        tool = $(this).attr('id');
+        console.log("Shape selected: " + tool);
+    })
 
-		/***********************SELECTING A COLOUR*************************/
- 		var clr = $("#colour");
- 		clr.mouseover(function(e){
- 			var colourTiles = $(".colours");
- 			for( var i = 0; i< colourTiles.length; i++){
- 				colourTiles[i].addEventListener('click', function(e){
- 					curColour = this.id; 				
- 				});
- 			}
- 		});
+    /***********************SELECTING A COLOUR*************************/
+    var clr = $("#colour");
+    clr.mouseover(function(e){
+      var colourTiles = $(".colours");
+      for( var i = 0; i< colourTiles.length; i++){
+        colourTiles[i].addEventListener('click', function(e){
+          curColour = this.id;        
+        });
+      }
+    });
 
- 	
-		/***********************SELECTING LINE WEIGHT *************************/
-		var thickness = document.getElementById("thickness");
-		thickness.addEventListener("click", function(e) {
-			$("#thickmenu").removeClass("hide");
-			var thickTiles = $(".thick");
-			for(var i = 0; i<thickTiles.length; i++){
-				thickTiles[i].addEventListener('click', function(e) {
-					curThickness = parseInt(this.id);
-					context.lineWidth = curThickness;
+  
+    /***********************SELECTING LINE WEIGHT *************************/
+    var thickness = document.getElementById("thickness");
+    thickness.addEventListener("click", function(e) {
+      $("#thickmenu").removeClass("hide");
+      var thickTiles = $(".thick");
+      for(var i = 0; i<thickTiles.length; i++){
+        thickTiles[i].addEventListener('click', function(e) {
+          curThickness = parseInt(this.id);
+          context.lineWidth = curThickness;
 
-				});
-			}
-		});
-	
+        });
+      }
+    });
+  
 
-		/*********************** UNDO ARRAY FUNCTION*************************/
-		function uPush(){
-			undoArr.push(canvas.toDataURL());
-			undoindex++;
-		}
-
-
- 		/*********************** UNDO FUNCTION*************************/
-		$(document).keydown(function (event) {
-		    if (event.ctrlKey && event.keyCode == 90) {
-		        undo1();
-		    }
-		});
-
-		var undo = document.getElementById("undo");
-		undo.addEventListener("click", undo1);
-
-		 function undo1 (e){
-		 	if (undoindex > 0){		
-		 		undoindex--;
-		 		console.log("undo: " + undoindex);
-		 		var undo_img = new Image();
-		 		undo_img.src = undoArr[undoindex];
-		 		context.clearRect(0,0,canvas.width, canvas.height);
-		 		context.drawImage(undo_img,0,0);
-		 		frameDraw(); 
-		 		console.log("undo");
-		 	}
-		}
+    /*********************** UNDO ARRAY FUNCTION*************************/
+    function uPush(){
+      undoArr.push(canvas.toDataURL());
+      undoindex++;
+    }
 
 
-	 /*********************** REDO FUNCTION*************************/
+    /*********************** UNDO FUNCTION*************************/
+    $(document).keydown(function (event) {
+        if (event.ctrlKey && event.keyCode == 90) {
+            undo1();
+        }
+    });
 
-		$(document).keydown(function (event) {
-		    if (event.ctrlKey && event.keyCode == 89) {
-		        redo1();
-		    }
-		});
+    var undo = document.getElementById("undo");
+    undo.addEventListener("click", undo1);
 
-		var redo = document.getElementById("redo");
-		redo.addEventListener("click", redo1);
-
-		function redo1(e){
-			if (undoindex < undoArr.length){	
-				undoindex++;
-		 		console.log("redo: " + undoindex);
-	 			var undo_img = new Image();
-	 			undo_img.src = undoArr[undoindex];
-	 			context.drawImage(undo_img,0,0);
-	 			frameDraw();	
-	 			console.log("redo");
-			}
-		}
-
-
-   		/*********************** SELECT FUNCTION*************************/
-   		var x, y, width, height, stx, sty = 0;
-   		var onSel = function(){
-		  	if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			context.lineWidth = 1;
-   			context.setLineDash([6]);
-			context.clearRect(0,0, canvas.width, canvas.height);
-
-			x = Math.min(mouse.x, start_mouse.x);
-			y = Math.min(mouse.y, start_mouse.y);
-			width = Math.abs(mouse.x - start_mouse.x);
-			height = Math.abs(mouse.y - start_mouse.y);
-
-			context.strokeRect(x,y, width, height);
-			stx = mouse.x;
-			sty = mouse.y;
-			tool = 'choose';
-   		};
-   		var onChoose = function(){
-   			if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			context.clearRect(0,0, canvas.width, canvas.height);
-    		context.fillStyle = 'white';
-    		context.strokeStyle = 'white';
-			context.setLineDash([0]);
-			context.fillRect(x,y, width, height);
-			context.strokeRect(x,y, width, height);
-			diffx = mouse.x - stx;
-			diffy = mouse.y - sty;
-			context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
-			context.strokeRect(x+diffx, y+diffy, width, height);
-    		context.strokeStyle = 'black';
-   		};
-
-   		/*********************** PAINT FILL FUNCTION*************************/
+     function undo1 (e){
+      if (undoindex > 0){   
+        undoindex--;
+        console.log("undo: " + undoindex);
+        var undo_img = new Image();
+        undo_img.src = undoArr[undoindex];
+        context.clearRect(0,0,canvas.width, canvas.height);
+        context.drawImage(undo_img,0,0);
+        frameDraw(); 
+        console.log("undo");
+      }
+    }
 
 
+   /*********************** REDO FUNCTION*************************/
 
-		
- 		/********************** FRAME SELECT *********************/
-		
- 		var frame_select = "frmimg"+curFrame;
-  		$("#img div").on('click', function(){
-  			frame_select = $(this).attr('id');
-  			console.log("frame selected: "+frame_select);
- 		})
+    $(document).keydown(function (event) {
+        if (event.ctrlKey && event.keyCode == 89) {
+            redo1();
+        }
+    });
 
+    var redo = document.getElementById("redo");
+    redo.addEventListener("click", redo1);
 
-		/*************************DRAW FRAME***********************/
-		var cnvs1 = document.getElementById("canvas1");
-		function frameDraw() {
-			var frame = new Image();
-			frame = cnvs1.toDataURL("image/png");
-
-			if ((curFrame == 1) && (images.length == 0)){
-				images.push(frame);
-			}
-
-			else if( curFrame == images.length){
-				images[curFrame-1] = frame;
-			}
-
-			else if (curFrame > images.length){
-				images.push(frame);
-			}
-			console.log("Length of frame array: " + images.length);
-		
-			var val = "frmimg"+curFrame;
-			var frameimg = document.getElementById(val);
-			frameimg.src = frame;	
-		};
+    function redo1(e){
+      if (undoindex < undoArr.length){  
+        undoindex++;
+        console.log("redo: " + undoindex);
+        var undo_img = new Image();
+        undo_img.src = undoArr[undoindex];
+        context.drawImage(undo_img,0,0);
+        frameDraw();  
+        console.log("redo");
+      }
+    }
 
 
-		/*************************NEW FRAME************************/
-		var addFrame = document.getElementById("addframe");
-		addFrame.addEventListener("click", function(e){
-			context.clearRect(0,0, canvas.width, canvas.height);
-			context.clearRect(0,0,canvas.width, canvas.height);
+      /*********************** SELECT FUNCTION*************************/
+      var x, y, width, height, stx, sty = 0;
+      var onSel = function(){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      context.lineWidth = 1;
+        context.setLineDash([6]);
+      context.clearRect(0,0, canvas.width, canvas.height);
 
-			var frame = new Image();
-			frame = cnvs1.toDataURL("image/png");	
+      x = Math.min(mouse.x, start_mouse.x);
+      y = Math.min(mouse.y, start_mouse.y);
+      width = Math.abs(mouse.x - start_mouse.x);
+      height = Math.abs(mouse.y - start_mouse.y);
 
-			var img = document.createElement("img");
-			img.className = "frame";
-			img.setAttribute("id", "frmimg"+(curFrame+1));
-			$("#frmimg"+curFrame).after(img);
-			reset1();
-			curFrame++;
-			frameDraw();
-		});
+      context.strokeRect(x,y, width, height);
+      stx = mouse.x;
+      sty = mouse.y;
+      tool = 'choose';
+      };
+      var onChoose = function(){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      context.clearRect(0,0, canvas.width, canvas.height);
+        context.fillStyle = 'white';
+        context.strokeStyle = 'white';
+      context.setLineDash([0]);
+      context.fillRect(x,y, width, height);
+      context.strokeRect(x,y, width, height);
+      diffx = mouse.x - stx;
+      diffy = mouse.y - sty;
+      context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
+      context.strokeRect(x+diffx, y+diffy, width, height);
+        context.strokeStyle = 'black';
+      };
 
-		function reset1(){
-			undoArr = [];
-			undoindex= 0;
-		}
-
-
-		/*************************COPY FRAME************************/
-		var copyFrame = document.getElementById("copyframe");
-		copyFrame.addEventListener("click", function(e){
-			context.clearRect(0,0, canvas.width, canvas.height);
-			context.clearRect(0,0,canvas.width, canvas.height);
-
-			var cimg = new Image();
-			cimg.src = images[images.length -1];
-			context.drawImage(cimg,0,0);
-			frameDraw();
-
-			var frame = new Image();
-			frame = cnvs1.toDataURL("image/png");
-
-			var img = document.createElement("img");
-			img.className = "frame";
-			img.setAttribute("id", "frmimg" + (curFrame+1));
-			$("#frmimg"+curFrame).after(img);
-			reset1();
-			curFrame++;
-			frameDraw();
-
-		});
+      /*********************** PAINT FILL FUNCTION*************************/
 
 
-		/*************************DELETE FRAME************************/
-		var delFrame = document.getElementById("delframe");
-		delFrame.addEventListener("click", function(e){
-			if(curFrame > 1){
-				context.clearRect(0,0, canvas.width, canvas.height);
-				context.clearRect(0,0,canvas.width, canvas.height);
 
-				$("#frmimg"+curFrame).remove();
-				images.pop();
-				curFrame--;
-
-				var curImg = new Image();
-				curImg.src = images[images.length-1];
-				context.drawImage(curImg,0,0);
-				reset1();
-			}		
-
-		});
+    
+    /********************** FRAME SELECT *********************/
+    
+    var frame_select = "frmimg"+curFrame;
+      $("#img div").on('click', function(){
+        frame_select = $(this).attr('id');
+        console.log("frame selected: "+frame_select);
+    })
 
 
-		/***********************PLAY ANIMATION*********************/
-		var play = document.getElementById("play");
-		var j = 0;
-		var id;
-		play.addEventListener("click", function(e){
-			var time = parseInt(document.getElementById('frms').value);
-			var sec = 60/time;
-			var msec = sec*1000;
-			for(var i=0; i<images.length; i++){
-				var playScreen = document.createElement("img");
-				playScreen.setAttribute("id", "playDiv");
-				playScreen.src = images[i];
-				$("#canvas").prepend(playScreen);
-				$("#playDiv").delay(msec*(i+1)).fadeIn(msec-100).fadeOut(100);
-				console.log("Frame played:" + i);
-			}
-			$("#playDiv").remove();
-		});
+    /*************************DRAW FRAME***********************/
+    var cnvs1 = document.getElementById("canvas1");
+    function frameDraw() {
+      var frame = new Image();
+      frame = cnvs1.toDataURL("image/png");
 
-	
+      if ((curFrame == 1) && (images.length == 0)){
+        images.push(frame);
+      }
+
+      else if( curFrame == images.length){
+        images[curFrame-1] = frame;
+      }
+
+      else if (curFrame > images.length){
+        images.push(frame);
+      }
+      console.log("Length of frame array: " + images.length);
+    
+      var val = "frmimg"+curFrame;
+      var frameimg = document.getElementById(val);
+      frameimg.src = frame; 
+    };
+
+
+    /*************************NEW FRAME************************/
+    var addFrame = document.getElementById("addframe");
+    addFrame.addEventListener("click", function(e){
+      context.clearRect(0,0, canvas.width, canvas.height);
+      context.clearRect(0,0,canvas.width, canvas.height);
+
+      var frame = new Image();
+      frame = cnvs1.toDataURL("image/png"); 
+
+      var img = document.createElement("img");
+      img.className = "frame";
+      img.setAttribute("id", "frmimg"+(curFrame+1));
+      $("#frmimg"+curFrame).after(img);
+      reset1();
+      curFrame++;
+      frameDraw();
+    });
+
+    function reset1(){
+      undoArr = [];
+      undoindex= 0;
+    }
+
+
+    /*************************COPY FRAME************************/
+    var copyFrame = document.getElementById("copyframe");
+    copyFrame.addEventListener("click", function(e){
+      context.clearRect(0,0, canvas.width, canvas.height);
+      context.clearRect(0,0,canvas.width, canvas.height);
+
+      var cimg = new Image();
+      cimg.src = images[images.length -1];
+      context.drawImage(cimg,0,0);
+      frameDraw();
+
+      var frame = new Image();
+      frame = cnvs1.toDataURL("image/png");
+
+      var img = document.createElement("img");
+      img.className = "frame";
+      img.setAttribute("id", "frmimg" + (curFrame+1));
+      $("#frmimg"+curFrame).after(img);
+      reset1();
+      curFrame++;
+      frameDraw();
+
+    });
+
+
+    /*************************DELETE FRAME************************/
+    var delFrame = document.getElementById("delframe");
+    delFrame.addEventListener("click", function(e){
+      if(curFrame > 1){
+        context.clearRect(0,0, canvas.width, canvas.height);
+        context.clearRect(0,0,canvas.width, canvas.height);
+
+        $("#frmimg"+curFrame).remove();
+        images.pop();
+        curFrame--;
+
+        var curImg = new Image();
+        curImg.src = images[images.length-1];
+        context.drawImage(curImg,0,0);
+        reset1();
+      }   
+
+    });
+
+
+    /***********************PLAY ANIMATION*********************/
+    var play = document.getElementById("play");
+    var j = 0;
+    var id;
+    play.addEventListener("click", function(e){
+      var time = parseInt(document.getElementById('frms').value);
+      var sec = 60/time;
+      var msec = sec*1000;
+      for(var i=0; i<images.length; i++){
+        var playScreen = document.createElement("img");
+        playScreen.setAttribute("id", "playDiv");
+        playScreen.src = images[i];
+        $("#canvas").prepend(playScreen);
+        $("#playDiv").delay(msec*(i+1)).fadeIn(msec-100).fadeOut(100);
+        console.log("Frame played:" + i);
+      }
+      $("#playDiv").remove();
+    });
+
+  
 
 }, false); }

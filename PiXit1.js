@@ -116,10 +116,10 @@ if(window.addEventListener) {
       points.push({x:mouse.x, y:mouse.y});
 
        if(tool == 'line'){
-        shp = new Line("Line",'#FFFFFF');
+        shp = new Line("Line",'#000000');
         addShape(shp);
-        shp.draw();
-        temp_canvas.addEventListener('mousemove', function(){shp.draw();}, false );
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if(tool == 'rect') {
@@ -128,10 +128,16 @@ if(window.addEventListener) {
 
       else if(tool == 'brush'){
         shp = new FreeForm("FreeForm", curColour, new Array());
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if(tool == 'pencil'){
         shp = new FreeForm("FreeForm", curColour, new Array());
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if(tool == 'select'){
@@ -149,48 +155,68 @@ if(window.addEventListener) {
 
       else if(tool == 'circle'){
         shp = new Circle( "Circle", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if(tool == 'oval'){
         shp = new Oval("Oval", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if (tool == 'square'){
         shp = new Square("Square", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if( tool == 'cline'){
         shp = new CLine("Curved Line", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if (tool == 'triangle'){
         shp = new Triangle("Triangle", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if (tool == 'diam'){
         shp = new Diamond("Diamond", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if (tool == 'heart'){
         shp = new Heart("Heart", curColour);
+        addShape(shp);
+        func = function() {shp.draw();};
+        temp_canvas.addEventListener('mousemove', func, false );
       }
 
       else if (tool == 'text'){
         temp_canvas.addEventListener('mousemove', Texts.draw, false );
         addShape(new Texts("Textbox", '#FFFFFF'))
       }
-      addShape(shp);
-      func = function() {shp.draw();};
-      temp_canvas.addEventListener('mousemove', func, false );
 
 
   }, false);
 
-    canvas.addEventListener('mouseup', function(e){
+    temp_canvas.addEventListener('mouseup', function(e){
+      console.log("huisfhaiuhduagdfuilagefagdiugadufgaisdugasudguaedifgauidogfudiofgasudfgoaidufgasudgfiasdugfiudgfoasugfioaugdfiugasdufgausdgfoauidgfoadfugaisdugfusidofasiudgfioaudgfiuasdgfiusagdaoiugdfiuogiufgsodfiugsdioufgsiodugfaisuog");
+       
       dragging = false;
       resizing = false;
       //mouseUpSelected(e);
-      draw();
+      //draw();
       uPush();
       last_mouse.x = mouse.x;
       last_mouse.y = mouse.y;
@@ -260,15 +286,14 @@ if(window.addEventListener) {
              
             temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
         }
-        console.log("huisfhaiuhduagdfuilagefagdiugadufgaisdugasudguaedifgauidogfudiofgasudfgoaidufgasudgfiasdugfiudgfoasugfioaugdfiugasdufgausdgfoauidgfoadfugaisdugfusidofasiudgfioaudgfiuasdgfiusagdaoiugdfiuogiufgsodfiugsdioufgsiodugfaisuog");
-        //context.drawImage(canvas, 0, 0);
+        context.drawImage(canvas, 0, 0);
 
         temp_context.clearRect(0, 0, canvas.width, canvas.height);
      
         textarea.style.display = 'none';
         textarea.value = '';
 
-      }
+      } 
       context.drawImage(temp_canvas,0,0);
       temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
       
@@ -1068,6 +1093,7 @@ if(window.addEventListener) {
         {
             e.preventDefault();
         }
+        
       this.points.push({x:mouse.x, y:mouse.y});
       addFree = true;
       
@@ -1079,19 +1105,19 @@ if(window.addEventListener) {
         context.closePath();
         return;
       }
-      context.clearRect(0,0, canvas.width, canvas.height);
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
-      context.beginPath();
-      context.moveTo(this.points[0].x, this.points[0].y);
+      temp_context.beginPath();
+      temp_context.moveTo(this.points[0].x, this.points[0].y);
 
       for( var i = 1; i < this.points.length - 2; i++){
         var c = (this.points[i].x + this.points[i+1].x) / 2;
         var d = (this.points[i].y + this.points[i+1].y) / 2;
-        context.quadraticCurveTo(this.points[i].x, this.points[i].y,c,d);
+        temp_context.quadraticCurveTo(this.points[i].x, this.points[i].y,c,d);
       }
 
-      context.quadraticCurveTo( this.points[i].x, this.points[i].y, this.points[i+1].x, this.points[i+1].y);
-      context.stroke();
+      temp_context.quadraticCurveTo( this.points[i].x, this.points[i].y, this.points[i+1].x, this.points[i+1].y);
+      temp_context.stroke();
 
       if (this.selected === true) {
         this.drawHandles(context);

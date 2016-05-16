@@ -60,7 +60,7 @@ if(window.addEventListener) {
 
     /********************** CAPTURE MOUSE MOVEMENT *********************/
     var mouse = {x: 0, y: 0};
-    var start_mouse = {x: 0, y:0};
+    var start_mouse = {x: 0, y: 0};
     var last_mouse = {x: 0, y: 0};
     
       
@@ -123,7 +123,7 @@ if(window.addEventListener) {
       }
 
       else if(tool == 'rect') {
-        shp = new Rectangle("Rectangle", '#000000');
+        shp = new Rectangle("Rectangle", curColour);
       }
 
       else if(tool == 'brush'){
@@ -148,40 +148,40 @@ if(window.addEventListener) {
       }
 
       else if(tool == 'circle'){
-        shp = new Circle( "Circle",'#000000');
+        shp = new Circle( "Circle", curColour);
       }
 
       else if(tool == 'oval'){
-        shp = new Oval("Oval",'#FFFFFF');
+        shp = new Oval("Oval", curColour);
       }
 
       else if (tool == 'square'){
-        shp = new Square("Square",'#FFFFFF');
+        shp = new Square("Square", curColour);
       }
 
       else if( tool == 'cline'){
-        shp = new CLine("Curved Line", '#FFFFFF');
+        shp = new CLine("Curved Line", curColour);
       }
 
       else if (tool == 'triangle'){
-        shp = new Triangle("Triangle", '#FFFFFF');
+        shp = new Triangle("Triangle", curColour);
       }
 
       else if (tool == 'diam'){
-        shp = new Diamond("Diamond", '#FFFFFF');
+        shp = new Diamond("Diamond", curColour);
       }
 
       else if (tool == 'heart'){
-        shp = new Heart("Heart", '#FFFFFF');
+        shp = new Heart("Heart", curColour);
       }
 
       else if (tool == 'text'){
         temp_canvas.addEventListener('mousemove', Texts.draw, false );
         addShape(new Texts("Textbox", '#FFFFFF'))
       }
-      //addShape(shp);
-      //func = function() {shp.draw();};
-      //temp_canvas.addEventListener('mousemove', func, false );
+      addShape(shp);
+      func = function() {shp.draw();};
+      temp_canvas.addEventListener('mousemove', func, false );
 
 
   }, false);
@@ -260,8 +260,8 @@ if(window.addEventListener) {
              
             temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
         }
-        
-        context.drawImage(canvas, 0, 0);
+        console.log("huisfhaiuhduagdfuilagefagdiugadufgaisdugasudguaedifgauidogfudiofgasudfgoaidufgasudgfiasdugfiudgfoasugfioaugdfiugasdufgausdgfoauidgfoadfugaisdugfusidofasiudgfioaudgfiuasdgfiusagdaoiugdfiuogiufgsodfiugsdioufgsiodugfaisuog");
+        //context.drawImage(canvas, 0, 0);
 
         temp_context.clearRect(0, 0, canvas.width, canvas.height);
      
@@ -464,8 +464,8 @@ if(window.addEventListener) {
       start_mouse.y = mouse.y;
 
       points.push({x:mouse.x, y:mouse.y});
-
-      /*var l = shapes.length;
+      /*****************************************************/
+      var l = shapes.length;
       var tmpSelected = false;
       for (var i = l - 1; i >= 0; i--) {
            if (shapes[i].contains(mouse.x, mouse.y) && tmpSelected === false) {
@@ -493,11 +493,11 @@ if(window.addEventListener) {
       if (tmpSelected === false) {
           canvas.selection = null;
       }
-      */
+      /***************************************************/
     }, false);
 
 
-/*
+/*********************************************************************/
     mouseDownSelected = function(e, shape) {
       mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
       mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
@@ -654,19 +654,19 @@ if(window.addEventListener) {
         valid = true;
     }
   }; 
-  */
+  /**************************************************************************/
 
 
   var addShape = function(shape) {
-      shapes.push(shape);
-      valid = false;
+    shapes.push(shape);
+    valid = false;
   };
-  /*
+  /********************************************************/
 
   var clearCanvas= function() {
       context.clearRect(0, 0, this.width, this.height);
   };
-  */
+  /********************************************************/
 
 
     /***********SHAPE CONSTRUCTOR***********/
@@ -694,17 +694,21 @@ if(window.addEventListener) {
     /********************** STRAIGHT LINE FUNCTION *********************/
 
     var Line = function (name,fill){
-      Shape.call(this, name, fill);    
+      Shape.call(this, name, fill);  
+      this.x = Math.min(start_mouse.x, start_mouse.y);
+      this.y = Math.min(mouse.x, mouse.y);
+      this.w = Math.abs(mouse.x - start_mouse.x);
+      this.h = Math.abs(mouse.y - start_mouse.y);  
            
     };
 
     Line.prototype  = Object.create(Shape.prototype);
 
     Line.prototype.draw = function(){
-      this.x = Math.min(start_mouse.x, start_mouse.y);
-      this.y = Math.min(mouse.x, mouse.y);
-      this.w = Math.abs(mouse.x - start_mouse.x);
-      this.h = Math.abs(mouse.y - start_mouse.y);
+      if (blockMenuHeaderScroll)
+      {
+          e.preventDefault();
+      }
       temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
       temp_context.fillStyle = this.fill;
@@ -728,15 +732,15 @@ if(window.addEventListener) {
     /********************** TRIANGLE FUNCTION *********************/
     var Triangle = function(name,fill){
       Shape.call(this, name, fill);
+      this.x = Math.min(this.ex, this.sx);
+      this.y = Math.min(this.ey, this.sy);
+      this.w = Math.abs(this.ex - this.sx);
+      this.h = Math.abs(this.ey - this.sy); 
     };
 
     Triangle.prototype = Object.create(Shape.prototype);
 
     Triangle.prototype.draw = function(){ 
-      this.x = Math.min(this.ex, this.sx);
-      this.y = Math.min(this.ey, this.sy);
-      this.w = Math.abs(this.ex - this.sx);
-      this.h = Math.abs(this.ey - this.sy); 
 
       context.fillStyle = this.fill;
       context.beginPath();
@@ -744,6 +748,7 @@ if(window.addEventListener) {
       context.lineTo(this.x + this.w / 2, this.y + this.h);
       context.lineTo(this.x - this.w / 2, this.y + this.h);
       context.lineTo(this.x, this.y);
+      console.log(curColour);
       context.stroke();
       context.closePath();
 
@@ -835,18 +840,20 @@ if(window.addEventListener) {
       this.x = Math.min(this.ex, this.sx);
       this.y = Math.min(this.ey, this.sy);
       this.w = Math.abs(this.ex - this.sx);
-      this.h = Math.abs(this.ey - this.sy); 
+      this.h = Math.abs(this.ey - this.sy);
+      console.log("(" + this.x + ", " + this.y + ", " + this.w + ", " + this.h + ")") 
     };
 
     Rectangle.prototype = Object.create(Shape.prototype);
 
     Rectangle.prototype.draw = function(){
-      console.log(this.fill);
-      console.log(this.sx);
-      console.log(this.sy);
-      console.log(this.ex);
-      console.log(this.sy);
+      //console.log(this.fill);
+      //console.log(this.sx);
+      //console.log(this.sy);
+      //console.log(this.ex);
+      //console.log(this.sy);
       context.fillStyle = this.fill;
+      console.log(curColour);
       context.strokeRect(this.x, this.y, this.w, this.h);
 
       if (this.selected === true){
@@ -1380,7 +1387,6 @@ if(window.addEventListener) {
         images.push(frame);
       }
       console.log("Length of frame array: " + images.length);
-    
       var val = "frmimg"+curFrame;
       var frameimg = document.getElementById(val);
       frameimg.src = frame; 

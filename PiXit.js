@@ -1252,10 +1252,22 @@ if(window.addEventListener) {
 			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");	
-
-			var img = document.createElement("img");
-			img.className = "frame";
-			img.setAttribute("id", "frmimg"+(curFrame+1));
+			
+			
+			if(document.getElementById("frmimg"+(curFrame+1))!=null){
+				console.log("made it");
+				var keys=Object.keys(images);
+				console.log(curFrame);				
+				for(var i=keys.length-1;i>=curFrame;i--){
+					console.log(parseInt(keys[i])+1);
+					images[parseInt(keys[i])+1]=images[keys[i]];
+					document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
+				}
+			}
+				var img = document.createElement("img");
+				img.className = "frame";		
+				img.setAttribute("id", "frmimg"+(curFrame+1));
+			
 			$("#frmimg"+curFrame).after(img);
 			reset1();
 			curFrame++;

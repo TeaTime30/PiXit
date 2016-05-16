@@ -745,7 +745,7 @@ if(window.addEventListener) {
         document.body.appendChild(link);
         var url = window.URL.createObjectURL(saveFile);
         link.href = url;
-        link.download = fileName;
+        link.download = fileName + ".xml";
         link.click();
         window.URL.revokeObjectURL(url);
         $("#saving").remove();

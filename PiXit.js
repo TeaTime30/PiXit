@@ -1373,11 +1373,12 @@ if(window.addEventListener) {
 			/*$("#playDiv").remove();*/
 		});
 		/**Object interactions **/	
-		$(".object").on("click",function(e){
-			if($(":nth-child(2)").hasClass("objdata hide"))
-				$(":nth-child(2)").removeClass("objdata hide").addClass("objdata");
+		$(".object-header").on("click",function(e){
+			var $obj =$(this).parent();
+			if($(":nth-child(2),:nth-child(3)",$obj).hasClass("hide"))
+				$(":nth-child(2),:nth-child(3)",$obj).removeClass("hide");
 			else
-				$(":nth-child(2)").addClass("hide");		
+				$(":nth-child(2),:nth-child(3)",$obj).addClass("hide");		
 		});
 		
 }, false); }

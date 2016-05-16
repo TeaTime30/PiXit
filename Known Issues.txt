@@ -1,0 +1,48 @@
+Completed Tasks
+--------------------------------------------------------------------------------------
+1. Saves files as XML locally.
+2. Opens files from local folders.
+3. Basic pseudo-parsing to ensure file format is correct.
+4. Interprets file to ascertain values and pass to shape constructors.
+
+Issues
+--------------------------------------------------------------------------------------
+1. Cloud support for storage.
+
+Possible Solutions
+--------------------------------------------------------------------------------------
+1. Can convert XML file to JSON file and vice versa. JSON file stores objects(shape) as 
+   well as array of objects. Google API can stores strings and JSON files.
+2. Saving to and Opening from Drive Using REST API and Nodejs
+
+Required Technologies
+--------------------------------------------------------------------------------------
+JSON
+ - http://www.w3schools.com/json/
+Google API
+ - https://developers.google.com/google-apps/realtime/realtime-quickstart#step_1_set_up_the_sample
+JQuery
+ - https://github.com/johnculviner/jquery.fileDownload
+Nodejs [May not be necessary]
+ - http://www.tutorialspoint.com/nodejs/nodejs_environment_setup.htm
+ - Installer: https://nodejs.org/en/blog/release/v0.12.0/
+REST API (Depends on Nodejs) [May not be necessary]
+ - https://developers.google.com/drive/v3/web/about-sdk#create_and_open_files_directly_from_the_drive_ui
+ - https://developers.google.com/drive/v3/web/enable-sdk#enable_the_drive_api
+ - https://developers.google.com/drive/v3/web/appdata#inserting_a_file_into_the_application_data_folder
+ - https://developers.google.com/drive/v3/web/savetodrive#getting_started
+ - https://developers.google.com/drive/v3/web/integrate-open#open_and_convert_google_docs_in_your_app
+
+
+NOTES
+ For path (vector animation) can put an indication above corners(touch handles) and in the centre of the shape.
+
+Can use a list to cycle through parallel objects moving
+
+For path for vector animation : calculate full path, use iterator to calculate changes. Show line segments ( where shape is in a particular segment).
+
+Change x and y as select moves object
+
+Store path of object as it moves in a list
+
+

@@ -1,0 +1,97 @@
+<!--TEMPLATE ONE - Relational Script-->
+<shape>
+	<shapename>value</shapename>
+	<shapeid>value</shapeid>
+	<frameid>value</frameid>
+	<startx>value</startx>
+	<starty>value</starty>
+	<endx>value</endx>
+	<endy>value</endy>
+	<width>value</width>
+	<length>value</length>
+	<linecolour>value</linecolour>
+	<fillcolour>value</fillcolour>
+	<lineweight>value</lineweight>	
+	<linestyle>round</linestyle>
+	<sanimid>value</sanimid>
+</shape>
+
+<freeform>
+	<shapeid>value</shapeid>
+	<frameid>value</frameid>
+	<linecolour>value</linecolour>
+	<lineweight>value</lineweight>	
+	<linestyle>round</linestyle>
+	<point>
+		<x>value</x>
+		<y>value</y>
+	</point>
+<freeform>
+
+<sanim>
+	<sanimid>value</sanimid>
+	<order>value</order>
+	<point>
+		<x>value</x>
+		<y>value</y>
+	</point>
+</sanim>
+
+<frame>
+	<frameid>value</frameid>
+	<order>value</order>
+</frame>
+
+<rate>value</rate>
+
+<!-- Could represent free-form shape record and path record
+<path>  
+	<pathid>value</value>
+	<linecolour>value</linecolour>
+	<lineweight>value</lineweight>	
+	<linestyle>round</linestyle>
+	<point>
+		<x>value</x>
+		<y>value</y>
+	</point>
+</path>
+-->
+
+<!--TEMPLATE TWO - Object-Oriented Script-->
+<shape>
+	<name>shape</name>
+	<startpoint>
+		<x>value</x>
+		<y>value</y>
+	</startpoint>
+	<endpoint>
+		<x>value</x>
+		<y>value</y>
+	</endpoint>
+	<width>value</width>
+	<length>value</length>
+	<sanim>
+		<order>value</order>
+		<path>
+			<point>
+				<x>value</x>
+				<y>value</y>
+			</point>
+			<point>
+				<x>value</x>
+				<y>value</y>
+			</point>
+			...
+		</path>
+	</sanim>
+	<fill>value</fill>	
+	<fillcolor>value</fillcolor>
+	<linecolor>value</linecolor>
+	<linwidth>value</linewidth>	
+	<linestyle>round</linestyle>
+</shape>
+
+<frame>
+	<order>value</order>
+	<shape>value</shape>
+</frame>

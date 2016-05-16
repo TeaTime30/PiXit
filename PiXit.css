@@ -31,6 +31,10 @@
 	height:130px;
 	border-bottom:1px solid black;
 }
+#imageLoader{
+	
+	display:none;
+}
 
 #tools div{
 	display:inline;

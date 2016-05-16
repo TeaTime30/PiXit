@@ -1,0 +1,251 @@
+#image {
+	width: 100%;
+	height: 500px;
+	opacity: .95;
+    margin-top: 65px;
+    position: static;
+}
+
+body {
+	margin: 0;
+}
+
+#menu {
+	width: 100%;
+	height: 65px;
+	background-color: #a6de62;
+	color: #000000;
+	font-size: 25px; 
+    position: fixed;
+}
+
+span {
+	color: #000000;
+}
+
+#home:hover span {
+	color: #a6de62;
+}
+
+#home {
+	font-family: "Comic Sans MS", "Helvetica" !important;
+	font-size: 30px !important;
+    padding: 10px 16px 13px 16px !important;
+    margin-right: 929px !important;
+}
+
+#signup {
+	top: 0;
+	width: 100%;
+	height: 560px;
+	background-color: #a6de62;
+	color: #ffffff;
+	font-size: 20px; 
+	font-family: "Comic Sans MS", "Helvetica";
+	text-align: center;
+	padding-top: 100px;
+    padding-bottom: 10px;
+}
+
+#signin {
+    top: 0;
+    width: 100%;
+    height: 560px;
+    background-color: #579CD5;
+    color: #ffffff;
+    font-size: 20px; 
+    font-family: "Comic Sans MS", "Helvetica";
+    text-align: center;
+    padding-top: 100px;
+    padding-bottom: 10px;
+}
+
+.options {
+	display: inline-block;
+}
+
+#list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#list li {
+    float: left;
+}
+
+#list li a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 24px 16px 24px 16px;
+    text-decoration: none;
+    font-size: 15px;
+	font-family: "Arial", "Helvetica";
+}
+
+#list li a:hover {
+    background-color: #000000;
+    color: white;
+}
+
+#hd1 {
+	color: black;
+	font-size: 30px;
+	font-family: "Comic Sans MS", "Helvetica";
+}
+
+#hd2 {
+	color: black;
+	font-size: 17px;
+	font-family: "Comic Sans MS", "Helvetica";
+}
+
+#hd5 {
+    color: black;
+    font-size: 30px;
+    font-family: "Comic Sans MS", "Helvetica";
+}
+
+#hd6 {
+    color: black;
+    font-size: 17px;
+    font-family: "Comic Sans MS", "Helvetica";
+}
+
+form {  
+    width: 400px;
+}
+
+#signin form{
+    background-color: #a6de62;
+    height: 180px;
+    padding-top: 25px;
+    margin-left: 475px; 
+}
+
+#signup form{
+    background-color: #579CD5;
+    height: 350px;
+    padding-top: 10px;
+    margin-left: 475px;
+}
+
+#sigin {
+    font-family: "Calibri";
+    color: black;
+    background-color: #DFDB81;
+    height: 30px;
+    width: 400px;
+    margin-left: 475px;
+}
+
+#sigup {
+    font-family: "Calibri";
+    color: black;
+    background-color: #DFDB81;
+    height: 30px;
+    width: 400px;
+    margin-left: 475px;
+}
+
+.textbxs { 
+    -moz-border-radius-topleft: 30px;
+    -webkit-border-top-left-radius: 30px;
+    border-top-left-radius: 30px;
+    -moz-border-radius-bottomleft: 30px;
+    -webkit-border-bottom-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+
+    moz-border-radius-topright: 30px;
+    -webkit-border-top-right-radius: 30px;
+    border-top-right-radius: 30px;
+    -moz-border-radius-bottomright: 30px;
+    -webkit-border-bottom-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+
+    border: 1px solid #848484;
+    outline:0; 
+    height:30px; 
+    width: 300px; 
+    padding-left:10px; 
+    font-size: 16px;
+  } 
+
+  #break {
+    background-color: black;
+    height: 600px;
+    width: 100%;
+    padding-top: 70px;
+    /*padding-bottom: 10px;*/
+  }
+
+  #sample {
+    vertical-align: center;
+    margin-left: 200px;
+  }
+
+  #break2 {
+    background-color: #579CD5; /*#31314C*/
+    height: 650px;
+    width: 100%;
+    font-size: 45px;
+    font-family: "Comic Sans MS", "Helvetica";
+    color: white;
+    padding-top: 100px;
+  }
+
+  #word {
+    text-align: center;
+    font-style: italic;
+  }
+
+  #idea {
+    text-align: left;
+    margin-left: 475px;
+  }
+
+  #about {
+    height: 450px;
+    width: 1309px;
+    background-color: #EFEDC2;
+    padding-top: 100px;
+    padding-left: 40px;
+    font-size: 25px;
+    font-family: "Calibri";
+  }
+
+  #hd3 {
+    font-family: "Comic Sans MS", "Helvetica"; 
+    font-size: 50px;
+    text-align: center;
+    color: black;
+  }
+
+  #hd4 {
+    font-family: "Comic Sans MS", "Helvetica"; 
+    font-size: 25px;
+    color: : black;
+  }
+
+.accent {
+    color: #84CB2E;
+}
+
+#follow {
+    padding-top: 15px;
+    padding-left: 20px;
+    color: white;
+    font-family: "Calibri";
+    font-size: 20px;
+    width: 100%;
+    height: 95px;
+    background-color: #262641;
+}
+
+.fol {
+    height: 45px;
+    width: 45px;
+    margin-top: 5px;
+}

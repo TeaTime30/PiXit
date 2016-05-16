@@ -285,6 +285,7 @@ figure{
 	display:inline-block;
 	border:1px solid black;
 }
+
 .active-frame{
 	border:4px solid #0BC37B;
 }
@@ -337,4 +338,69 @@ figure{
 }
 .object{
 	border:2px solid black;
+}
+
+
+
+#saving {
+    background-color: #a6de62;
+    height: 60px;
+    padding-top: 25px;
+    width: 195px;
+    text-align: center;
+    /*margin-left: 475px; */
+    position: absolute;
+	margin-left: 1011px;
+	margin-top: 0px;
+}
+
+#file { 
+    -moz-border-radius-topleft: 30px;
+    -webkit-border-top-left-radius: 30px;
+    border-top-left-radius: 30px;
+    -moz-border-radius-bottomleft: 30px;
+    -webkit-border-bottom-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+
+    moz-border-radius-topright: 30px;
+    -webkit-border-top-right-radius: 30px;
+    border-top-right-radius: 30px;
+    -moz-border-radius-bottomright: 30px;
+    -webkit-border-bottom-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+
+    border: 1px solid #848484;
+    outline:0; 
+    height:30px; 
+    width: 150px; 
+    padding-left:10px; 
+    font-size: 16px;
+  } 
+
+#sv {
+    font-family: "Calibri";
+    color: black;
+    font-size: 15px;
+    background-color: #DFDB81;
+    position: absolute;
+    height: 30px;
+    width: 195px;
+    margin-top: 25px;
+}
+
+#files {
+    font-family: "Comic Sans MS";
+    font-size: 15px;
+    color: black;
+    background-color: #BCD7EE;
+    width: 250px;
+    height: 50px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 35px;
+    position: relative;
+}
+
+#list {
+	color: white;
 }

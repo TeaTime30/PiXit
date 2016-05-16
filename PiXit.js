@@ -1356,8 +1356,8 @@ if(window.addEventListener) {
 		var j = 0;
 		var id;
 		play.addEventListener("click", function(e){
-			var sec = parseFloat(document.getElementById('frms').value);
-			var msec = sec*1000;
+			var rate = parseFloat(document.getElementById('frms').value);
+			var msec = (1/rate)*1000;
 			var count=0;
 			var keys= Object.keys(images);
 			for(var key in keys){
@@ -1367,10 +1367,17 @@ if(window.addEventListener) {
 				$("#canvas").prepend(playScreen);
 				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
 				
-				console.log("Frame played:" + count+" key:"+ key+" sec:"+sec);
+				console.log("Frame played:" + count+" key:"+ key+" msec:"+msec);
 				count++;
 			}
 			/*$("#playDiv").remove();*/
 		});
-
+		/**Object interactions **/	
+		$(".object").on("click",function(e){
+			if($(":nth-child(2)").hasClass("objdata hide"))
+				$(":nth-child(2)").removeClass("objdata hide").addClass("objdata");
+			else
+				$(":nth-child(2)").addClass("hide");		
+		});
+		
 }, false); }

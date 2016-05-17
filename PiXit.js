@@ -711,6 +711,7 @@ if(window.addEventListener) {
 		/*********************** SAVE ANIMATES FUNCTION*************************/
 
     var onSave = function(){
+      testFile = "";
       var rate = "<rate>" + parseInt(document.getElementById('frms').value) + "</rate>\n";
       testFile += rate + "<!--&&-->\n";
       for(var i = 0; i < frameArray.length; i++){

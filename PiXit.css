@@ -3,8 +3,9 @@
 	width:1207px;
 	height:75px;
 	border: 1px solid black;	
-	border-bottom: solid white;
-	
+	border-bottom: solid black;
+	background-color:#0BC37B;
+	color:white;
 }
 
 #menu > div{
@@ -244,6 +245,7 @@ img{
 
 body{
 	white-space: nowrap;
+	font-family:"Calibri",ubuntu;
 }
 
 figure{

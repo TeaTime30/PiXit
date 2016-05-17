@@ -1253,10 +1253,22 @@ if(window.addEventListener) {
 			var cnvs1 = document.getElementById("canvas1");
 			var frame = new Image();
 			frame = cnvs1.toDataURL("image/png");	
-
-			var img = document.createElement("img");
-			img.className = "frame";
-			img.setAttribute("id", "frmimg"+(curFrame+1));
+			
+			
+			if(document.getElementById("frmimg"+(curFrame+1))!=null){
+				console.log("made it");
+				var keys=Object.keys(images);
+				console.log(curFrame);				
+				for(var i=keys.length-1;i>=curFrame;i--){
+					console.log(parseInt(keys[i])+1);
+					images[parseInt(keys[i])+1]=images[keys[i]];
+					document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
+				}
+			}
+				var img = document.createElement("img");
+				img.className = "frame";		
+				img.setAttribute("id", "frmimg"+(curFrame+1));
+			
 			$("#frmimg"+curFrame).after(img);
 			reset1();
 			curFrame++;
@@ -1345,8 +1357,8 @@ if(window.addEventListener) {
 		var j = 0;
 		var id;
 		play.addEventListener("click", function(e){
-			var sec = parseFloat(document.getElementById('frms').value);
-			var msec = sec*1000;
+			var rate = parseFloat(document.getElementById('frms').value);
+			var msec = (1/rate)*1000;
 			var count=0;
 			var keys= Object.keys(images);
 			for(var key in keys){
@@ -1356,10 +1368,18 @@ if(window.addEventListener) {
 				$("#canvas").prepend(playScreen);
 				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
 				
-				console.log("Frame played:" + count+" key:"+ key+" sec:"+sec);
+				console.log("Frame played:" + count+" key:"+ key+" msec:"+msec);
 				count++;
 			}
 			/*$("#playDiv").remove();*/
 		});
-
+		/**Object interactions **/	
+		$(".object-header").on("click",function(e){
+			var $obj =$(this).parent();
+			if($(":nth-child(2),:nth-child(3)",$obj).hasClass("hide"))
+				$(":nth-child(2),:nth-child(3)",$obj).removeClass("hide");
+			else
+				$(":nth-child(2),:nth-child(3)",$obj).addClass("hide");		
+		});
+		
 }, false); }

@@ -18,6 +18,9 @@ var sanimid = 0;
 var lineStyle = "round";
 var fillColour = "#ffffff"
 var testFile = "";
+var opened = false;
+var ptx = 0;
+var pty = 0;
 
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
@@ -575,6 +578,10 @@ if(window.addEventListener) {
 
 
 		/*********************** OPEN ANIMATES FILE FUNCTION*************************/
+    var ptx = 0;
+    var pty = 0;
+
+
     var onOpen = function(){
       var alt = "";
       var menu = document.getElementById('menu');
@@ -594,7 +601,12 @@ if(window.addEventListener) {
 
           reader.onload = function(e) {
             tempFile = reader.result;
-
+            var chk = /<rate>([0-9]*)<\/rate>\n<!--&&-->\n(<frame>\n\t<frameid>([0-9])*<\/frameid>\n\t<order>([0-9])*<\/order>\n<\/frame>\n<!--@@-->(\n)?)*<!--&&-->\n(<shape>\n\t<shapename>(line|cline|rectangle|circle|square|triangle|oval|heart|diamond)<\/shapename>\n\t<shapeid>([0-9])*<\/shapeid>\n\t<frameid>([0-9])*<\/frameid>\n\t<startx>([0-9]*(.)?[0-9]*)<\/startx>\n\t<starty>([0-9]*(.)?[0-9]*)<\/starty>\n\t<endx>([0-9]*(.)?[0-9]*)<\/endx>\n\t<endy>([0-9]*(.)?[0-9]*)<\/endy>\n\t<width>([0-9]*(.)?[0-9]*)<\/width>\n\t<length>([0-9]*(.)?[0-9]*)<\/length>\n\t<linecolour>#[0-9a-fA-F]*<\/linecolour>\n\t<fillcolour>#[0-9a-fA-F]*<\/fillcolour>\n\t<lineweight>[0-5]<\/lineweight>\n\t<linestyle>round<\/linestyle>\n\t<sanimid>[0-9]*<\/sanimid>\n<\/shape>\n<!--\*\*-->(\n)?|<freeform>\n\t<shapeid>([0-9])*<\/shapeid>\n\t<frameid>([0-9])*<\/frameid>\n\t<linecolour>#[0-9a-fA-F]*<\/linecolour>\n\t<lineweight>[0-5]<\/lineweight>\n\t<linestyle>round<\/linestyle>\n\t(<point>\n\t\t<x>([0-9]*(.)?[0-9]*)<\/x>\n\t\t<y>([0-9]*(.)?[0-9]*)<\/y>\n\t<\/point>\n(\t)?)*<\/freeform>)*/.test(tempFile);
+            if(!chk){
+              alert("Incorrect file structure");
+              return;
+            }
+            opened = true;
             $("#files").remove();
             $("#list").remove();
 
@@ -629,10 +641,6 @@ if(window.addEventListener) {
                   var lnwght = parseInt(tempShapes[j].match(/\d*(?=<\/lineweight>)/)[0], 10);
                   var stl = tempShapes[j].match(/[a-z]*(?=<\/linestyle>)/)[0];
                   var sanim = parseInt(tempShapes[j].match(/\d*(?=<\/sanimid>)/)[0], 10);
-                  if(stl != 'round'){
-                    alt += "Unsupported Style Type:- " + stl + "\n";
-                    stl = "round";
-                  }
                   console.log(nm + "(" + sid + ", " + sx + ", " + sy + ", " + ex + ", " + ey + ", " + wd + ", " + ln + ", " + lncol + ", " + flcol + ", " + lnwght + ", " + stl + ", " + sanim + ")");
                   if(nm == 'line'){
                     // var ln = Line(sid, frmid, sx, sy, ex, ey, lncol, lnwght, stl, sanim);
@@ -670,9 +678,6 @@ if(window.addEventListener) {
                     // var diam = Diamond(sid, frmid, sx, sy, ex, ey, wd, ln, lncol, lnwght, stl, sanim);
                     
                   }
-                  else {
-                    alt += "Unsupported object:- " + nm + "\n";
-                  }
                 }
                 else if(tempShapes[j].includes("<frameid>" + frmid + "</frameid>") && tempShapes[j].includes("<freeform>")) {
                   var pts = tempShapes[j].split("<point>");
@@ -689,10 +694,6 @@ if(window.addEventListener) {
                     pnts.push({x: pntx, y: pnty});
                     console.log("{x: " + pntx + ", y: " + pnty + "}");
                   }
-                  if(alt.length > 0){
-                    alert(alt);
-                  }
-                  //var fr = FreeForm(sid, lncol, lnwght, stl, pnts);
                 }
               }
             }
@@ -1148,8 +1149,8 @@ if(window.addEventListener) {
 		}
 
 		/********************** BRUSH FUNCTION *********************/
-		var points = [];
     tool = 'brush';
+    var points = [];
 
 		var onBrush = function(e){
    			if (blockMenuHeaderScroll)
@@ -1157,8 +1158,9 @@ if(window.addEventListener) {
 	        	e.preventDefault();
 	    	}
 			//Save all points in array
-			points.push({x:mouse.x, y:mouse.y});
-      tempPath += "\t<point>\n\t\t<x>" + mouse.x + "</x>\n\t\t<y>" + mouse.y + "</y>\n\t</point>\n"
+		  points.push({x:mouse.x, y:mouse.y});
+      tempPath += "\t<point>\n\t\t<x>" + mouse.x + "</x>\n\t\t<y>" + mouse.y + "</y>\n\t</point>\n";
+      
       addFree = true;
 
 			if(points.length <3){
@@ -1366,7 +1368,7 @@ if(window.addEventListener) {
 				playScreen.setAttribute("id", "playDiv");
 				playScreen.src = images[keys[key]];
 				$("#canvas").prepend(playScreen);
-				$("#playDiv").delay(msec*(count+1)).fadeIn(msec-100).fadeOut(100);
+				$("#playDiv").delay(msec*(count+1)).fadeIn(0).fadeOut(0);
 				
 				console.log("Frame played:" + count+" key:"+ key+" msec:"+msec);
 				count++;

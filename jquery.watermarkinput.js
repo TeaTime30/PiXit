@@ -1,20 +1,4 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
- @TeaTime30
- Unwatch 4
-  Star 0
-  Fork 0 TeaTime30/PiXit
- Code  Issues 0  Pull requests 0  Wiki  Pulse  Graphs  Settings
-Branch: master Find file Copy path
-PiXit/jquery.watermarkinput.js
-79525af  3 days ago
-@tan-jerene tan-jerene Save file to Downloads
-1 contributor
-RawBlameHistory     81 lines (75 sloc)  2.33 KB
+
 /*
  * Copyright (c) 2007 Josh Bush (digitalbush.com)
  * 
@@ -95,5 +79,3 @@ RawBlameHistory     81 lines (75 sloc)  2.33 KB
 		);
 	};
 })(jQuery);
-Status API Training Shop Blog About
-© 2016 GitHub, Inc. Terms Privacy Security Contact Help

@@ -727,10 +727,10 @@ if(window.addEventListener) {
       $("#saving").append(bt);
       $("#saving").delay(1000).fadeIn(200);
 
-      $("#file").Watermark("File Name");
+      $("#save").Watermark("File Name");
 
       $("#sv").click(function() {
-        fileName = $('#file').val();
+        fileName = $('#save').val();
 
         var saveFile = new Blob([testFile], {type: 'text/xml'});
         var link = document.createElement('a');

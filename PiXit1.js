@@ -1099,10 +1099,10 @@ if(window.addEventListener) {
       
       if(this.points.length <3){
         var b = this.points[0];
-        context.beginPath();
-        context.arc(b.x, b.y, context.lineWidth / 2, 0, Math.PI * 2, !0 );
-        context.fill();
-        context.closePath();
+        temp_context.beginPath();
+        temp_context.arc(b.x, b.y, context.lineWidth / 2, 0, Math.PI * 2, !0 );
+        temp_context.fill();
+        temp_context.closePath();
         return;
       }
       temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);

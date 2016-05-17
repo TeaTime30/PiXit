@@ -609,11 +609,12 @@ ul{
 	width:800px;
 	height:500px;
 	position: absolute;
-	background-color: white;
+	background: white;
 	margin: auto;
 	margin-left: 300px;
 	margin-top: 75px;
 	vertical-align: top;
+	z-index:900;
 }
 
   #saving {

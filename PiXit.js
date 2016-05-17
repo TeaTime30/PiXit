@@ -1291,7 +1291,16 @@ if(window.addEventListener) {
 			var cnvs1 = document.getElementById("canvas1");
 			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 			context.clearRect(0,0,canvas.width, canvas.height);
-
+			if(document.getElementById("frmimg"+(curFrame+1))!=null){
+				console.log("made it");
+				var keys=Object.keys(images);
+				console.log(curFrame);				
+				for(var i=keys.length-1;i>=curFrame;i--){
+					console.log(parseInt(keys[i])+1);
+					images[parseInt(keys[i])+1]=images[keys[i]];
+					document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
+				}
+			}
 			var cimg = new Image();
 			cimg.src = images[curFrame-1];
 			context.drawImage(cimg,0,0);

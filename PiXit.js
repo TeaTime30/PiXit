@@ -1,10 +1,8 @@
-var fileName = "";
-
 /**********************GLOBAL VARIABLES*********************/
 var curColour = "#000000";
 var curThickness = 5;
 var curFrame = 1;
-var images = {};
+var images = new Array();
 var undoindex = 0;
 var undoArr = new Array();
 var redoArr = new Array();
@@ -22,32 +20,42 @@ var opened = false;
 var ptx = 0;
 var pty = 0;
 
+
 window.blockMenuHeaderScroll = false;
 if(window.addEventListener) {
-/*<<<<<<< HEAD ********************************************************************************************************************************/
 	window.addEventListener('load', function () {
+    
+    (function(){
+    var bodyEl = $('body'), navToggleBtn = bodyEl.find('.nav-toggle-btn1');
+    navToggleBtn.on("click", function(e){
+      bodyEl.toggleClass('active-nav');
+      e.preventDefault();
+    });
+  })();
 
-		/********************** INITIALISE CANVAS AND CONTEXT *********************/
+  
+    /********************** INITIALISE CANVAS AND CONTEXT *********************/
 
-		$("#thickmenu").addClass("hide");
-		var canvas = document.querySelector('#canvas1');
-  	var context = canvas.getContext('2d');
+    $("#thickmenu").addClass("hide");
+    var canvas = document.querySelector('#canvas1');
+      var context = canvas.getContext('2d');
 
- 		var container = document.querySelector('#canvas');
-  	var container_style = getComputedStyle(container);  
- 		canvas.width = parseInt(container_style.getPropertyValue('width'));
-  	canvas.height = parseInt(container_style.getPropertyValue('height'));
-		activeTool();
-		showSelected();
-		frameDraw();
- 		/********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
+    var container = document.querySelector('#canvas');
+      var container_style = getComputedStyle(container);  
+    canvas.width = parseInt(container_style.getPropertyValue('width'));
+      canvas.height = parseInt(container_style.getPropertyValue('height'));
+    showSelected();
+    frameDraw();
+    /********************** INITIALISE TEMPORARY CANVAS AND CONTEXT *********************/
 
-  		var temp_canvas = document.createElement('canvas');
-  		var temp_context = temp_canvas.getContext('2d');
-  		temp_canvas.id = 'temp_canvas';
-  		temp_canvas.width = canvas.width;
-  		temp_canvas.height = canvas.height;
-      var addShape = false;
+      var temp_canvas = document.createElement('canvas');
+      var temp_context = temp_canvas.getContext('2d');
+      temp_canvas.id = 'temp_canvas';
+      temp_canvas.width = canvas.width;
+      temp_canvas.height = canvas.height;
+
+      container.appendChild(temp_canvas);
+       var addShape = false;
       var addFree = false;
       var shapeid = 0;
       var name = '';
@@ -57,127 +65,310 @@ if(window.addEventListener) {
       var wid = 0;
       var ht = 0;
 
-  		container.appendChild(temp_canvas);
 
- 		/********************** INITIALISE TEXT CANVAS AND CONTEXT *********************/
+    /********************** INITIALISE TEXT CANVAS AND CONTEXT ********************
 
-  		var textarea = document.createElement('textarea');
-  		textarea.id = 'text_tool';
-  		container.appendChild(textarea);
+      var textarea = document.createElement('textarea');
+      textarea.id = 'text_tool';
+      container.appendChild(textarea);
 
-  		var temp_txt_context = document.createElement('div');
-  		temp_txt_context.style.display = 'none';
-  		container.appendChild(temp_txt_context);
+      var temp_txt_context = document.createElement('div');
+      temp_txt_context.style.display = 'none';
+      container.appendChild(temp_txt_context);
 
-  		textarea.addEventListener('mouseup', function(e){
-			temp_canvas.removeEventListener('mousemove', onText,false);
-  		},false);
-	
+      textarea.addEventListener('mouseup', function(e){
+      temp_canvas.removeEventListener('mousemove', onText,false);
+      },false);
+      */
+  
 
-		/********************** CAPTURE MOUSE MOVEMENT *********************/
+    /********************** CAPTURE MOUSE MOVEMENT *********************/
 
-  		var mouse = {x: 0, y: 0};
-  		var start_mouse = {x: 0, y:0};
-  		var last_mouse = {x: 0, y: 0};
-  		var points = [];
-
-
-  		temp_canvas.addEventListener('mousemove', function(e){
-  			mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-  			mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-	  	}, false);
-
-	  	temp_canvas.addEventListener('touchmove', function(e){
-  			mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
-  			mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
-	  	}, false);
+      var mouse = {x: 0, y: 0};
+      var start_mouse = {x: 0, y:0};
+      var last_mouse = {x: 0, y: 0};
+      var points = [];
 
 
-		/********************** DRAWING ON CONTEXT *********************/
+      temp_canvas.addEventListener('mousemove', function(e){
+        mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+      }, false);
 
-		temp_canvas.addEventListener('mousedown', function(e){
+      temp_canvas.addEventListener('touchmove', function(e){
+        mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
+        mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
+      }, false);
 
-	  		temp_context.lineWidth = curThickness;
-	  		temp_context.lineJoin = 'round';
-	  		temp_context.lineCap = 'round';
-	  		temp_context.strokeStyle = curColour;
-	  		temp_context.fillstyle =curColour;
-			$("#thickmenu").addClass("hide");
-			mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-  			mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-  	
-  			start_mouse.x = mouse.x;
-  			start_mouse.y = mouse.y;
 
-  			points.push({x:mouse.x, y:mouse.y});
+    /********************** DRAWING ON CONTEXT *********************/
 
-  			if(tool == 'line'){
-  				temp_canvas.addEventListener('mousemove', onLine, false);
-  			}
+    temp_canvas.addEventListener('mousedown', function(e){
 
-  			else if(tool == 'rect') {
-  				temp_canvas.addEventListener('mousemove', onRect, false);
-  			}
+        temp_context.lineWidth = curThickness;
+        temp_context.lineJoin = 'round';
+        temp_context.lineCap = 'round';
+        temp_context.strokeStyle = curColour;
+        temp_context.fillstyle =curColour;
+      $("#thickmenu").addClass("hide");
+      mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
+        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+    
+        start_mouse.x = mouse.x;
+        start_mouse.y = mouse.y;
 
-  			else if(tool == 'brush'){
-  				temp_canvas.addEventListener('mousemove', onBrush, false);
-  			}
+        points.push({x:mouse.x, y:mouse.y});
 
-  			else if(tool == 'pencil'){
-  				temp_canvas.addEventListener('mousemove', onPencil, false);
-  			}
+        if(tool == 'line'){
+          temp_canvas.addEventListener('mousemove', onLine, false);
+        }
 
-  			else if(tool == 'select'){
-  				temp_canvas.addEventListener('mousemove', onSel, false);
-  			}
+        else if(tool == 'rect') {
+          temp_canvas.addEventListener('mousemove', onRect, false);
+        }
 
-  			else if(tool == 'choose'){
-  				temp_canvas.addEventListener('mousemove', onChoose, false);
-  			}
+        else if(tool == 'brush'){
+          temp_canvas.addEventListener('mousemove', onBrush, false);
+        }
 
-  			else if(tool == 'erase'){
-  				temp_canvas.addEventListener('mousemove', onErase, false);
-  			}
+        else if(tool == 'pencil'){
+          temp_canvas.addEventListener('mousemove', onPencil, false);
+        }
 
-  			else if(tool == 'circle'){
-  				temp_canvas.addEventListener('mousemove', onCircle, false);
-  			}
+        else if(tool == 'select'){
+          temp_canvas.addEventListener('mousemove', onSel, false);
+        }
 
-  			else if(tool == 'oval'){
-  				temp_canvas.addEventListener('mousemove', onOval, false);
-  			}
+        else if(tool == 'choose'){
+          console.log("choose");
+          temp_canvas.addEventListener('mousemove', onChoose, false);
+        }
 
-  			else if (tool == 'square'){
-  				temp_canvas.addEventListener('mousemove', onSquare, false);
-  			}
+        else if(tool == 'erase'){
+          temp_canvas.addEventListener('mousemove', onErase, false);
+        }
 
-  			else if( tool == 'cline'){
-  				temp_canvas.addEventListener('mousemove', onCLine, false);
-  			}
+        else if(tool == 'circle'){
+          temp_canvas.addEventListener('mousemove', onCircle, false);
+        }
 
-  			else if (tool == 'triangle'){
-  				temp_canvas.addEventListener('mousemove', onTriangle, false);
-  			}
+        else if(tool == 'oval'){
+          temp_canvas.addEventListener('mousemove', onOval, false);
+        }
 
-  			else if (tool == 'diam'){
-  				temp_canvas.addEventListener('mousemove', onDiam, false);
-  			}
+        else if (tool == 'square'){
+          temp_canvas.addEventListener('mousemove', onSquare, false);
+        }
 
-  			else if (tool == 'heart'){
-  				temp_canvas.addEventListener('mousemove',onHeart, false);
-  			}
+        else if( tool == 'cline'){
+          temp_canvas.addEventListener('mousemove', onCLine, false);
+        }
 
-  			else if (tool == 'text'){
-  				temp_canvas.addEventListener('mousemove', onText, false);
-  			}
+        else if (tool == 'triangle'){
+          temp_canvas.addEventListener('mousemove', onTriangle, false);
+        }
 
-  		}, false);
+        else if (tool == 'diam'){
+          temp_canvas.addEventListener('mousemove', onDiam, false);
+        }
 
-		temp_canvas.addEventListener('mouseup', function(){
-	  		uPush();
-	  		last_mouse.x = mouse.x;
-	  		last_mouse.y = mouse.y;
+        else if (tool == 'heart'){
+          temp_canvas.addEventListener('mousemove',onHeart, false);
+        }
+
+        else if (tool == 'text'){
+          temp_canvas.addEventListener('mousemove', onText, false);
+        }
+
+      }, false);
+
+    temp_canvas.addEventListener('mouseup', function(){
+        uPush();
+        last_mouse.x = mouse.x;
+        last_mouse.y = mouse.y;
+        console.log("push");
         if(addShape){
+          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n<!--**-->\n");
+          addShape = false;
+        }
+
+         else if(addFree){
+          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n<!--**-->\n");
+          addFree = false;
+        }
+
+      temp_canvas.removeEventListener('mousemove', onLine, false);
+      temp_canvas.removeEventListener('mousemove', onCLine, false);
+      temp_canvas.removeEventListener('mousemove', onRect, false);
+      temp_canvas.removeEventListener('mousemove', onBrush, false);
+      temp_canvas.removeEventListener('mousemove', onErase,false);
+      temp_canvas.removeEventListener('mousemove', onCircle, false);
+      temp_canvas.removeEventListener('mousemove', onOval, false);
+      temp_canvas.removeEventListener('mousemove', onSquare, false);
+      temp_canvas.removeEventListener('mousemove', onTriangle, false);
+      temp_canvas.removeEventListener('mousemove', onDiam, false);
+      temp_canvas.removeEventListener('mousemove', onHeart, false);
+      temp_canvas.removeEventListener('mousemove', onText,false);
+      temp_canvas.removeEventListener('mousemove', onPencil, false);
+      temp_canvas.removeEventListener('mousemove', onSel, false);
+      temp_canvas.removeEventListener('mousemove', onChoose, false);
+      if(tool == 'select'){
+          temp_context.setLineDash([]);
+          temp_context.lineWidth = curThickness;
+        }
+
+        if (tool == 'text'){
+
+          var lines = textarea.value.split('\n');
+        var processed_lines= [];
+
+        for (var i = 0; i< lines.length; i++){
+          var chars = lines[i].length;
+
+          for(var j; j< chars; j++){
+            var text_node = document.createTextNode(lines[i][j]);
+            temp_txt_context.appendChild(text_node);
+
+            temp_txt_context.style.position = 'absolute';
+            temp_txt_context.style.visibility = 'hidden';
+            temp_txt_context.style.display = 'block';
+
+            var width = temp_txt_context.offsetWidth;
+            var height = temp_txt_context.offsetHeight;
+
+            temp_txt_context.style.position = '';
+            temp_txt_context.style.visibility = '';
+            temp_txt_context.style.display = 'none';
+
+            if (width > parseInt(textarea.style.width)) {
+                       break;
+                  }
+              }
+           
+              processed_lines.push(temp_txt_context.textContent);
+                temp_txt_context.innerHTML = '';
+          }
+       
+          var ta_comp_style = getComputedStyle(textarea);
+          var fs = ta_comp_style.getPropertyValue('font-size');
+          var ff = ta_comp_style.getPropertyValue('font-family');
+        
+          temp_context.font = fs + ' ' + ff;
+          temp_context.textBaseline = 'top';
+         
+          for (var n = 0; n < processed_lines.length; n++) {
+              var processed_line = processed_lines[n];
+               
+              temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
+          }
+          
+          context.drawImage(temp_canvas, 0, 0);
+
+          temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+       
+          textarea.style.display = 'none';
+          textarea.value = '';
+
+        }
+
+        context.drawImage(temp_canvas,0,0);
+        temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
+
+        points = [];
+
+        //uPush();
+
+        frameDraw();
+
+    }, false);
+
+    temp_canvas.addEventListener("touchstart", function(e){
+
+      blockMenuHeaderScroll = true;
+        temp_context.lineWidth = curThickness;
+        temp_context.lineJoin = 'round';
+        temp_context.lineCap = 'round';
+        temp_context.strokeStyle = curColour;
+        temp_context.fillstyle =curColour;
+      $("#thickmenu").addClass("hide");
+      mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
+        mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
+    
+        start_mouse.x = mouse.x;
+        start_mouse.y = mouse.y;
+
+        points.push({x:mouse.x, y:mouse.y});
+
+        if(tool == 'line'){
+          temp_canvas.addEventListener('touchmove', onLine, false);
+        }
+
+        else if(tool == 'rect') {
+          temp_canvas.addEventListener('touchmove', onRect, false);
+        }
+
+        else if(tool == 'brush'){
+          temp_canvas.addEventListener('touchmove', onBrush, false);
+        }
+
+        else if(tool == 'pencil'){
+          temp_canvas.addEventListener('touchmove', onPencil, false);
+        }
+
+        else if(tool == 'select'){
+          temp_canvas.addEventListener('touchmove', onSel, false);
+        }
+
+        else if(tool == 'choose'){
+          console.log("choose");
+          temp_canvas.addEventListener('touchmove', onChoose, false);
+        }
+
+        else if(tool == 'erase'){
+          temp_canvas.addEventListener('touchmove', onErase, false);
+        }
+
+        else if(tool == 'circle'){
+          temp_canvas.addEventListener('touchmove', onCircle, false);
+        }
+
+        else if(tool == 'oval'){
+          temp_canvas.addEventListener('touchmove', onOval, false);
+        }
+
+        else if (tool == 'square'){
+          temp_canvas.addEventListener('touchmove', onSquare, false);
+        }
+
+        else if( tool == 'cline'){
+          temp_canvas.addEventListener('touchmove', onCLine, false);
+        }
+
+        else if (tool == 'triangle'){
+          temp_canvas.addEventListener('touchmove', onTriangle, false);
+        }
+
+        else if (tool == 'diam'){
+          temp_canvas.addEventListener('touchmove', onDiam, false);
+        }
+
+        else if (tool == 'heart'){
+          temp_canvas.addEventListener('touchmove',onHeart, false);
+        }
+
+        else if (tool == 'text'){
+          temp_canvas.addEventListener('touchmove', onText, false);
+        }
+
+      }, false);
+
+    temp_canvas.addEventListener('touchend', function(e){
+      blockMenuHeaderScroll = false;
+        uPush();
+        last_mouse.x = mouse.x;
+        last_mouse.y = mouse.y;
+        console.log("push");
+         if(addShape){
           shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n<!--**-->\n");
           addShape = false;
         }
@@ -185,406 +376,209 @@ if(window.addEventListener) {
           shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n<!--**-->\n");
           addFree = false;
         }
-			temp_canvas.removeEventListener('mousemove', onLine, false);
-			temp_canvas.removeEventListener('mousemove', onCLine, false);
-			temp_canvas.removeEventListener('mousemove', onRect, false);
-			temp_canvas.removeEventListener('mousemove', onBrush, false);
-			temp_canvas.removeEventListener('mousemove', onErase,false);
-			temp_canvas.removeEventListener('mousemove', onCircle, false);
-			temp_canvas.removeEventListener('mousemove', onOval, false);
-			temp_canvas.removeEventListener('mousemove', onSquare, false);
-			temp_canvas.removeEventListener('mousemove', onTriangle, false);
-			temp_canvas.removeEventListener('mousemove', onDiam, false);
-			temp_canvas.removeEventListener('mousemove', onHeart, false);
-			temp_canvas.removeEventListener('mousemove', onText,false);
-			temp_canvas.removeEventListener('mousemove', onPencil, false);
-			temp_canvas.removeEventListener('mousemove', onSel, false);
-			temp_canvas.removeEventListener('mousemove', onChoose, false);
-			if(tool == 'select'){
-   				temp_context.setLineDash([]);
-   				temp_context.lineWidth = curThickness;
-  			}
-
-    		if (tool == 'text'){
-
-    			var lines = textarea.value.split('\n');
-				var processed_lines= [];
-
-				for (var i = 0; i< lines.length; i++){
-					var chars = lines[i].length;
-
-					for(var j; j< chars; j++){
-						var text_node = document.createTextNode(lines[i][j]);
-						temp_txt_context.appendChild(text_node);
-
-						temp_txt_context.style.position = 'absolute';
-						temp_txt_context.style.visibility = 'hidden';
-						temp_txt_context.style.display = 'block';
-
-						var width = temp_txt_context.offsetWidth;
-						var height = temp_txt_context.offsetHeight;
-
-						temp_txt_context.style.position = '';
-						temp_txt_context.style.visibility = '';
-						temp_txt_context.style.display = 'none';
-
-						if (width > parseInt(textarea.style.width)) {
-    		           		 break;
-    		        	}
-    	   			}
-    	     
-    	  	 		processed_lines.push(temp_txt_context.textContent);
-    	  		  	temp_txt_context.innerHTML = '';
-    			}
-    	 
-   				var ta_comp_style = getComputedStyle(textarea);
-    			var fs = ta_comp_style.getPropertyValue('font-size');
-    			var ff = ta_comp_style.getPropertyValue('font-family');
-    	 	
-    			temp_context.font = fs + ' ' + ff;
-    			temp_context.textBaseline = 'top';
-    		 
-    			for (var n = 0; n < processed_lines.length; n++) {
-    		    	var processed_line = processed_lines[n];
-    		    	 
-   			     	temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
-   			 	}
-   	      
-   				context.drawImage(temp_canvas, 0, 0);
-
-    			temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
-    	 
-    			textarea.style.display = 'none';
-    			textarea.value = '';
-
-    		}
-
-    		context.drawImage(temp_canvas,0,0);
-    		temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
-
-    		points = [];
-
-    		//uPush();
-
-    		frameDraw();
-
-		}, false);
-
-		temp_canvas.addEventListener("touchstart", function(e){
-
-			blockMenuHeaderScroll = true;
-	  		temp_context.lineWidth = curThickness;
-	  		temp_context.lineJoin = 'round';
-	  		temp_context.lineCap = 'round';
-	  		temp_context.strokeStyle = curColour;
-	  		temp_context.fillstyle =curColour;
-			$("#thickmenu").addClass("hide");
-			mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
-  			mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
-  	
-  			start_mouse.x = mouse.x;
-  			start_mouse.y = mouse.y;
-
-  			points.push({x:mouse.x, y:mouse.y});
-
-  			if(tool == 'line'){
-  				temp_canvas.addEventListener('touchmove', onLine, false);
-  			}
-
-  			else if(tool == 'rect') {
-  				temp_canvas.addEventListener('touchmove', onRect, false);
-  			}
-
-  			else if(tool == 'brush'){
-  				temp_canvas.addEventListener('touchmove', onBrush, false);
-  			}
-
-  			else if(tool == 'pencil'){
-  				temp_canvas.addEventListener('touchmove', onPencil, false);
-  			}
-
-  			else if(tool == 'select'){
-  				temp_canvas.addEventListener('touchmove', onSel, false);
-  			}
-
-  			else if(tool == 'choose'){
-  				console.log("choose");
-  				temp_canvas.addEventListener('touchmove', onChoose, false);
-  			}
-
-  			else if(tool == 'erase'){
-  				temp_canvas.addEventListener('touchmove', onErase, false);
-  			}
-
-  			else if(tool == 'circle'){
-  				temp_canvas.addEventListener('touchmove', onCircle, false);
-  			}
-
-  			else if(tool == 'oval'){
-  				temp_canvas.addEventListener('touchmove', onOval, false);
-  			}
-
-  			else if (tool == 'square'){
-  				temp_canvas.addEventListener('touchmove', onSquare, false);
-  			}
-
-  			else if( tool == 'cline'){
-  				temp_canvas.addEventListener('touchmove', onCLine, false);
-  			}
-
-  			else if (tool == 'triangle'){
-  				temp_canvas.addEventListener('touchmove', onTriangle, false);
-  			}
-
-  			else if (tool == 'diam'){
-  				temp_canvas.addEventListener('touchmove', onDiam, false);
-  			}
-
-  			else if (tool == 'heart'){
-  				temp_canvas.addEventListener('touchmove',onHeart, false);
-  			}
-
-  			else if (tool == 'text'){
-  				temp_canvas.addEventListener('touchmove', onText, false);
-  			}
-
-  		}, false);
-
-		temp_canvas.addEventListener('touchend', function(e){
-			blockMenuHeaderScroll = false;
-	  		uPush();
-	  		last_mouse.x = mouse.x;
-	  		last_mouse.y = mouse.y;
-        if(addShape){
-          shapeArray.push("<shape>\n\t<shapename>" + name + "</shapename>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<startx>" + x + "</startx>\n\t<starty>" + y + "</starty>\n\t<endx>" + last_mouse.x + "</endx>\n\t<endy>" + last_mouse.y + "</endy>\n\t<width>" + wid + "</width>\n\t<length>" + ht + "</length>\n\t<linecolour>" + curColour + "</linecolour>\n\t<fillcolour>" + fillColour + "</fillcolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n\t<sanimid>" + sanimid + "</sanimid>\n</shape>\n<!--**-->\n");
-          addShape = false;
+      temp_canvas.removeEventListener('touchmove', onLine, false);
+      temp_canvas.removeEventListener('touchmove', onCLine, false);
+      temp_canvas.removeEventListener('touchmove', onRect, false);
+      temp_canvas.removeEventListener('touchmove', onBrush, false);
+      temp_canvas.removeEventListener('touchmove', onErase,false);
+      temp_canvas.removeEventListener('touchmove', onCircle, false);
+      temp_canvas.removeEventListener('touchmove', onOval, false);
+      temp_canvas.removeEventListener('touchmove', onSquare, false);
+      temp_canvas.removeEventListener('touchmove', onTriangle, false);
+      temp_canvas.removeEventListener('touchmove', onDiam, false);
+      temp_canvas.removeEventListener('touchmove', onHeart, false);
+      temp_canvas.removeEventListener('touchmove', onText, false);
+      temp_canvas.removeEventListener('touchmove', onPencil, false);
+      temp_canvas.removeEventListener('touchmove', onSel, false);
+      temp_canvas.removeEventListener('touchmove', onChoose, false);
+      if(tool == 'select'){
+          temp_context.setLineDash([]);
+          temp_context.lineWidth = curThickness;
         }
-        else if(addFree){
-          shapeArray.push("<freeform>\n\t<shapeid>" + (shapeid++) + "</shapeid>\n\t<frameid>" + curFrame + "</frameid>\n\t<linecolour>" + curColour + "</linecolour>\n\t<lineweight>" + curThickness + "</lineweight>\n\t<linestyle>" + lineStyle + "</linestyle>\n" + tempPath + "</freeform>\n<!--**-->\n");
-          addFree = false;
+
+        if (tool == 'text'){
+
+          var lines = textarea.value.split('\n');
+        var processed_lines= [];
+
+        for (var i = 0; i< lines.length; i++){
+          var chars = lines[i].length;
+
+          for(var j; j< chars; j++){
+            var text_node = document.createTextNode(lines[i][j]);
+            temp_txt_context.appendChild(text_node);
+
+            temp_txt_context.style.position = 'absolute';
+            temp_txt_context.style.visibility = 'hidden';
+            temp_txt_context.style.display = 'block';
+
+            var width = temp_txt_context.offsetWidth;
+            var height = temp_txt_context.offsetHeight;
+
+            temp_txt_context.style.position = '';
+            temp_txt_context.style.visibility = '';
+            temp_txt_context.style.display = 'none';
+
+            if (width > parseInt(textarea.style.width)) {
+                       break;
+                  }
+              }
+           
+              processed_lines.push(temp_txt_context.textContent);
+                temp_txt_context.innerHTML = '';
+          }
+       
+          var ta_comp_style = getComputedStyle(textarea);
+          var fs = ta_comp_style.getPropertyValue('font-size');
+          var ff = ta_comp_style.getPropertyValue('font-family');
+        
+          temp_context.font = fs + ' ' + ff;
+          temp_context.textBaseline = 'top';
+         
+          for (var n = 0; n < processed_lines.length; n++) {
+              var processed_line = processed_lines[n];
+               
+              temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
+          }
+          
+          context.drawImage(temp_canvas, 0, 0);
+
+          temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+       
+          textarea.style.display = 'none';
+          textarea.value = '';
+
         }
-			temp_canvas.removeEventListener('touchmove', onLine, false);
-			temp_canvas.removeEventListener('touchmove', onCLine, false);
-			temp_canvas.removeEventListener('touchmove', onRect, false);
-			temp_canvas.removeEventListener('touchmove', onBrush, false);
-			temp_canvas.removeEventListener('touchmove', onErase,false);
-			temp_canvas.removeEventListener('touchmove', onCircle, false);
-			temp_canvas.removeEventListener('touchmove', onOval, false);
-			temp_canvas.removeEventListener('touchmove', onSquare, false);
-			temp_canvas.removeEventListener('touchmove', onTriangle, false);
-			temp_canvas.removeEventListener('touchmove', onDiam, false);
-			temp_canvas.removeEventListener('touchmove', onHeart, false);
-			temp_canvas.removeEventListener('touchmove', onText, false);
-			temp_canvas.removeEventListener('touchmove', onPencil, false);
-			temp_canvas.removeEventListener('touchmove', onSel, false);
-			temp_canvas.removeEventListener('touchmove', onChoose, false);
-			if(tool == 'select'){
-   				temp_context.setLineDash([]);
-   				temp_context.lineWidth = curThickness;
-  			}
 
-    		if (tool == 'text'){
+        context.drawImage(temp_canvas,0,0);
+        temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
 
-    			var lines = textarea.value.split('\n');
-				var processed_lines= [];
+        points = [];
 
-				for (var i = 0; i< lines.length; i++){
-					var chars = lines[i].length;
+        //uPush();
 
-					for(var j; j< chars; j++){
-						var text_node = document.createTextNode(lines[i][j]);
-						temp_txt_context.appendChild(text_node);
+        frameDraw();
 
-						temp_txt_context.style.position = 'absolute';
-						temp_txt_context.style.visibility = 'hidden';
-						temp_txt_context.style.display = 'block';
+    }, false);
+  
 
-						var width = temp_txt_context.offsetWidth;
-						var height = temp_txt_context.offsetHeight;
+  
+    /**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
+    $('#tools div').on('click', function(){
+      tool = $(this).attr('id');
+      console.log("Tool selected: " + tool);
+    })
 
-						temp_txt_context.style.position = '';
-						temp_txt_context.style.visibility = '';
-						temp_txt_context.style.display = 'none';
-
-						if (width > parseInt(textarea.style.width)) {
-    		           		 break;
-    		        	}
-    	   			}
-    	     
-    	  	 		processed_lines.push(temp_txt_context.textContent);
-    	  		  	temp_txt_context.innerHTML = '';
-    			}
-    	 
-   				var ta_comp_style = getComputedStyle(textarea);
-    			var fs = ta_comp_style.getPropertyValue('font-size');
-    			var ff = ta_comp_style.getPropertyValue('font-family');
-    	 	
-    			temp_context.font = fs + ' ' + ff;
-    			temp_context.textBaseline = 'top';
-    		 
-    			for (var n = 0; n < processed_lines.length; n++) {
-    		    	var processed_line = processed_lines[n];
-    		    	 
-   			     	temp_context.fillText(processed_line,  parseInt(textarea.style.left), parseInt(textarea.style.top) + n*parseInt(fs) );
-   			 	}
-   	      
-   				context.drawImage(temp_canvas, 0, 0);
-
-    			temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
-    	 
-    			textarea.style.display = 'none';
-    			textarea.value = '';
-
-    		}
-
-    		context.drawImage(temp_canvas,0,0);
-    		temp_context.clearRect(0,0,temp_canvas.width,temp_canvas.height);
-
-    		points = [];
-
-    		//uPush();
-
-    		frameDraw();
-
-		}, false);
-	
-
-	
-		/**********************INITIALISE DEFAULT TOOL - BRUSH *********************/
- 	 	$('#tools div').on('click', function(){
-			
- 	 		tool = $(this).attr('id');
-			activeTool();
- 	 		console.log("Tool selected: " + tool);
- 		}); /*********************************************************************************************************************/
-
- 		$('#shapes div').on('click', function(){
-  			tool = $(this).attr('id');
-			activeTool();
-			console.log("Tool selected: " + tool);
- 		}); /*********************************************************************************************************************/
-
-    $('#menu div').on('click', function(){
+    $('#shapes div').on('click', function(){
         tool = $(this).attr('id');
-        if (tool == 'save'){
-          onSave();
-        }
-        if (tool == 'open'){
+        console.log("Tool selected: " + tool);
+    })
+
+    $('#open').on('click', function(){
+      console.log("open");
           onOpen();
+        });
+
+    $('#save').on('click', function(){
+      console.log("save");
+          onSave();
+                  });
+     
+
+    /***********************SELECTING A COLOUR*************************/
+    var clr = $("#colour");
+    clr.mouseover(function(e){
+      var colourTiles = $(".colours");
+      for( var i = 0; i< colourTiles.length; i++){
+        colourTiles[i].addEventListener('click', function(e){
+          curColour = this.id;        
+        });
+      }
+    });
+
+  
+    /***********************SELECTING LINE WEIGHT *************************/
+    var thickness = document.getElementById("thickness");
+    thickness.addEventListener("click", function(e) {
+      $("#thickmenu").removeClass("hide");
+      var thickTiles = $(".thick");
+      for(var i = 0; i<thickTiles.length; i++){
+        thickTiles[i].addEventListener('click', function(e) {
+          curThickness = parseInt(this.id);
+          temp_context.lineWidth = curThickness;
+
+        });
+      }
+    });
+  
+
+    /*********************** UNDO ARRAY FUNCTION*************************/
+    function uPush(){
+      undoArr.push(canvas.toDataURL());
+      undoindex++;
+    }
+
+
+    /*********************** UNDO FUNCTION*************************/
+    $(document).keydown(function (event) {
+        if (event.ctrlKey && event.keyCode == 90) {
+            undo1();
         }
-    }); /*********************************************************************************************************************/
+    });
 
-		function activeTool(){
-		$("#tools div").removeClass("tool-btn active-tool");
-		$("#tools div").addClass("tool-btn");
-		$("#shapes div").removeClass("tool-btn active-tool");
-		$("#shapes div").addClass("tool-btn");
-		;
-		$("#"+tool).addClass("active-tool");
-		}
+    var undo = document.getElementById("undo");
+    undo.addEventListener("click", undo1);
 
-		/***********************SELECTING A COLOUR*************************/
- 		var clr = $("#colour");
- 		clr.mouseover(function(e){
- 			var colourTiles = $(".colours");
- 			for( var i = 0; i< colourTiles.length; i++){
- 				colourTiles[i].addEventListener('click', function(e){
- 					curColour = this.id; 				
- 				});
- 			}
- 		});
-
- 	
-		/***********************SELECTING LINE WEIGHT *************************/
-		var thickness = document.getElementById("thickness");
-		thickness.addEventListener("click", function(e) {
-			$("#thickmenu").removeClass("hide");
-			var thickTiles = $(".thick");
-			for(var i = 0; i<thickTiles.length; i++){
-				thickTiles[i].addEventListener('click', function(e) {
-					curThickness = parseInt(this.id);
-					temp_context.lineWidth = curThickness;
-					
-					
-
-				});
-			}
-			$(document).on( 'click',".thick",function(e) {
-			$("#thickmenu").addClass("hide");})
-			tool="brush";
-			activeTool();
-			
-		});
-		
-	
-
-		/*********************** UNDO ARRAY FUNCTION*************************/
-		function uPush(){
-			undoArr.push(canvas.toDataURL());
-			undoindex++;
-		}
+     function undo1 (e){
+      if (undoindex > 0){   
+        undoindex--;
+        console.log("undo: " + undoindex);
+        var undo_img = new Image();
+        undo_img.src = undoArr[undoindex];
+        context.clearRect(0,0,temp_canvas.width, temp_canvas.height);
+        context.drawImage(undo_img,0,0);
+        frameDraw(); 
+        console.log("undo");
+      }
+    }
 
 
- 		/*********************** UNDO FUNCTION*************************/
-		$(document).keydown(function (event) {
-		    if (event.ctrlKey && event.keyCode == 90) {
-		        undo1();
-		    }
-		});
+   /*********************** REDO FUNCTION*************************/
 
-		var undo = document.getElementById("undo");
-		undo.addEventListener("click", undo1);
+    $(document).keydown(function (event) {
+        if (event.ctrlKey && event.keyCode == 89) {
+            redo1();
+        }
+    });
 
-		 function undo1 (e){
-		 	if (undoindex > 0){		
-		 		undoindex--;
-		 		console.log("undo: " + undoindex);
-		 		var undo_img = new Image();
-		 		undo_img.src = undoArr[undoindex];
-		 		context.clearRect(0,0,temp_canvas.width, temp_canvas.height);
-		 		context.drawImage(undo_img,0,0);
-		 		frameDraw(); 
-		 		console.log("undo");
-		 	}
-		}
+    var redo = document.getElementById("redo");
+    redo.addEventListener("click", redo1);
 
-
-	 /*********************** REDO FUNCTION*************************/
-
-		$(document).keydown(function (event) {
-		    if (event.ctrlKey && event.keyCode == 89) {
-		        redo1();
-		    }
-		});
-
-		var redo = document.getElementById("redo");
-		redo.addEventListener("click", redo1);
-
-		function redo1(e){
-			if (undoindex < undoArr.length){	
-				undoindex++;
-		 		console.log("redo: " + undoindex);
-	 			var undo_img = new Image();
-	 			undo_img.src = undoArr[undoindex];
-	 			context.drawImage(undo_img,0,0);
-	 			frameDraw();	
-	 			console.log("redo");
-			}
-		}
+    function redo1(e){
+      if (undoindex < undoArr.length){  
+        undoindex++;
+        console.log("redo: " + undoindex);
+        var undo_img = new Image();
+        undo_img.src = undoArr[undoindex];
+        context.drawImage(undo_img,0,0);
+        frameDraw();  
+        console.log("redo");
+      }
+    }
 
 
-		/*********************** NEW ANIMATES FILE FUNCTION*************************/
+    /*********************** NEW ANIMATES FILE FUNCTION*************************/
 
 
 
-		/*********************** OPEN ANIMATES FILE FUNCTION*************************/
-    var ptx = 0;
+    /*********************** OPEN ANIMATES FILE FUNCTION*************************/
+     var ptx = 0;
     var pty = 0;
 
 
     var onOpen = function(){
       var alt = "";
-      var menu = document.getElementById('menu');
+      var menu = document.getElementById('options');
       menu.innerHTML = menu.innerHTML + '<input type=\"file\" id=\"files\" name=\"files[]\" multiple /><br><output id=\"list\"></output>';
 
       function handleFileSelect(e) {
@@ -609,7 +603,6 @@ if(window.addEventListener) {
             opened = true;
             $("#files").remove();
             $("#list").remove();
-
             console.log("*****************************************PARSED FILE*****************************************");
             var fileArr = tempFile.split("<!--&&-->");
             if (fileArr.length < 3) {
@@ -703,14 +696,12 @@ if(window.addEventListener) {
         reader.readAsText(f);
       }
 
-      document.getElementById('files').addEventListener('change', handleFileSelect, false);
+      document.getElementById('open').addEventListener('change', handleFileSelect, false);
 
     }
 
 
-
-		/*********************** SAVE ANIMATES FUNCTION*************************/
-
+    /*********************** SAVE ANIMATES FUNCTION*************************/
     var onSave = function(){
       testFile = "";
       var rate = "<rate>" + parseInt(document.getElementById('frms').value) + "</rate>\n";
@@ -762,118 +753,101 @@ if(window.addEventListener) {
     }
 
 
-		/*********************** IMPORT FILE FUNCTION*************************/
-    	var imageLoader = document.getElementById('imageLoader');
-    	imageLoader.addEventListener('change', handleImage, false);
-    	function handleImage(e){
-      	var reader = new FileReader();
-      	reader.onload = function(event){
-        	var img = new Image();
-        	img.onload = function(){
-          		img.width = 600;
-          		img.height = 400;
-          		context.drawImage(img, 0, 0, canvas.width - 100, canvas.height - 100);
-          	console.log(img);
-          	uPush();
-        	}
-        	img.src = event.target.result;
-      	}
-      	reader.readAsDataURL(e.target.files[0]);
-    	}
-
- 		/*********************** CUT FUNCTION*************************/
+    /*********************** IMPORT FILE FUNCTION*************************/
+    var imageLoader = document.getElementById('imageLoader');
+    imageLoader.addEventListener('change', handleImage, false);
+    function handleImage(e){
+      var reader = new FileReader();
+      reader.onload = function(event){
+        var img = new Image();
+        img.onload = function(){
+          img.width = 600;
+          img.height = 400;
+          context.drawImage(img, 0, 0, canvas.width - 100, canvas.height - 100);
+          console.log(img);
+          uPush();
+        }
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(e.target.files[0]);
+    }
 
 
-
-  		/*********************** COPY FUNCTION*************************/
+    /*********************** CUT FUNCTION*************************/
 
 
 
-   		/*********************** PASTE FUNCTION*************************/
+      /*********************** COPY FUNCTION*************************/
 
 
 
-   		/*********************** SELECT FUNCTION*************************/
-   		var x, y, width, height, stx, sty = 0;
-   		var onSel = function(){
-		  	if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			temp_context.lineWidth = 1;
-   			temp_context.setLineDash([6]);
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-
-			x = Math.min(mouse.x, start_mouse.x);
-			y = Math.min(mouse.y, start_mouse.y);
-			width = Math.abs(mouse.x - start_mouse.x);
-			height = Math.abs(mouse.y - start_mouse.y);
-
-			temp_context.strokeRect(x,y, width, height);
-			stx = mouse.x;
-			sty = mouse.y;
-			tool = 'choose';
-   		};
-   		var onChoose = function(){
-   			if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-    		temp_context.fillStyle = 'white';
-    		temp_context.strokeStyle = 'white';
-			temp_context.setLineDash([0]);
-			temp_context.fillRect(x,y, width, height);
-			temp_context.strokeRect(x,y, width, height);
-			diffx = mouse.x - stx;
-			diffy = mouse.y - sty;
-			temp_context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
-			temp_context.strokeRect(x+diffx, y+diffy, width, height);
-    		temp_context.strokeStyle = 'black';
-   		};
-
-   		/*********************** PAINT FILL FUNCTION*************************/
+      /*********************** PASTE FUNCTION*************************/
 
 
 
-		/********************** TEXT FUNCTION *********************/
-		var onText = function(){
-   			if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+      /*********************** SELECT FUNCTION*************************/
+      var x, y, width, height, stx, sty = 0;
+      var onSel = function(){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      temp_context.lineWidth = 1;
+        temp_context.setLineDash([6]);
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
-			var x = Math.min(mouse.x,start_mouse.x);
-			var y = Math.min(mouse.y, start_mouse.y);
-			var width = Math.abs(mouse.x - start_mouse.x);
-			var height = Math.abs(mouse.y - start_mouse.y);
+      x = Math.min(mouse.x, start_mouse.x);
+      y = Math.min(mouse.y, start_mouse.y);
+      width = Math.abs(mouse.x - start_mouse.x);
+      height = Math.abs(mouse.y - start_mouse.y);
 
-			textarea.style.left = x + 'px';
-			textarea.style.top = y + 'px';
-			textarea.style.width = width + 'px';
-			textarea.style.height = height + 'px';
-			textarea.style.display = 'block';
-	
-		};
+      temp_context.strokeRect(x,y, width, height);
+      stx = mouse.x;
+      sty = mouse.y;
+      tool = 'choose';
+      };
+      var onChoose = function(){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+        temp_context.fillStyle = 'white';
+        temp_context.strokeStyle = 'white';
+      temp_context.setLineDash([0]);
+      temp_context.fillRect(x,y, width, height);
+      temp_context.strokeRect(x,y, width, height);
+      diffx = mouse.x - stx;
+      diffy = mouse.y - sty;
+      temp_context.drawImage(canvas, x, y, width, height, x+diffx, y+diffy, width, height);
+      temp_context.strokeRect(x+diffx, y+diffy, width, height);
+        temp_context.strokeStyle = 'black';
+      };
 
-    /********************** CAPTURE MOUSE MOVEMENT *********************/
-
-      var mouse = {x: 0, y: 0};
-      var start_mouse = {x: 0, y:0};
-      var last_mouse = {x: 0, y: 0};
-      var points = [];
+      /*********************** PAINT FILL FUNCTION*************************/
 
 
-      temp_canvas.addEventListener('mousemove', function(e){
-        mouse.x = typeof e.offsetX !== 'undefine' ? e.offsetX : e.layerX;
-        mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
-      }, false);
 
-      temp_canvas.addEventListener('touchmove', function(e){
-        mouse.x = e.touches[0].pageX - $('#temp_canvas').offset().left;
-        mouse.y = e.touches[0].pageY - $('#temp_canvas').offset().top;
-      }, false);
+    /********************** TEXT FUNCTION *********************/
+    var onText = function(){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+
+      var x = Math.min(mouse.x,start_mouse.x);
+      var y = Math.min(mouse.y, start_mouse.y);
+      var width = Math.abs(mouse.x - start_mouse.x);
+      var height = Math.abs(mouse.y - start_mouse.y);
+
+      textarea.style.left = x + 'px';
+      textarea.style.top = y + 'px';
+      textarea.style.width = width + 'px';
+      textarea.style.height = height + 'px';
+      textarea.style.display = 'block';
+  
+    };
 
 
     /********************** STRAIGHT LINE FUNCTION *********************/
@@ -899,8 +873,8 @@ if(window.addEventListener) {
     };
 
 
-    /********************** CURVED LINE FUNCTION *********************/ //SCRIPT FUNCTIONALITY NOT IMPLEMENTED
-    var cpoints = [];
+    /********************** CURVED LINE FUNCTION *********************/
+     var cpoints = [];
 
     var onCLine = function(e) {
         if (blockMenuHeaderScroll)
@@ -961,7 +935,7 @@ if(window.addEventListener) {
 
 
     /********************** DIAMOND FUNCTION *********************/
-    var onDiam = function(e){
+     var onDiam = function(e){
         if (blockMenuHeaderScroll)
         {
             e.preventDefault();
@@ -989,7 +963,7 @@ if(window.addEventListener) {
 
 
     /********************** HEART FUNCTION *********************/
-    var onHeart = function(e){
+     var onHeart = function(e){
         if (blockMenuHeaderScroll)
         {
             e.preventDefault();
@@ -1025,7 +999,7 @@ if(window.addEventListener) {
 
     /********************** RECTANGLE FUNCTION *********************/
 
-    var onRect = function(e){
+     var onRect = function(e){
         if (blockMenuHeaderScroll)
         {
             e.preventDefault();
@@ -1044,7 +1018,7 @@ if(window.addEventListener) {
 
 
     /********************** SQUARE FUNCTION *********************/
-    var onSquare = function(e){
+     var onSquare = function(e){
         if (blockMenuHeaderScroll)
         {
             e.preventDefault();
@@ -1112,224 +1086,223 @@ if(window.addEventListener) {
           ye = y + h,           // y-end
           xm = x + w / 2,       // x-middle
           ym = y + h / 2;       // y-middle
- 
-/*<<<<<<< HEAD ******************************************************************************************************************************************/
-  			temp_context.beginPath();
-  			temp_context.moveTo(x, ym);
-  			temp_context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-  			temp_context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-  			temp_context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-  			temp_context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-  			temp_context.closePath();
-  			temp_context.stroke();
-		}
 
+        temp_context.beginPath();
+        temp_context.moveTo(x, ym);
+        temp_context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+        temp_context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+        temp_context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+        temp_context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+        temp_context.closePath();
+        temp_context.stroke();
+    }
 
-		/********************** PENCIL FUNCTION *********************/
-		var points = [];
+    /********************** PENCIL FUNCTION *********************/
+   var points = [];
 
-		var onPencil = function(e){
-   			if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			temp_context.lineWidth = 1;
+    var onPencil = function(e){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      temp_context.lineWidth = 1;
       addShape = false;
-			temp_context.lineJoin = 'square';
-			points.push({x:mouse.x, y:mouse.y});
+      temp_context.lineJoin = 'square';
+      points.push({x:mouse.x, y:mouse.y});
 
-			if(points.length <3){
-				var b = points[0];
-				temp_context.beginPath();
-				temp_context.arc(b.x, b.y, temp_context.lineWidth / 2, 0, Math.PI * 2, !0 );
-				temp_context.fill();
-				temp_context.closePath();
-				return;
-			}
+      if(points.length <3){
+        var b = points[0];
+        temp_context.beginPath();
+        temp_context.arc(b.x, b.y, temp_context.lineWidth / 2, 0, Math.PI * 2, !0 );
+        temp_context.fill();
+        temp_context.closePath();
+        return;
+      }
 
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
-			temp_context.beginPath();
-			temp_context.moveTo(points[0].x, points[0].y);
+      temp_context.beginPath();
+      temp_context.moveTo(points[0].x, points[0].y);
 
-			for( var i = 1; i < points.length - 2; i++){
-				var c = (points[i].x + points[i+1].x) / 2;
-				var d = (points[i].y + points[i+1].y) / 2;
-				temp_context.quadraticCurveTo(points[i].x, points[i].y,c,d);
-			}
+      for( var i = 1; i < points.length - 2; i++){
+        var c = (points[i].x + points[i+1].x) / 2;
+        var d = (points[i].y + points[i+1].y) / 2;
+        temp_context.quadraticCurveTo(points[i].x, points[i].y,c,d);
+      }
 
-			temp_context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
-			temp_context.stroke();
-		
-		}
+      temp_context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+      temp_context.stroke();
+    
+    }
 
-		/********************** BRUSH FUNCTION *********************/
+    /********************** BRUSH FUNCTION *********************/
     tool = 'brush';
     var points = [];
 
-		var onBrush = function(e){
-   			if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			//Save all points in array
-		  points.push({x:mouse.x, y:mouse.y});
+    var onBrush = function(e){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      //Save all points in array
+      points.push({x:mouse.x, y:mouse.y});
       tempPath += "\t<point>\n\t\t<x>" + mouse.x + "</x>\n\t\t<y>" + mouse.y + "</y>\n\t</point>\n";
       
       addFree = true;
 
-			if(points.length <3){
-				var b = points[0];
-				temp_context.beginPath();
-				temp_context.arc(b.x, b.y, temp_context.lineWidth / 2, 0, Math.PI * 2, !0 );
-				temp_context.fill();
-				temp_context.closePath();
-				return;
-			}
+      if(points.length <3){
+        var b = points[0];
+        temp_context.beginPath();
+        temp_context.arc(b.x, b.y, temp_context.lineWidth / 2, 0, Math.PI * 2, !0 );
+        temp_context.fill();
+        temp_context.closePath();
+        return;
+      }
 
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
 
-			temp_context.beginPath();
-			temp_context.moveTo(points[0].x, points[0].y);
+      temp_context.beginPath();
+      temp_context.moveTo(points[0].x, points[0].y);
 
-			for( var i = 1; i < points.length - 2; i++){
-				var c = (points[i].x + points[i+1].x) / 2;
-				var d = (points[i].y + points[i+1].y) / 2;
-				temp_context.quadraticCurveTo(points[i].x, points[i].y,c,d);
-			}
+      for( var i = 1; i < points.length - 2; i++){
+        var c = (points[i].x + points[i+1].x) / 2;
+        var d = (points[i].y + points[i+1].y) / 2;
+        temp_context.quadraticCurveTo(points[i].x, points[i].y,c,d);
+      }
 
-			temp_context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
-			temp_context.stroke();
-		
-		};
-
-
-		/********************** ERASE FUNCTION *********************/
-		var onErase = function(){
-   			if (blockMenuHeaderScroll)
-	    	{
-	        	e.preventDefault();
-	    	}
-			curColour = 'white';	
-  			temp_context.strokeStyle = curColour;
-  			temp_context.fillstyle =curColour;
-			onBrush();
-		}
-
- 		/********************** FRAME SELECT *********************/
-		
- 		
-  		$("#frames").on('click','img.frame' ,function(){
-  			frame_select = $(this).attr('id');
-			curFrame=parseInt(frame_select.match(/frmimg(\d+)/)[1]);
-  			console.log("frame selected: "+frame_select+" curFrame:"+curFrame);
-
-			var framesrc=document.getElementById(frame_select).src;
-			var canvas=document.getElementById("canvas1");
-			var context=canvas.getContext("2d");
-			var img = new Image();
-			img.src=framesrc;
-			img.onload=function(){
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				context.drawImage(img,0,0);				
-			};
-
-			showSelected();
-			
-			console.log(images);
-			
- 		});
-			//Visually shows curFrame
-			function showSelected(){
-			$("#frames img").removeClass("frame active-frame");
-			$("#frames img").addClass("frame");
-			$("#frmimg"+curFrame).addClass("frame active-frame");}
-
-		/*************************DRAW FRAME***********************/
-		
-		function frameDraw() {
-			var cnvs1 = document.getElementById("canvas1");
-			var frame = new Image();
-			frame = cnvs1.toDataURL("image/png");
-			
-			
-			images[curFrame-1]=frame;
-			//console.log("Length of frame array: " + images.length);
-		
-			var val = "frmimg"+curFrame;
-			var frameimg = document.getElementById(val);
-			frameimg.src = frame;	
-		};
+      temp_context.quadraticCurveTo( points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+      temp_context.stroke();
+    
+    };
 
 
-		/*************************NEW FRAME************************/
-		var addFrame = document.getElementById("addframe");
-		addFrame.addEventListener("click", function(e){
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-			context.clearRect(0,0,canvas.width, canvas.height);
-			var cnvs1 = document.getElementById("canvas1");
-			var frame = new Image();
-			frame = cnvs1.toDataURL("image/png");	
-			
-			
-			if(document.getElementById("frmimg"+(curFrame+1))!=null){
-				console.log("made it");
-				var keys=Object.keys(images);
-				console.log(curFrame);				
-				for(var i=keys.length-1;i>=curFrame;i--){
-					console.log(parseInt(keys[i])+1);
-					images[parseInt(keys[i])+1]=images[keys[i]];
-					document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
-				}
-			}
-				var img = document.createElement("img");
-				img.className = "frame";		
-				img.setAttribute("id", "frmimg"+(curFrame+1));
-			
-			$("#frmimg"+curFrame).after(img);
-			reset1();
-			curFrame++;
-			frameDraw();
-			showSelected();
-		});
 
-		function reset1(){
-			undoArr = [];
-			undoindex= 0	;
-		}
+    /********************** ERASE FUNCTION *********************/
+    var onErase = function(){
+        if (blockMenuHeaderScroll)
+        {
+            e.preventDefault();
+        }
+      curColour = 'white';  
+        temp_context.strokeStyle = curColour;
+        temp_context.fillstyle =curColour;
+      onBrush();
+    }
+
+    /********************** FRAME SELECT *********************/
+    
+    
+      $("#frames").on('click','img.frame' ,function(){
+        frame_select = $(this).attr('id');
+      curFrame=parseInt(frame_select.match(/frmimg(\d+)/)[1]);
+        console.log("frame selected: "+frame_select+" curFrame:"+curFrame);
+
+      var framesrc=document.getElementById(frame_select).src;
+      var canvas=document.getElementById("canvas1");
+      var context=canvas.getContext("2d");
+      var img = new Image();
+      img.src=framesrc;
+      img.onload=function(){
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(img,0,0);       
+      };
+
+      showSelected();
+      
+      console.log(images);
+      
+    });
+      //Visually shows curFrame
+      function showSelected(){
+      $("#frames img").removeClass("frame active-frame");
+      $("#frames img").addClass("frame");
+      $("#frmimg"+curFrame).addClass("frame active-frame");}
+
+    /*************************DRAW FRAME***********************/
+    
+    function frameDraw() {
+      var cnvs1 = document.getElementById("canvas1");
+      var frame = new Image();
+      frame = cnvs1.toDataURL("image/png");
+      
+      
+      images[curFrame-1]=frame;
+      //console.log("Length of frame array: " + images.length);
+    
+      var val = "frmimg"+curFrame;
+      var frameimg = document.getElementById(val);
+      frameimg.src = frame; 
+    };
 
 
-		/*************************COPY FRAME************************/
-		var copyFrame = document.getElementById("copyframe");
-		copyFrame.addEventListener("click", function(e){
-				
-			var cnvs1 = document.getElementById("canvas1");
-			temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-			context.clearRect(0,0,canvas.width, canvas.height);
-			if(document.getElementById("frmimg"+(curFrame+1))!=null){
-				console.log("made it");
-				var keys=Object.keys(images);
-				console.log(curFrame);				
-				for(var i=keys.length-1;i>=curFrame;i--){
-					console.log(parseInt(keys[i])+1);
-					images[parseInt(keys[i])+1]=images[keys[i]];
-					document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
-				}
-			}
-			var cimg = new Image();
-			cimg.src = images[curFrame-1];
-			context.drawImage(cimg,0,0);
-			frameDraw();
-			
-			var frame = new Image();
-			frame = cnvs1.toDataURL("image/png");
+    /*************************NEW FRAME************************/
+   var addFrame = document.getElementById("addframe");
+    addFrame.addEventListener("click", function(e){
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+      context.clearRect(0,0,canvas.width, canvas.height);
+      var cnvs1 = document.getElementById("canvas1");
+      var frame = new Image();
+      frame = cnvs1.toDataURL("image/png"); 
+      
+      
+      if(document.getElementById("frmimg"+(curFrame+1))!=null){
+        console.log("made it");
+        var keys=Object.keys(images);
+        console.log(curFrame);        
+        for(var i=keys.length-1;i>=curFrame;i--){
+          console.log(parseInt(keys[i])+1);
+          images[parseInt(keys[i])+1]=images[keys[i]];
+          document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
+        }
+      }
+        var img = document.createElement("img");
+        img.className = "frame";    
+        img.setAttribute("id", "frmimg"+(curFrame+1));
+      
+      $("#frmimg"+curFrame).after(img);
+      reset1();
+      curFrame++;
+      frameDraw();
+      showSelected();
+    });
 
-			var img = document.createElement("img");
-			img.className = "frame";
-			img.setAttribute("id", "frmimg" + (curFrame+1));
-			$("#frmimg"+curFrame).after(img);
-			reset1();
-			curFrame++;
+    function reset1(){
+      undoArr = [];
+      undoindex= 0  ;
+    }
+
+
+    /*************************COPY FRAME************************/
+    var copyFrame = document.getElementById("copyframe");
+    copyFrame.addEventListener("click", function(e){
+        
+      var cnvs1 = document.getElementById("canvas1");
+      temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+      context.clearRect(0,0,canvas.width, canvas.height);
+      if(document.getElementById("frmimg"+(curFrame+1))!=null){
+        console.log("made it");
+        var keys=Object.keys(images);
+        console.log(curFrame);        
+        for(var i=keys.length-1;i>=curFrame;i--){
+          console.log(parseInt(keys[i])+1);
+          images[parseInt(keys[i])+1]=images[keys[i]];
+          document.getElementById("frmimg"+(parseInt(keys[i])+1)).setAttribute("id","frmimg"+(parseInt(keys[i])+2));
+        }
+      }
+      var cimg = new Image();
+      cimg.src = images[curFrame-1];
+      context.drawImage(cimg,0,0);
+      frameDraw();
+      
+      var frame = new Image();
+      frame = cnvs1.toDataURL("image/png");
+
+      var img = document.createElement("img");
+      img.className = "frame";
+      img.setAttribute("id", "frmimg" + (curFrame+1));
+      $("#frmimg"+curFrame).after(img);
+      reset1();
+      curFrame++;
       frameArray.push("<frame>\n\t<frameid>" + curFrame + "</frameid>\n\t<order>" + (curFrame-1) + "</order>\n</frame>\n<!--@@-->\n");
       var val = shapeArray.length;
       for(var i = 0; i < val; i++){
@@ -1341,28 +1314,27 @@ if(window.addEventListener) {
           shapeArray.push(shapeArray[i].substring(0, copyInd+9) + (fid+1) + shapeArray[i].substring(restFrame));
         } 
       }
-			frameDraw();
-			showSelected();
-		});
+      frameDraw();
+      showSelected();
+    });
 
+    /*************************DELETE FRAME************************/
+    var delFrame = document.getElementById("delframe");
+    delFrame.addEventListener("click", function(e){
+      if(curFrame > 1){
+        temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
+        context.clearRect(0,0,canvas.width, canvas.height);
+        
+        $("#frmimg"+curFrame).remove();
+        console.log(images);
+        delete images[curFrame-1];
+        console.log("Frame "+curFrame+" deleted");
+        console.log(images);
+        curFrame--;
 
-		/*************************DELETE FRAME************************/
-		var delFrame = document.getElementById("delframe");
-		delFrame.addEventListener("click", function(e){
-			if(curFrame > 1){
-				temp_context.clearRect(0,0, temp_canvas.width, temp_canvas.height);
-				context.clearRect(0,0,canvas.width, canvas.height);
-				
-				$("#frmimg"+curFrame).remove();
-				console.log(images);
-				delete images[curFrame-1];
-				console.log("Frame "+curFrame+" deleted");
-				console.log(images);
-				curFrame--;
-
-				var curImg = new Image();
-				curImg.src = images[curFrame-1];
-				context.drawImage(curImg,0,0);
+        var curImg = new Image();
+        curImg.src = images[curFrame-1];
+        context.drawImage(curImg,0,0);
         var popped = frameArray.pop();
         var popId = parseInt(popped.match(/\d*(?=<\/frameid>)/)[0], 10);
         console.log(popped.indexOf("<frameid>") + 9);
@@ -1372,40 +1344,42 @@ if(window.addEventListener) {
             shapeArray.splice(i, 1);
           } 
         }
-				reset1();
-			}		
-		showSelected();
-		});
+        reset1();
+      }   
+    showSelected();
+    });
+
+    /***********************PLAY ANIMATION*********************/
+    $(function(){
 
 
-		/***********************PLAY ANIMATION*********************/
-		var play = document.getElementById("play");
-		var j = 0;
-		var id;
-		play.addEventListener("click", function(e){
-			var rate = parseFloat(document.getElementById('frms').value);
-			var msec = (1/rate)*1000;
-			var count=0;
-			var keys= Object.keys(images);
-			for(var key in keys){
-				var playScreen = document.createElement("img");
-				playScreen.setAttribute("id", "playDiv");
-				playScreen.src = images[keys[key]];
-				$("#canvas").prepend(playScreen);
-				$("#playDiv").delay(msec*(count+1)).fadeIn(0).fadeOut(0);
-				
-				console.log("Frame played:" + count+" key:"+ key+" msec:"+msec);
-				count++;
-			}
-			/*$("#playDiv").remove();*/
-		});
-		/**Object interactions **/	
-		$(".object-header").on("click",function(e){
-			var $obj =$(this).parent();
-			if($(":nth-child(2),:nth-child(3)",$obj).hasClass("hide"))
-				$(":nth-child(2),:nth-child(3)",$obj).removeClass("hide");
-			else
-				$(":nth-child(2),:nth-child(3)",$obj).addClass("hide");		
-		});
-		
-}, false); }
+      $('[data-popup-open]').on('click', function(e){
+        var targeted_popup_class = jQuery(this).attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        e.preventDefault();
+        var rate = parseFloat(document.getElementById('frms').value);
+      var msec = (1/rate)*1000;
+      var count=0;
+      var keys= Object.keys(images);
+      for(var key in keys){
+          var playScreen = document.createElement("img");
+          console.log(playScreen);
+          playScreen.setAttribute("id", "playDiv");
+          playScreen.src = images[keys[key]];
+          $("#popcontainer").prepend(playScreen);
+          $("#playDiv").delay(msec*(count+1)).fadeIn(0).fadeOut(0);
+             if((Object.keys(images).length -1) == count){
+          $('[data-popup="' + targeted_popup_class + '"]').delay(msec*(count+1)).fadeOut(350);
+          }
+          console.log("Frame played:" + count+" key:"+ key+" keys:"+keys);          
+          count++;
+        }        
+
+      });
+
+    });	
+
+}, 
+false); }
+
+

@@ -1,176 +1,184 @@
 <!DOCTYPE html>	
 <html>
 	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" type="text/css" href="PiXit.css"/>
 		<script src="jquery-1.11.3.min.js"></script>
-			<script type="text/javascript" src="jquery.watermarkinput.js"></script>		
+		<script type="text/javascript" src="jquery.watermarkinput.js"></script>
 		<script src="jscolor.min.js"></script>
 		<script type="text/javascript" src="PiXit.js"></script>
 		<script type="text/javascript" src="colourpicker.js"></script>
-		<title>PiXit</title>
+		<script type="text/javascript" src="jquery.watermarkinput.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<title>PiXit Beta</title>
 	</head>
 	<body>
-		<div class="topbar">
-			<div id = "topmenu">
-				<a href="#" class="nav-toggle-btn1">☰</a>
-				<div id="options">
-					<button id="open"><img src="icons/open.png"/></button>
-					<button id="save"><img src="icons/save.png"/></button>
-					<button id="cut"><img src="icons/cut.png"/></button>
-					<button id="copy"><img src="icons/copy.png"/></button>
-					<button id="paste"><img src="icons/paste.png"/></button>
-					<button id="undo"><img src="icons/undo.png"/></button>
-					<button id="redo"><img src="icons/redo.png"/></button>	
-
-					<button id="imageLoader"><img src="icons/down.png"></button>
-				</div>				
-			</div>
-			<nav id="nav1">				
-				<div id="tools"><span style="text-align:center">TOOLS</span>     
-					<div  id="brush"><img src="icons/brush.png"></div>
-					<div  id="pencil"><img src="icons/pencil.png"></div>
-					<div  id="select"><img src="icons/select.png"></div>
-					<div id="paint"><img src="icons/paint.png"></div>
-					<div id="text"><img src="icons/text.png"></div>
-					<div id="erase"><img src="icons/eraser.png"></div>
-					<div id="thickness"><img src="icons/lineweight.png">
-
-		<div id="menu">
+		<div id="menu" >
 			<p>MENU</p>
-			<div id="new"><figure><img src="icons/newfile.png"><figcaption> New</figcaption></figure></div>
-			<div id="open"><figure><img src="icons/openfile.png"><figcaption> Open</figcapton></figure></div>
-			<div id="save"><figure><img src="icons/save.png"><figcaption>Save</figcaption></figure></div>
-			<div id="cut"><figure><img src="icons/cut.png"><figcaption>Cut</figcaption></figure></div>
-			<div id="copy"><figure><img src="icons/copy.png"><figcaption>Copy</figcaption></figure></div>
-			<div id="paste"><figure><img src="icons/paste.png"><figcaption>Paste</figcaption></figure></div>
-			<div id="undo"><figure><img src="icons/undo.png"><figcaption>Undo</figcaption></figure></div>
-			<div id="redo"><figure><img src="icons/redo.png"><figcaption>Redo</figcaption></figure></div>
-			<div id="import"><figure><label for="imageLoader"><img src="icons/import.png"></label><input type="file" id="imageLoader" name="imageLoader"/><figcaption>Import</figcaption></figure></div>
+			<div id="new" class="icon-btn"><figure><img src="icons/newfile.png"><figcaption> New</figcaption></figure></div>
+			<div id="open"class="icon-btn"><figure><img src="icons/openfile.png"><figcaption> Open</figcapton></figure></div>
+			<div id="save"class="icon-btn"><figure><img src="icons/save.png"><figcaption>Save</figcaption></figure></div>
+			<div id="import"class="icon-btn"><label for="imageLoader"><img src="icons/import.png"></label><input type="file" id="imageLoader" name="imageLoader"/><figcaption>Import</figcaption></figure></div>
+			<div id="cut"class="icon-btn"><figure><img src="icons/cut.png"><figcaption>Cut</figcaption></figure></div>
+			<div id="copy"class="icon-btn"><figure><img src="icons/copy.png"><figcaption>Copy</figcaption></figure></div>
+			<div id="paste"class="icon-btn"><figure><img src="icons/paste.png"><figcaption>Paste</figcaption></figure></div>
+			<div id="undo"class="icon-btn"><figure><img src="icons/undo.png"><figcaption>Undo</figcaption></figure></div>
+			<div id="redo"class="icon-btn"><figure><img src="icons/redo.png"><figcaption>Redo</figcaption></figure></div><br>
+		
 		</div>
 		<div id="left-menu">
 			<div id="tools" class="left-menu">
-				<p>Tools</p>
-				<div id="brush"><img src="icons/brush.png"></div>
-				<div id="pencil"><img src="icons/pencil.png"></div>
-				<div id="thickness"><img src="icons/lineweight.png">
-					<ul class="hide" id="thickmenu">
-						<br>
-						<li>
-							<div class="thick" id="1" style="background-color:#ffffff; height:1px; width:40px"></div>
+				<span class="header">Tools</span>
+				<div id="brush"class="tool-btn"><img src="icons/brush.png"></div>
+				<div id="pencil"class="tool-btn"><img src="icons/pencil.png"></div>
+				<div id="thickness"class="tool-btn"><img src="icons/lineweight.png">
+					<ul  id="thickmenu">
+						
+						<li class="thick" id="1">
+							<div  style="background-color:#000000; height:1px; width:40px"></div><span>1px</span>
 						</li>
-						<li>
-							<div class="thick" id="3" style="background-color:#ffffff; height:3px; width:40px"></div>
+						<li class="thick" id="3">
+							<div style="background-color:#000000; height:3px; width:40px"></div><span>3px</span>
 						</li>
-						<li>
-							<div class="thick" id="5" style="background-color:#ffffff; height:5px; width:40px"></div>
+						<li class="thick" id="5">
+							<div  style="background-color:#000000; height:5px; width:40px"></div><span>5px</span>
 						</li>
-						<li>
-							<div class="thick" id="7" style="background-color:#ffffff; height:7px; width:40px"></div>
+						<li class="thick" id="7">
+							<div  style="background-color:#000000; height:7px; width:40px"></div><span>7px</span>
 						</li>
-						<li>
-							<div class="thick" id="9" style="background-color:#ffffff; height:9px; width:40px"></div>
+						<li class="thick" id="9">
+							<div  style="background-color:#000000; height:9px; width:40px"></div><span>9px</span>
 						</li>
 					</ul>
-				</div>		
 				</div>
-				<div class="heads"	id="shapes">SHAPES
-					<div id="line"><img src="icons/line.png"></div>
-					<div id="cline"> <img src="icons/cline.png"></div>
-					<div id="rect"><img src="icons/rectangle.png"></div>
-					<div id="circle"><img src="icons/circle.png"></div>
-					<div id="square"><img src="icons/square.png"></div>
-					<div id="triangle"><img src="icons/triangle.png"></div>
-					<div id="oval"><img src="icons/oval.png"></div>
-					<div id="heart"><img src="icons/heart.png"></div>
-					<div id="diam"><img src="icons/diamond.png"></div>
-				</div>	
-				<div id="colour" class="heads">   COLOURS
-					<div>
-							<button class="colours" id="#000000" style="background-color:#000000"></button>
-							<button class="colours" id="#cccccc" style="background-color:#cccccc"></button>
-							<button class="colours" id="#663300" style="background-color:#663300"></button>
-							<button class="colours" id="#990000" style="background-color:#990000"></button>
-							<button class="colours" id="#ff6600" style="background-color:#ff6600"></button>
-					</div>
+				<div id="select"class="tool-btn"><img src="icons/select.png"></div>
+				<div id="paint"class="tool-btn"><img src="icons/bucket.png"></div>
+				<div id="text"class="tool-btn"><img src="icons/text.png"></div>
+				<div id="erase"class="tool-btn"><img src="icons/eraser.png"></div>
+			</div>
+			
+						
+			<div id="shapes" class="left-menu">
+				<p>&nbsp;&nbsp;Shapes</p>
+				<div id="line"class="tool-btn"><img src="icons/line.png"></div>
+				<div id="cline"class="tool-btn"> <img src="icons/cline.png"></div>
+				<div id="rect"class="tool-btn"><img src="icons/rectangle.png"></div>
+				<div id="circle"class="tool-btn"><img src="icons/circle.png"></div>
+				<div id="square"class="tool-btn"><img src="icons/square.png"></div>
+				<div id="triangle"class="tool-btn"><img src="icons/triangle.png"></div>
+				<div id="oval"class="tool-btn"><img src="icons/oval.png"></div>
+				<div id="heart"class="tool-btn"><img src="icons/heart.png"></div>
+				<div id="diam"class="tool-btn"><img src="icons/diamond.png"></div>
+			</div>
 
-					<div>
-							<button class="colours" id="#808080" style="background-color:#808080"></button>
-							<button class="colours" id="#ffffff" style="background-color:#ffffff"></button>
-							<button class="colours" id="#996633" style="background-color:#996633"></button>
-							<button class="colours" id="#ff0000" style="background-color:#ff0000"></button>
-							<button class="colours" id="#ffa366" style="background-color:#ffa366"></button>
-					</div>
+			
+			<div id="colour" class="left-menu">
+				<p >&nbsp;&nbsp;Colours</p>
+				<div>
+						<button class="colours" id="#000000" style="background-color:#000000"></button>
+						<button class="colours" id="#cccccc" style="background-color:#cccccc"></button>
+						<button class="colours" id="#663300" style="background-color:#663300"></button>
+						<button class="colours" id="#990000" style="background-color:#990000"></button>
+						<button class="colours" id="#ff6600" style="background-color:#ff6600"></button>
+				</div>
 
-					<div>
-							<button class="colours" id="#ffcc00" style="background-color:#ffcc00"></button>
-							<button class="colours" id="#009900" style="background-color:#009900"></button>
-							<button class="colours" id="#0000ff" style="background-color:#0000ff"></button>
-							<button class="colours" id="#9900cc" style="background-color:#9900cc"></button>
-							<button class="colours" id="#ff3399" style="background-color:#ff3399"></button>
-					</div>
+				<div>
+						<button class="colours" id="#808080" style="background-color:#808080"></button>
+						<button class="colours" id="#ffffff" style="background-color:#ffffff"></button>
+						<button class="colours" id="#996633" style="background-color:#996633"></button>
+						<button class="colours" id="#ff0000" style="background-color:#ff0000"></button>
+						<button class="colours" id="#ffa366" style="background-color:#ffa366"></button>
+				</div>
 
-					<div>
-							<button class="colours" id="#ffff00" style="background-color:#ffff00"></button>
-							<button class="colours" id="#33cc33" style="background-color:#33cc33"></button>
-							<button class="colours" id="#99ccff" style="background-color:#99ccff"></button>
-							<button class="colours" id="#cc99ff" style="background-color:#cc99ff"></button>
-							<button class="colours" id="#ff99cc" style="background-color:#ff99cc"></button>
-					</div>
-	                <div id="picker">
-	                    <p>COLOUR PICKER</p>
-	                    <input type="color" id="colour-picker"> <button class="colours"id="apply">Apply Colour</button>
-	                </div>
+				<div>
+						<button class="colours" id="#ffcc00" style="background-color:#ffcc00"></button>
+						<button class="colours" id="#009900" style="background-color:#009900"></button>
+						<button class="colours" id="#0000ff" style="background-color:#0000ff"></button>
+						<button class="colours" id="#9900cc" style="background-color:#9900cc"></button>
+						<button class="colours" id="#ff3399" style="background-color:#ff3399"></button>
+				</div>
+
+				<div>
+						<button class="colours" id="#ffff00" style="background-color:#ffff00"></button>
+						<button class="colours" id="#33cc33" style="background-color:#33cc33"></button>
+						<button class="colours" id="#99ccff" style="background-color:#99ccff"></button>
+						<button class="colours" id="#cc99ff" style="background-color:#cc99ff"></button>
+						<button class="colours" id="#ff99cc" style="background-color:#ff99cc"></button>
+				</div>
+			</div><br>
+                <div id="picker">
+                    <p >&nbsp;&nbsp;Colour Picker</p><br>
+                    <input type="color" id="colour-picker"> <button class="colours btn">Apply Colour</button>
+                </div>
 				
-	                <script>
-					function update(picker) {
-				    	curColour = picker.toHEXString();		
-				    	console.log(curColour);    	
-					}
-					</script>
-				</div>		
-			</nav>			
-		</div>				
-		<div id="container">
+                <!--
+                Custom Colours
+				<div>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+				</div>
+				<div>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+					<button class="jscolor {valueElement:null, onFineChange:'update(this)'}"></button>
+				</div>
+                -->
+
+
+				<script>
+				function update(picker) {
+			    	curColour = picker.toHEXString();		
+			    	console.log(curColour);    	
+				}
+				</script>
+			
+		</div>
+		<div id="right-menu">
 			<div class = "show" id="canvas">
 				<canvas id="canvas1" ></canvas>
 			</div>
 			<div id="frameandtools">
-				<div id="framerate">Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input id="frms" type="number" name="frmpsec" min="30" max="360" value="120"> frames/sec
-				</div>
 
-				<div id ="player">
-					<div id="popcontainer" class="popup" data-popup="popup-1"></div>
-					 <a data-popup-open="popup-1" href ="#"> <img id="play" src="icons/play.png"></a>
-					 <div id="frame-tools">					 	
-						<button id="addframe"><img src="icons/addf.png"/></button>
-						<button id="copyframe"><img src="icons/copyf.png"/></button>
-						<button id="delframe"><img src="icons/delf.png"/></button>
+				<div class="header">Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+					<input id="frms" type="number" name="frmpsec" min="0" max="70" value="1">&nbsp;&nbsp;frames/sec &nbsp; &nbsp;
+					<div id ="player"><img id="play" src="icons/play.png"></div>
+
 				</div>
-				</div>				
-			</div>
-			<div id="fft">
-				<div id="frames">
-					<img class="frame" id = "frmimg1" src=""></img>
-				</div>						
+				
+				<div id="fft">
+					<div id="frames">
+						<img class="frame" id = "frmimg1" src=""></img>
+					</div>
+					<div id="frame-tools">
+						<div id="addframe"class="icon-btn"><figure><img src="icons/addframe.png"><figcaption>Add Frame</figcaption></figure></div>
+						<div id="copyframe"class="icon-btn"><figure><img src="icons/copy.png"><figcaption>Copy Frame</figcaption></figure></div>
+						<div id="delframe"class="icon-btn"><figure><img src="icons/trash.png"><figcaption>Delete Frame</figcaption></figure></div>
+					</div>
+				</div>
 			</div>
 		</div>
-		<a href="#"class="object-toggle-btn">Object</a>
-		<div class="right-nav" id="objcontent">
-			<p>Name</p>
-			<input type="text" name = "objname" placeholder="Object Name"><br>
-			<p>Start Position</p>
-			<input type="text" spos = "spos" placeholder="Object Start Position"><br>
-			<p>End Position</p>
-			<input type="text" epos = "epos" placeholder="Object End Position"><br>
-			<p>Time</p>
-			<input type="text" speed = "objspeed" placeholder="Time"><br>			
-		</div>		
+	<div id="object-tab">
+		<div class="header">Object</div>
+		<div id="objects">
+			<div id="obj1" class="object">
+				
+				<div class="objdata">
+					<div id="obj1attri" class="attributes">
+						<div class="object-header">ObjectName</div>
+						<label id="obj1name-label" for="obj1name"> Name: </label>
+						<input id="obj1name" type="text" placeholder="Object Name">
+					</div>
+					<div id="obj1actions" class="actions">
+						<div class="object-header">Actions</div>
+						<label id="object-header-label" for="object-header"> Move to: </label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	</body>
-
-	<footer></footer>
 </html>
-
-</html>
-

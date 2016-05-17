@@ -55,7 +55,10 @@ li{
 	width:80px;
 
 }
-
+#imageLoader{
+	
+	display:none;
+}
 li:hover{
 	background-color: #259C6D;
 

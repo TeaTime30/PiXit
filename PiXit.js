@@ -763,8 +763,23 @@ if(window.addEventListener) {
 
 
 		/*********************** IMPORT FILE FUNCTION*************************/
-
-
+    	var imageLoader = document.getElementById('imageLoader');
+    	imageLoader.addEventListener('change', handleImage, false);
+    	function handleImage(e){
+      	var reader = new FileReader();
+      	reader.onload = function(event){
+        	var img = new Image();
+        	img.onload = function(){
+          		img.width = 600;
+          		img.height = 400;
+          		context.drawImage(img, 0, 0, canvas.width - 100, canvas.height - 100);
+          	console.log(img);
+          	uPush();
+        	}
+        	img.src = event.target.result;
+      	}
+      	reader.readAsDataURL(e.target.files[0]);
+    	}
 
  		/*********************** CUT FUNCTION*************************/
 

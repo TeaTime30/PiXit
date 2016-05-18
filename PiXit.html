@@ -23,8 +23,7 @@
 					<button id="paste"><img src="icons/paste.png"/></button>
 					<button id="undo"><img src="icons/undo.png"/></button>
 					<button id="redo"><img src="icons/redo.png"/></button>
-					<button id="imageLoader"><img src="icons/down.png"></button>
-				</div>				
+					<label for="imageLoader"><img src="icons/down.png"></label><input type="file" id="imageLoader" name="imageLoader"/>		
 			</div>
 			<nav id="nav1">				
 				<div id="tools"><span style="text-align:center">TOOLS</span>     
@@ -117,18 +116,17 @@
 				<canvas id="canvas1" ></canvas>
 			</div>
 			<div id="frameandtools">
-				<div id="framerate">Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input id="frms" type="number" name="frmpsec" min="30" max="360" value="120"> frames/sec
+				<div id="framerate">Frames &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<input id="frms" type="number" name="frmpsec" min="1" max="80" value="1"> frames/sec
 				</div>
 
 				<div id ="player">
-					<div id="popcontainer" class="popup" data-popup="popup-1"></div>
-					 <a data-popup-open="popup-1" href ="#"> <img id="play" src="icons/play.png"></a>
+					<a data-popup-open="popup-1" href ="#"> <img id="play" src="icons/play.png"></a> 
 					 <div id="frame-tools">					 	
 						<button id="addframe"><img src="icons/addf.png"/></button>
 						<button id="copyframe"><img src="icons/copyf.png"/></button>
-						<button id="delframe"><img src="icons/delf.png"/></button>
-				</div>
-				</div>				
+						<button id="delframe"><img src="icons/delf.png"/></button>						
+					</div>
+				</div>								
 			</div>
 			<div id="fft">
 				<div id="frames">
@@ -148,5 +146,5 @@
 			<input type="text" speed = "objspeed" placeholder="Time"><br>			
 		</div>		
 	</body>
-	<footer></footer>
+	<footer><div id="popcontainer" class="popup" data-popup="popup-1"></div></footer>
 </html>

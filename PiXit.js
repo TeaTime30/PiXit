@@ -723,7 +723,7 @@ if(window.addEventListener) {
       bt.innerHTML = bt.innerHTML + "Save";
       form.appendChild(box);
       console.log($("#saving"));
-      $("#menu").prepend(form);
+      $("#options").prepend(form);
       $("#saving").append(bt);
       $("#saving").delay(1000).fadeIn(200);
 
